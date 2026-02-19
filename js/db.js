@@ -216,8 +216,6 @@ class DatabaseManager {
             const { data, error } = await window.supabaseClient
                 .from('categories')
                 .select('*')
-                .eq('user_id', window.authManager.currentUser.id)
-                .eq('is_active', true)
                 .order('order_index');
 
             if (error) throw error;
