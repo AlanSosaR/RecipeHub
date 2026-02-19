@@ -34,6 +34,9 @@ class DashboardManager {
         await this.loadRecipes();
         this.loadCategories();
         this.setupEventListeners();
+
+        // 3. Inicializar menú móvil
+        if (window.setupMobileMenu) window.setupMobileMenu();
     }
 
     updateUserUI() {

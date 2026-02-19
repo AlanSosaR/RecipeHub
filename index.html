@@ -126,25 +126,29 @@
 
             <!-- Main Content Area -->
             <main class="main-content">
-                <!-- Top Search & User Bar -->
                 <header class="top-bar">
+                    <button id="btnMenu" class="icon-button mobile-only">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+
                     <div class="search-wrapper">
                         <span class="material-symbols-outlined search-icon">search</span>
-                        <input type="text" id="searchInput" class="search-input" placeholder="Search your recipes...">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search by food name...">
                         <span class="material-symbols-outlined filter-icon">tune</span>
                     </div>
 
                     <div class="top-bar-actions">
                         <button class="btn-notif">
                             <span class="material-symbols-outlined">notifications</span>
+                            <div class="notif-dot"></div>
                         </button>
                         <div class="user-profile-small" onclick="window.location.href='profile.html'">
-                            <div class="user-info-text">
-                                <span class="name" id="user-name">Chef</span>
-                                <span class="role">Personal Plan</span>
+                            <div class="user-info-text desktop-only">
+                                <span class="name" id="user-name">Chef Mario</span>
+                                <span class="role">Free Account</span>
                             </div>
-                            <img src="https://ui-avatars.com/api/?name=Chef&background=FF7A50&color=fff" class="avatar"
-                                alt="User">
+                            <img src="https://ui-avatars.com/api/?name=Chef+Mario&background=FF7A50&color=fff"
+                                class="avatar" alt="User">
                         </div>
                     </div>
                 </header>
@@ -162,14 +166,15 @@
                     <!-- Hero Banner -->
                     <section class="hero-banner mb-lg">
                         <div class="hero-banner__content">
-                            <h1 id="hero-greeting">Hola, Chef</h1>
-                            <p>You have new recipes to explore today! Start by adding your latest culinary creation.</p>
+                            <h1>Add your own recipe</h1>
+                            <p>Upload your own home-made recipe, scan from a book, and share it with other members of
+                                our community.</p>
                             <button class="btn-banner-upload" onclick="window.location.href='recipe-form.html'">
                                 <span class="material-symbols-outlined">add</span>
-                                Add New Recipe
+                                Upload Now
                             </button>
                         </div>
-                        <div class="hero-banner__img">
+                        <div class="hero-banner__img-container">
                             <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&q=80&w=800"
                                 alt="Cooking">
                         </div>
@@ -224,6 +229,7 @@
     <script src="js/auth.js"></script>
     <script src="js/db.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/ui.js"></script>
     <script src="js/dashboard.js"></script>
 </body>
 
