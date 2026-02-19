@@ -29,6 +29,11 @@ ol {
     margin: 0;
 }
 
+
+.bg-emerald-light {
+    background-color: var(--primary-light);
+}
+
 /* ─── Layout base ────────────────────────────────────────────────── */
 #app {
     min-height: 100dvh;

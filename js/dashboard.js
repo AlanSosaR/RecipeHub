@@ -160,62 +160,52 @@ class DashboardManager {
     }
 
     renderDashboardSections(recipes) {
-        // 1. "Based on the food you like" (primeras 3)
-        const featured = recipes.slice(0, 3);
-        this.renderFeatured(featured);
-
-        // 2. "More Recipes" (el resto)
-        const more = recipes.slice(3);
-        this.renderMore(more);
-    }
-
-    renderFeatured(recipes) {
-        container.innerHTML = recipes.map(recipe => `
-            <div class="group cursor-pointer card-hover animate-fade-in" onclick="window.location.href='recipe-detail.html?id=${recipe.id}'" style="border-radius: 16px; overflow: hidden; border: 1px solid #F1F5F9; background: white; transition: all 0.3s ease;">
-                <div style="aspect-ratio: 1/1; overflow: hidden; position: relative; background: #F8FAFC; border-bottom: 1px solid #F1F5F9;">
-                    <img src="${recipe.primaryImage || 'assets/placeholder-recipe.jpg'}" alt="${recipe.name_es}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-                    <div style="position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.9); padding: 4px; border-radius: 8px; opacity: 0; transition: opacity 0.2s ease;" class="card-more-btn">
-                        <span class="material-symbols-outlined" style="font-size: 18px; color: #4B5563;">more_vert</span>
-                    </div>
-                </div>
-                <div style="padding: 12px; display: flex; align-items: flex-start; gap: 8px;">
-                    <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px; margin-top: 2px;">description</span>
-                    <div style="flex: 1; min-width: 0;">
-                        <h3 style="font-size: 14px; font-weight: 500; color: #111827; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${recipe.name_es}</h3>
-                        <p style="font-size: 12px; color: #94A3B8; margin: 2px 0 0;">${recipe.prep_time_minutes || '20'} min • ${recipe.category_name || 'Receta'}</p>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    renderMore(recipes) {
-        const container = document.getElementById('moreRecipesList');
-        if (!container) return;
-
-        if (recipes.length === 0) {
-            container.innerHTML = '<p class="empty-msg">Explora más recetas pronto.</p>';
+        // En diseño Drive, mostramos un grid unificado de "Archivos"
+        const container = document.getElementById('recipesGrid');
+        if (!container) {
+            console.error('No se encontró el contenedor recipesGrid');
             return;
         }
 
-        // En móvil usamos el mismo estilo de tarjeta premium pero tal vez en un grid diferente
+        if (recipes.length === 0) {
+            // Mostrar estado vacío si no es búsqueda (búsqueda tiene su propia lógica)
+            container.innerHTML = '';
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) emptyState.classList.remove('hidden');
+            return;
+        }
+
+        // Ocultar estado vacío si hay recetas
+        const emptyState = document.getElementById('emptyState');
+        if (emptyState) emptyState.classList.add('hidden');
+
         container.innerHTML = recipes.map(recipe => `
-            <div class="card-recipe animate-fade-in" onclick="window.location.href='recipe-detail.html?id=${recipe.id}'">
-                <div class="card-recipe__img">
-                    <img src="${recipe.primaryImage || 'assets/placeholder-recipe.jpg'}" alt="${recipe.name_es}">
-                    <button class="card-recipe__save" onclick="event.stopPropagation(); window.dashboard.toggleFavorite('${recipe.id}')">
-                        <span class="material-symbols-outlined">favorite_border</span>
+            <div class="card-recipe animate-fade-in group cursor-pointer" onclick="window.location.href='recipe-detail.html?id=${recipe.id}'">
+                <div class="card-recipe__img relative overflow-hidden">
+                    <img src="${recipe.primaryImage || 'assets/placeholder-recipe.jpg'}" alt="${recipe.name_es}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <button class="absolute top-2 right-2 p-1.5 bg-white/90 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white text-gray-600 hover:text-red-500" 
+                        onclick="event.stopPropagation(); window.dashboard.toggleFavorite('${recipe.id}')">
+                        <span class="material-symbols-outlined text-[20px]">favorite_border</span>
                     </button>
+                     <div class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex justify-end">
+                         <span class="text-white text-xs font-medium flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[16px]">visibility</span>
+                             Ver
+                         </span>
+                    </div>
                 </div>
-                <div class="card-recipe__content">
-                    <h4>${recipe.name_es}</h4>
-                    <div class="card-recipe__meta">
-                        <div>
-                            <span class="material-symbols-outlined">schedule</span>
+                <div class="card-recipe__content p-3">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h4 class="font-medium text-gray-900 text-sm line-clamp-1" title="${recipe.name_es}">${recipe.name_es}</h4>
+                        <span class="material-symbols-outlined text-gray-400 text-[18px]">more_vert</span>
+                    </div>
+                    <div class="card-recipe__meta flex items-center gap-3 text-xs text-gray-500">
+                        <div class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">schedule</span>
                             <span>${recipe.prep_time_minutes || '20'} min</span>
                         </div>
-                        <div>
-                            <span class="material-symbols-outlined">electric_bolt</span>
+                        <div class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">local_fire_department</span>
                             <span>${recipe.calories || '150'} kcal</span>
                         </div>
                     </div>
@@ -223,6 +213,8 @@ class DashboardManager {
             </div>
         `).join('');
     }
+
+    // Métodos renderFeatured y renderMore eliminados por redundancia en diseño Drive
 
     renderSearchResults(recipes) {
         const resultsGrid = document.getElementById('recipesGrid');
