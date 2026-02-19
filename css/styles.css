@@ -1,36 +1,33 @@
 /* =========================================================
    styles.css  –  RecipeHub Personal
-   Design tokens (CSS variables) — Material 3 Expressive
+   Design tokens (CSS variables) — Drive Emerald Design
    ========================================================= */
 
 /* ─── Google Fonts ──────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
 
 /* ─── Tokens — Light Mode ────────────────────────────────────────── */
 :root {
-    /* Colores Mashup Premium - Inspirados en Stitch */
-    --primary: #064e3b;
-    /* Verde Esmeralda Deep */
-    --primary-light: #e6f2ee;
-    --primary-dark: #043d2e;
+    /* Colores RecipeHub Drive - Estética Esmeralda Premium */
+    --primary: #064E3B;
+    --primary-light: #ECFDF5;
+    --primary-dark: #003324;
     --on-primary: #FFFFFF;
 
-    --secondary: #ff6933;
-    /* Naranja Vibrante */
-    --secondary-light: #fddbc7;
-    /* Melocotón / Peach */
-    --on-secondary: #FFFFFF;
+    --secondary: #10B981;
+    /* Esmeralda Vibrante */
+    --secondary-light: #D1FAE5;
+    --on-secondary: #064E3B;
 
-    /* Superficies Orgánicas */
-    --bg: #f7f2ed;
-    /* Fondo Crema Orgánico */
+    /* Superficies Drive */
+    --bg: #FFFFFF;
     --surface: #FFFFFF;
-    --surface-variant: #f3f0ec;
-    --surface-peach: #fddbc7;
+    --surface-variant: #F9FAFB;
+    --surface-card: #FFFFFF;
+    --outline: #F1F5F9;
 
-    --on-surface: #1A1A1A;
-    --on-surface-variant: #64748B;
-    --outline: #E2E8F0;
+    --text-main: #1F2937;
+    --text-secondary: #6B7280;
 
     --success: #10B981;
     --warning: #F59E0B;
@@ -53,8 +50,8 @@
     --radius-full: 9999px;
 
     /* Sombras */
-    --shadow-subtle: 0 4px 12px rgba(0, 0, 0, 0.03);
-    --shadow-md: 0 10px 40px rgba(0, 0, 0, 0.04);
+    --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
     --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.08);
 
     /* Tipografía Premium */
@@ -64,91 +61,6 @@
     /* Transiciones */
     --transition-fast: 150ms ease-out;
     --transition-base: 250ms ease-out;
-}
-
-/* ─── Dark Mode ──────────────────────────────────────────────────── */
-[data-theme="dark"],
-.dark {
-    --primary: #FFB59B;
-    --on-primary: #5A1700;
-    --primary-container: #7E2E00;
-    --on-primary-container: #FFD8C8;
-
-    --secondary: #E7BEAE;
-    --on-secondary: #432B1E;
-    --secondary-container: #5C3F32;
-    --on-secondary-container: #FFD8C8;
-
-    --tertiary: #C2CC98;
-    --on-tertiary: #2D330F;
-    --tertiary-container: #434B23;
-    --on-tertiary-container: #DEE8B3;
-
-    --error: #FFB4AB;
-    --on-error: #690005;
-    --error-container: #93000A;
-    --on-error-container: #FFDAD6;
-
-    --surface: #1A1210;
-    --on-surface: #EDE0DC;
-    --surface-variant: #53433E;
-    --on-surface-variant: #D8C2BC;
-    --surface-container: #2E2220;
-    --surface-container-low: #201A17;
-    --surface-container-high: #3A2D2A;
-    --inverse-surface: #EDE0DC;
-    --inverse-on-surface: #201A17;
-
-    --outline: #A08C87;
-    --outline-variant: #53433E;
-
-    --elevation-1: 0 1px 3px rgba(0, 0, 0, .3), 0 1px 2px rgba(0, 0, 0, .2);
-    --elevation-2: 0 3px 6px rgba(0, 0, 0, .35), 0 2px 4px rgba(0, 0, 0, .25);
-    --elevation-3: 0 6px 12px rgba(0, 0, 0, .4), 0 4px 6px rgba(0, 0, 0, .3);
-    --elevation-4: 0 10px 20px rgba(0, 0, 0, .45), 0 6px 8px rgba(0, 0, 0, .3);
-}
-
-/* Preferencia del sistema */
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-        --primary: #FFB59B;
-        --on-primary: #5A1700;
-        --primary-container: #7E2E00;
-        --on-primary-container: #FFD8C8;
-
-        --secondary: #E7BEAE;
-        --on-secondary: #432B1E;
-        --secondary-container: #5C3F32;
-        --on-secondary-container: #FFD8C8;
-
-        --tertiary: #C2CC98;
-        --on-tertiary: #2D330F;
-        --tertiary-container: #434B23;
-        --on-tertiary-container: #DEE8B3;
-
-        --error: #FFB4AB;
-        --on-error: #690005;
-        --error-container: #93000A;
-        --on-error-container: #FFDAD6;
-
-        --surface: #1A1210;
-        --on-surface: #EDE0DC;
-        --surface-variant: #53433E;
-        --on-surface-variant: #D8C2BC;
-        --surface-container: #2E2220;
-        --surface-container-low: #201A17;
-        --surface-container-high: #3A2D2A;
-        --inverse-surface: #EDE0DC;
-        --inverse-on-surface: #201A17;
-
-        --outline: #A08C87;
-        --outline-variant: #53433E;
-
-        --elevation-1: 0 1px 3px rgba(0, 0, 0, .3), 0 1px 2px rgba(0, 0, 0, .2);
-        --elevation-2: 0 3px 6px rgba(0, 0, 0, .35), 0 2px 4px rgba(0, 0, 0, .25);
-        --elevation-3: 0 6px 12px rgba(0, 0, 0, .4), 0 4px 6px rgba(0, 0, 0, .3);
-        --elevation-4: 0 10px 20px rgba(0, 0, 0, .45), 0 6px 8px rgba(0, 0, 0, .3);
-    }
 }
 
 /* ─── Base Global ────────────────────────────────────────────────── */
@@ -162,7 +74,7 @@ body {
     margin: 0;
     font-family: var(--font-body);
     background: var(--surface);
-    color: var(--on-surface);
+    color: var(--text-main);
     transition: background-color .3s ease, color .3s ease;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -180,21 +92,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--outline-variant);
+    background: #E2E8F0;
     border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--outline);
-}
-
-.no-scrollbar::-webkit-scrollbar {
-    display: none;
-}
-
-.no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    background: #CBD5E1;
 }
 
 /* ─── Focus visible ──────────────────────────────────────────────── */
@@ -206,11 +109,74 @@ body {
 
 /* ─── Selección de texto ─────────────────────────────────────────── */
 ::selection {
-    background: var(--primary-container);
-    color: var(--on-primary-container);
+    background: var(--primary-light);
+    color: var(--primary);
 }
 
 /* ─── Utilidades ─────────────────────────────────────────────────── */
 .hidden {
     display: none !important;
+}
+
+.brand-font {
+    font-family: 'Epilogue', sans-serif;
+}
+
+.soft-shadow {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.card-hover:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.fill-1 {
+    font-variation-settings: 'FILL' 1;
+}
+
+/* ─── Layout Drive ────────────────────────────────────────────── */
+.body-drive {
+    background-color: white;
+    color: var(--text-main);
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+}
+
+.aside-drive {
+    width: 260px;
+    height: 100%;
+    background: white;
+    border-right: 1px solid #F1F5F9;
+    display: flex;
+    flex-direction: column;
+    z-index: 20;
+}
+
+.main-drive {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    background: white;
+}
+
+.top-bar-drive {
+    padding: 16px 32px;
+    border-bottom: 1px solid #F1F5F9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }

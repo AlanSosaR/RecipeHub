@@ -138,33 +138,19 @@ class DashboardManager {
     }
 
     renderFeatured(recipes) {
-        const container = document.getElementById('featuredGrid');
-        if (!container) return;
-
-        if (recipes.length === 0) {
-            container.innerHTML = '<p class="empty-msg">No hay sugerencias aún.</p>';
-            return;
-        }
-
         container.innerHTML = recipes.map(recipe => `
-            <div class="card-recipe animate-fade-in" onclick="window.location.href='recipe-detail.html?id=${recipe.id}'">
-                <div class="card-recipe__img">
-                    <img src="${recipe.primaryImage || 'assets/placeholder-recipe.jpg'}" alt="${recipe.name_es}">
-                    <button class="card-recipe__save" onclick="event.stopPropagation(); window.dashboard.toggleFavorite('${recipe.id}')">
-                        <span class="material-symbols-outlined">${recipe.isFavorited ? 'favorite' : 'favorite_border'}</span>
-                    </button>
+            <div class="group cursor-pointer card-hover animate-fade-in" onclick="window.location.href='recipe-detail.html?id=${recipe.id}'" style="border-radius: 16px; overflow: hidden; border: 1px solid #F1F5F9; background: white; transition: all 0.3s ease;">
+                <div style="aspect-ratio: 1/1; overflow: hidden; position: relative; background: #F8FAFC; border-bottom: 1px solid #F1F5F9;">
+                    <img src="${recipe.primaryImage || 'assets/placeholder-recipe.jpg'}" alt="${recipe.name_es}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+                    <div style="position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.9); padding: 4px; border-radius: 8px; opacity: 0; transition: opacity 0.2s ease;" class="card-more-btn">
+                        <span class="material-symbols-outlined" style="font-size: 18px; color: #4B5563;">more_vert</span>
+                    </div>
                 </div>
-                <div class="card-recipe__content">
-                    <h4>${recipe.name_es}</h4>
-                    <div class="card-recipe__meta">
-                        <div>
-                            <span class="material-symbols-outlined">schedule</span>
-                            <span>${recipe.prep_time_minutes || '20'} min</span>
-                        </div>
-                        <div>
-                            <span class="material-symbols-outlined">electric_bolt</span>
-                            <span>${recipe.calories || '150'} kcal</span>
-                        </div>
+                <div style="padding: 12px; display: flex; align-items: flex-start; gap: 8px;">
+                    <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px; margin-top: 2px;">description</span>
+                    <div style="flex: 1; min-width: 0;">
+                        <h3 style="font-size: 14px; font-weight: 500; color: #111827; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${recipe.name_es}</h3>
+                        <p style="font-size: 12px; color: #94A3B8; margin: 2px 0 0;">${recipe.prep_time_minutes || '20'} min • ${recipe.category_name || 'Receta'}</p>
                     </div>
                 </div>
             </div>
@@ -244,15 +230,15 @@ class DashboardManager {
         if (result.success) {
             const categories = result.categories;
             chipsContainer.innerHTML = `
-                <button class="chip active" onclick="window.dashboard.handleCategory('all', this)">
-                    <span class="material-symbols-outlined">grid_view</span>
-                    <span>Todos</span>
-                </button>
+                <div class="flex items-center gap-3 p-4 card-hover" onclick="window.dashboard.handleCategory('all', this)" style="min-width: 200px; background: #F9FAFB; border: 1px solid #F1F5F9; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s ease;">
+                    <span class="material-symbols-outlined fill-1" style="color: #94A3B8;">folder</span>
+                    <span style="font-size: 14px; font-weight: 500; color: #374151;">Todas</span>
+                </div>
                 ${categories.map(cat => `
-                    <button class="chip" onclick="window.dashboard.handleCategory('${cat.id}', this)">
-                        <span class="material-symbols-outlined">${cat.icon || 'restaurant'}</span>
-                        <span>${cat.name_es}</span>
-                    </button>
+                    <div class="flex items-center gap-3 p-4 card-hover" onclick="window.dashboard.handleCategory('${cat.id}', this)" style="min-width: 200px; background: #F9FAFB; border: 1px solid #F1F5F9; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s ease;">
+                        <span class="material-symbols-outlined fill-1" style="color: #94A3B8;">folder</span>
+                        <span style="font-size: 14px; font-weight: 500; color: #374151;">${cat.name_es}</span>
+                    </div>
                 `).join('')}
             `;
         }
