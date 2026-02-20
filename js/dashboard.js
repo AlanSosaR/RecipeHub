@@ -337,33 +337,52 @@ class DashboardManager {
     }
 
     async loadCategories() {
-        const chipsContainer = document.getElementById('categoryChips');
-        if (!chipsContainer) return;
+        // Render in Sidebar (Desktop & Mobile)
+        const sidebarContainer = document.getElementById('sidebar-categories');
+        const mobileContainer = document.getElementById('mobile-categories');
 
         const result = await window.db.getMyCategories();
         if (result.success) {
             const categories = result.categories;
-            chipsContainer.innerHTML = `
-                ${categories.map(cat => `
-                    <div class="folder-card group" onclick="window.dashboard.handleCategory('${cat.id}', this)">
-                        <span class="material-symbols-outlined icon border-none">folder</span>
-                        <span class="title">${cat.name_es}</span>
-                        <span class="subtitle">Ver recetas</span>
-                    </div>
-                `).join('')}
-                 <div class="folder-card new-folder group" onclick="window.utils.showToast('Crear carpeta próximamente')">
-                    <span class="material-symbols-outlined icon">create_new_folder</span>
-                    <span class="title">Nueva Carpeta</span>
-                </div>
+
+            const renderCategoryItem = (cat, isMobile) => `
+                <a href="#" class="${isMobile ? 'nav-item-mobile' : 'nav-item'}" 
+                   onclick="window.dashboard.handleCategory('${cat.id}', this)"
+                   data-category-id="${cat.id}">
+                    <span class="material-symbols-outlined" style="font-size: 20px; color: ${cat.color || '#666'}">folder</span>
+                    <span style="font-size: 14px;">${cat.name_es}</span>
+                </a>
             `;
+
+            // Inject into Desktop Sidebar
+            if (sidebarContainer) {
+                sidebarContainer.innerHTML = categories.map(cat => renderCategoryItem(cat, false)).join('');
+                // Add "New Folder" button if desired, or keep it manageable
+            }
+
+            // Inject into Mobile Drawer
+            if (mobileContainer) {
+                mobileContainer.innerHTML = categories.map(cat => renderCategoryItem(cat, true)).join('');
+            }
         }
     }
 
-    handleCategory(categoryId, chipEl) {
-        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-        chipEl.classList.add('active');
-        const filters = categoryId === 'all' ? {} : { categoryId };
-        this.loadRecipes(filters);
+    handleCategory(categoryId, element) {
+        // Update Active State
+        document.querySelectorAll('.nav-item, .nav-item-mobile').forEach(el => el.classList.remove('active'));
+        if (element) element.classList.add('active');
+
+        // Close Mobile Menu if open
+        this.toggleMobileMenu(false);
+
+        // Update Title
+        const titleEl = document.getElementById('view-title');
+        if (titleEl && element) {
+            titleEl.textContent = element.querySelector('span:last-child').textContent;
+        }
+
+        // Load Recipes for this category
+        this.loadRecipes({ categoryId: categoryId });
     }
 
     async toggleFavorite(recipeId) {
