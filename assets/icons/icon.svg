@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="96" fill="#064E3B"/>
+
+
+  <!-- Pot body (rounded rectangle) -->
+  <rect x="128" y="228" width="256" height="164" rx="30" fill="white"/>
+
+  <!-- Pot lid -->
+  <rect x="112" y="196" width="288" height="40" rx="20" fill="white"/>
+
+  <!-- Lid knob -->
+  <rect x="232" y="168" width="48" height="32" rx="12" fill="white"/>
+
+  <!-- Left handle -->
+  <path d="M128 248 Q88 248 88 278 Q88 308 128 308" stroke="white" stroke-width="22" fill="none" stroke-linecap="round"/>
+
+  <!-- Right handle -->
+  <path d="M384 248 Q424 248 424 278 Q424 308 384 308" stroke="white" stroke-width="22" fill="none" stroke-linecap="round"/>
+
+  <!-- Steam lines -->
+  <path d="M194 156 Q204 134 194 112" stroke="white" stroke-width="14" stroke-linecap="round" fill="none"/>
+  <path d="M256 156 Q266 134 256 112" stroke="white" stroke-width="14" stroke-linecap="round" fill="none"/>
+  <path d="M318 156 Q328 134 318 112" stroke="white" stroke-width="14" stroke-linecap="round" fill="none"/>
+</svg>

@@ -218,27 +218,41 @@ class OCRScanner {
         if (!this.videoElement || !this.stream) return;
 
         const loading = document.getElementById('ocrLoading');
-        loading.style.display = 'flex';
+        const video = this.videoElement;
+        const preview = document.getElementById('capturePreview');
 
         try {
-            // Dibujar frame en canvas oculto
+            // Draw current frame to canvas
             const canvas = document.createElement('canvas');
-            canvas.width = this.videoElement.videoWidth;
-            canvas.height = this.videoElement.videoHeight;
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
             const ctx = canvas.getContext('2d');
-            ctx.drawImage(this.videoElement, 0, 0);
+            ctx.drawImage(video, 0, 0);
 
-            // Convertir a Blob/File
+            // Show frozen preview of the captured frame while processing
+            if (preview) {
+                preview.src = canvas.toDataURL('image/jpeg', 0.85);
+                preview.style.display = 'block';
+                video.style.display = 'none';
+            }
+
+            // Show loading spinner
+            loading.style.display = 'flex';
+
+            // Convert to Blob/File for OCR
             const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.85));
             const file = new File([blob], 'scan.jpg', { type: 'image/jpeg' });
 
-            // Procesar con OCRProcessor
+            // Process with OCRProcessor
             const results = await window.ocrProcessor.processImage(file);
-
             this.showResults(results);
+
         } catch (error) {
             console.error('OCR Error:', error);
             window.utils.showToast('Error al procesar la imagen', 'error');
+            // On error, restore camera view
+            if (preview) { preview.style.display = 'none'; }
+            if (video) { video.style.display = 'block'; }
         } finally {
             loading.style.display = 'none';
         }
