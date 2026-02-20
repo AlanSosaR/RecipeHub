@@ -4,124 +4,324 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nueva Receta - RecipeHub Premium</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Nueva Receta - RecipeHub Drive</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        rel="stylesheet">
+
+    <!-- CSS -->
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/responsive.css">
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+
+    <style>
+        /* Estilos específicos para este layout 'Drive' que no están en components.css */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: white;
+            color: var(--text-main, #1F2937);
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .brand-font {
+            font-family: 'Epilogue', sans-serif;
+        }
+
+        /* OCR Modal Transition */
+        #ocrModal {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+    </style>
 </head>
 
-<body class="recipe-form-app">
-    <div class="form-container">
+<body class="bg-white text-gray-900 antialiased overflow-hidden h-screen flex">
+
+    <!-- Sidebar Desktop (Hidden on Mobile) -->
+    <nav class="w-[240px] h-full flex flex-col bg-gray-50/50 border-r border-gray-200 shrink-0 z-20 hidden lg:flex"
+        style="width: 240px; display: none; background-color: #F9FAFB; border-right: 1px solid #E5E7EB;">
+        <div class="p-6" style="padding: 1.5rem;">
+            <div class="flex items-center gap-2 text-primary mb-8"
+                style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; color: var(--primary);">
+                <span class="material-symbols-outlined text-[28px]" style="font-size: 28px;">cooking</span>
+                <span class="font-bold text-xl tracking-tight brand-font text-gray-900"
+                    style="font-weight: 700; font-size: 1.25rem; color: #111827;">RecipeHub</span>
+            </div>
+
+            <div class="flex flex-col gap-1 w-full" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <a class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100 transition-colors"
+                    href="index.html"
+                    style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 0.375rem; color: #4B5563; text-decoration: none;">
+                    <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                    <span class="text-sm">Volver al Dashboard</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full relative overflow-hidden bg-white"
+        style="flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; background-color: white;">
+
         <!-- Header -->
-        <header class="form-header">
-            <button class="icon-button" onclick="history.back()">
-                <span class="material-symbols-outlined">arrow_back</span>
-            </button>
-            <h1 id="formTitle">Nueva Receta</h1>
-            <div class="header-actions">
-                <button id="btnOCR" class="btn-secondary">
-                    <span class="material-symbols-outlined">center_focus_strong</span>
-                    Escanear
+        <header class="px-8 py-4 shrink-0 z-10 flex items-center justify-between border-b border-gray-100 h-[73px]"
+            style="padding: 1rem 2rem; border-bottom: 1px solid #F3F4F6; height: 73px; display: flex; align-items: center; justify-content: space-between;">
+            <div class="flex items-center gap-4" style="display: flex; align-items: center; gap: 1rem;">
+                <button class="flex items-center gap-1 text-gray-500 hover:text-gray-900 transition-colors group"
+                    onclick="history.back()"
+                    style="display: flex; align-items: center; gap: 0.25rem; color: #6B7280; background: none; border: none; cursor: pointer;">
+                    <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                    <span class="text-sm font-medium group-hover:underline">Volver</span>
                 </button>
+                <div class="h-6 w-px bg-gray-200 mx-2 hidden sm:block"
+                    style="height: 1.5rem; width: 1px; background-color: #E5E7EB; margin: 0 0.5rem;"></div>
+                <h1 id="formTitle" class="text-lg font-semibold text-gray-900 brand-font hidden sm:block"
+                    style="font-size: 1.125rem; font-weight: 600; color: #111827;">Nueva Receta</h1>
+            </div>
+
+            <div class="flex items-center gap-3" style="display: flex; align-items: center; gap: 0.75rem;">
+                <button id="btnOCROpen"
+                    class="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-50 text-emerald-700 font-medium hover:bg-emerald-100 transition-colors"
+                    style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 0.5rem; background-color: #ECFDF5; color: #047857; border: none; cursor: pointer;">
+                    <span class="material-symbols-outlined">center_focus_strong</span>
+                    <span class="hidden sm:inline">Escanear Receta</span>
+                </button>
+                <div class="w-9 h-9 rounded-full overflow-hidden border border-gray-200 cursor-pointer ml-2">
+                    <!-- Profile Placeholder -->
+                    <div id="userProfile" class="w-full h-full bg-gray-200"></div>
+                </div>
             </div>
         </header>
 
-        <form id="recipeForm" class="premium-form">
-            <!-- Sección: Imagen -->
-            <section class="form-section">
-                <div id="imageUploadArea" class="image-upload-area">
-                    <input type="file" id="imageInput" accept="image/*" hidden>
-                    <div class="upload-placeholder">
-                        <span class="material-symbols-outlined">add_a_photo</span>
-                        <p>Toca para agregar una foto</p>
+        <!-- Form Scroll Area -->
+        <div class="flex-1 overflow-y-auto overflow-x-hidden p-6 md:p-10 bg-white"
+            style="flex: 1; overflow-y: auto; overflow-x: hidden; padding: 1.5rem;">
+            <div class="max-w-[800px] mx-auto pb-20" style="max-width: 800px; margin: 0 auto; padding-bottom: 5rem;">
+                <form id="recipeForm" class="space-y-12" style="display: flex; flex-direction: column; gap: 3rem;">
+
+                    <!-- Basic Info -->
+                    <div class="space-y-6" style="display: flex; flex-direction: column; gap: 1.5rem;">
+
+                        <!-- Image Upload (Visual) -->
+                        <div id="imageUploadArea"
+                            class="w-full aspect-video bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors relative overflow-hidden"
+                            style="width: 100%; aspect-ratio: 16/9; background-color: #F9FAFB; border: 2px dashed #D1D5DB; border-radius: 0.75rem; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
+                            <input type="file" id="imageInput" accept="image/*" hidden>
+                            <div class="upload-placeholder flex flex-col items-center text-gray-400">
+                                <span class="material-symbols-outlined text-4xl mb-2">add_a_photo</span>
+                                <span class="text-sm font-medium">Toca para agregar una foto</span>
+                            </div>
+                            <img id="imagePreview" src="" alt=""
+                                class="absolute inset-0 w-full h-full object-cover hidden">
+                            <button type="button" id="btnRemoveImage"
+                                class="absolute top-2 right-2 bg-white/80 p-1 rounded-full text-red-500 hover:bg-white hidden shadow-sm">
+                                <span class="material-symbols-outlined text-xl">close</span>
+                            </button>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" for="name">Nombre de la
+                                receta</label>
+                            <input
+                                class="form-input block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary text-lg py-3 px-4 placeholder-gray-400"
+                                id="name" name="name_es" placeholder="Ej. Lasaña de la abuela" type="text" required>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6"
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2"
+                                    for="category">Categoría</label>
+                                <select
+                                    class="form-select block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary py-3 px-4 text-gray-700"
+                                    id="category" name="category_id" required>
+                                    <option value="">Cargando...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2" for="time">Tiempo de
+                                    preparación</label>
+                                <div class="relative rounded-md shadow-sm">
+                                    <input
+                                        class="form-input block w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary py-3 px-4 pr-12"
+                                        id="time" name="prep_time_minutes" placeholder="0" type="number">
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4"
+                                        style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: #6B7280;">
+                                        <span class="text-gray-500 sm:text-sm">min</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6"
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Dificultad</label>
+                                <select
+                                    class="form-select block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary py-3 px-4 text-gray-700"
+                                    name="difficulty" id="difficulty">
+                                    <option value="easy">Fácil</option>
+                                    <option value="medium">Media</option>
+                                    <option value="hard">Difícil</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Porciones</label>
+                                <input
+                                    class="form-input block w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary py-3 px-4"
+                                    name="servings" type="number" placeholder="4">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                            <textarea
+                                class="form-textarea block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary py-3 px-4 placeholder-gray-400 resize-none"
+                                id="description" name="description_es" placeholder="Breve descripción de la receta..."
+                                rows="3"></textarea>
+                        </div>
                     </div>
-                    <img id="imagePreview" src="" alt="Previsualización" class="hidden">
-                    <button type="button" id="btnRemoveImage" class="btn-remove hidden">
-                        <span class="material-symbols-outlined">close</span>
-                    </button>
-                </div>
-            </section>
 
-            <!-- Sección: Información Básica -->
-            <section class="form-section">
-                <div class="input-group">
-                    <label for="name">Nombre de la Receta</label>
-                    <input type="text" id="name" name="name_es" placeholder="Ej: Lasagna de Berenjena" required>
-                </div>
+                    <div class="h-px bg-gray-100 w-full" style="height: 1px; background-color: #F3F4F6;"></div>
 
-                <div class="input-group">
-                    <label for="description">Descripción (Opcional)</label>
-                    <textarea id="description" name="description_es" placeholder="Cuéntanos un poco sobre este plato..."
-                        rows="3"></textarea>
-                </div>
-
-                <div class="form-row">
-                    <div class="input-group">
-                        <label for="category">Categoría</label>
-                        <select id="category" name="category_id" required>
-                            <!-- Se carga dinámicamente -->
-                        </select>
+                    <!-- Ingredients -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4"
+                            style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                            <h3 class="text-lg font-medium text-gray-900">Ingredientes</h3>
+                            <button
+                                class="text-sm font-medium text-primary hover:text-primary-dark flex items-center gap-1 transition-colors"
+                                type="button" id="btnAddIngredient"
+                                style="color: var(--primary); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                <span class="material-symbols-outlined text-[18px]">add</span>
+                                Añadir
+                            </button>
+                        </div>
+                        <div id="ingredientsList" class="space-y-3"
+                            style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <!-- Dynamic Ingredients -->
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label for="difficulty">Dificultad</label>
-                        <select id="difficulty" name="difficulty" required>
-                            <option value="easy">Fácil</option>
-                            <option value="medium">Media</option>
-                            <option value="hard">Difícil</option>
-                        </select>
+
+                    <div class="h-px bg-gray-100 w-full" style="height: 1px; background-color: #F3F4F6;"></div>
+
+                    <!-- Steps -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4"
+                            style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                            <h3 class="text-lg font-medium text-gray-900">Pasos de preparación</h3>
+                            <button
+                                class="text-sm font-medium text-primary hover:text-primary-dark flex items-center gap-1 transition-colors"
+                                type="button" id="btnAddStep"
+                                style="color: var(--primary); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                <span class="material-symbols-outlined text-[18px]">add</span>
+                                Añadir
+                            </button>
+                        </div>
+                        <div id="stepsList" class="space-y-4" style="display: flex; flex-direction: column; gap: 1rem;">
+                            <!-- Dynamic Steps -->
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-row">
-                    <div class="input-group">
-                        <label for="prepTime">Tiempo (min)</label>
-                        <input type="number" id="prepTime" name="prep_time_minutes" min="1" placeholder="30">
+                    <!-- Submit -->
+                    <div class="pt-6 flex justify-end">
+                        <button type="submit" id="btnSave" class="btn-primary"
+                            style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 2rem; border-radius: 0.5rem; font-weight: 500; font-size: 1.125rem;">
+                            <span class="material-symbols-outlined">save</span>
+                            Guardar Receta
+                        </button>
                     </div>
-                    <div class="input-group">
-                        <label for="servings">Porciones</label>
-                        <input type="number" id="servings" name="servings" min="1" placeholder="4">
-                    </div>
-                </div>
-            </section>
-
-            <!-- Sección: Ingredientes -->
-            <section class="form-section">
-                <div class="section-header">
-                    <h2>Ingredientes</h2>
-                    <button type="button" id="btnAddIngredient" class="btn-add-item">
-                        <span class="material-symbols-outlined">add</span>
-                    </button>
-                </div>
-                <div id="ingredientsList" class="dynamic-list">
-                    <!-- Los ingredientes se agregan aquí -->
-                </div>
-            </section>
-
-            <!-- Sección: Pasos -->
-            <section class="form-section">
-                <div class="section-header">
-                    <h2>Preparación</h2>
-                    <button type="button" id="btnAddStep" class="btn-add-item">
-                        <span class="material-symbols-outlined">add</span>
-                    </button>
-                </div>
-                <div id="stepsList" class="dynamic-list">
-                    <!-- Los pasos se agregan aquí -->
-                </div>
-            </section>
-
-            <!-- Submit -->
-            <div class="form-actions">
-                <button type="submit" id="btnSave" class="btn-primary w-full">
-                    <span class="material-symbols-outlined">save</span>
-                    Guardar Receta
-                </button>
+                </form>
             </div>
-        </form>
+        </div>
+    </main>
+
+    <!-- OCR Modal Overlay -->
+    <div id="ocrModal" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 hidden opacity-0"
+        style="position: fixed; inset: 0; background-color: rgba(0,0,0,0.5); z-index: 50; display: none; align-items: center; justify-content: center;">
+        <div class="bg-white rounded-3xl overflow-hidden shadow-2xl w-full max-w-[375px] h-[80vh] flex flex-col relative"
+            style="width: 100%; max-width: 375px; height: 80vh; background-color: white; border-radius: 1.5rem; display: flex; flex-direction: column;">
+
+            <!-- Modal Header -->
+            <div class="px-6 py-4 flex items-center justify-between z-10 bg-white border-b border-gray-100">
+                <button type="button" id="btnCloseOCR"
+                    class="p-2 rounded-full hover:bg-gray-100 transition-colors -ml-2 text-gray-700">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+                <h1 class="text-lg font-bold tracking-tight">Escanear Receta</h1>
+                <div class="w-8"></div> <!-- Spacer -->
+            </div>
+
+            <!-- Pre-Capture State -->
+            <div id="ocrCameraState" class="flex-1 relative bg-black flex flex-col">
+                <video id="videoFeed" class="absolute inset-0 w-full h-full object-cover" autoplay playsinline></video>
+
+                <!-- Guides -->
+                <div class="absolute inset-x-8 inset-y-24 border-2 border-white/50 rounded-xl pointer-events-none">
+                    <div class="absolute top-0 left-0 w-4 h-4 border-t-4 border-l-4 border-white"></div>
+                    <div class="absolute top-0 right-0 w-4 h-4 border-t-4 border-r-4 border-white"></div>
+                    <div class="absolute bottom-0 left-0 w-4 h-4 border-b-4 border-l-4 border-white"></div>
+                    <div class="absolute bottom-0 right-0 w-4 h-4 border-b-4 border-r-4 border-white"></div>
+                </div>
+
+                <!-- Controls -->
+                <div
+                    class="mt-auto pb-8 pt-4 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-around px-6 z-20">
+                    <button id="btnGallery" class="p-3 rounded-full bg-white/20 text-white backdrop-blur-sm">
+                        <input type="file" id="ocrGalleryInput" accept="image/*" class="hidden">
+                        <span class="material-symbols-outlined">photo_library</span>
+                    </button>
+
+                    <button id="btnCapture"
+                        class="w-16 h-16 rounded-full bg-white border-4 border-gray-300 flex items-center justify-center shadow-lg active:scale-95 transition-transform">
+                        <div class="w-14 h-14 rounded-full bg-white border-2 border-black/10"></div>
+                    </button>
+
+                    <button id="btnSwitchCamera" class="p-3 rounded-full bg-white/20 text-white backdrop-blur-sm">
+                        <span class="material-symbols-outlined">cameraswitch</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results State (Hidden) -->
+            <div id="ocrResultState" class="flex-1 flex flex-col p-6 hidden bg-gray-50 overflow-y-auto">
+                <div class="mb-2 flex items-center justify-between">
+                    <h2 class="font-bold text-gray-900 text-base">Texto Detectado</h2>
+                </div>
+
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200 flex-1 flex flex-col">
+                    <textarea id="extractedText"
+                        class="w-full h-full text-sm text-gray-700 bg-transparent border-none focus:ring-0 resize-none p-0"
+                        placeholder="El texto aparecerá aquí..."></textarea>
+                </div>
+
+                <div class="mt-4 grid grid-cols-2 gap-3">
+                    <button id="btnRetryOCR"
+                        class="w-full py-3 bg-white text-gray-700 font-medium rounded-xl border border-gray-200 shadow-sm hover:bg-gray-50 flex items-center justify-center">
+                        Reintentar
+                    </button>
+                    <button id="btnImportOCR"
+                        class="w-full py-3 bg-primary text-white font-medium rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center hover:brightness-105">
+                        Usar Texto
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading Overlay -->
+            <div id="ocrLoading"
+                class="absolute inset-0 bg-white/90 z-50 hidden flex flex-col items-center justify-center">
+                <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4">
+                </div>
+                <p class="text-sm font-medium text-gray-600">Procesando receta...</p>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->
@@ -131,7 +331,21 @@
     <script src="js/auth.js"></script>
     <script src="js/db.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/ocr.js"></script>
     <script src="js/recipe-form.js"></script>
+
+    <script>
+        // Init Auth Check
+        (async () => {
+            const isAuth = await window.authManager.checkAuth();
+            if (!isAuth) window.location.href = 'index.html';
+
+            // Layout adjustments for Desktop if needed (mock sidebar)
+            if (window.innerWidth >= 1024) {
+                document.querySelector('nav.hidden').style.display = 'flex';
+            }
+        })();
+    </script>
 </body>
 
 </html>

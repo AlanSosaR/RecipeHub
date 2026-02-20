@@ -109,9 +109,12 @@ class RecipeFormManager {
         document.getElementById('btnAddStep').addEventListener('click', () => this.addStep());
 
         // OCR
-        document.getElementById('btnOCR').addEventListener('click', () => {
-            window.location.href = `ocr.html${this.isEditing ? '?id=' + this.recipeId : ''}`;
-        });
+        const btnOCROpen = document.getElementById('btnOCROpen');
+        if (btnOCROpen) {
+            btnOCROpen.addEventListener('click', () => {
+                if (window.ocr) window.ocr.openModal();
+            });
+        }
 
         // Form Submit
         document.getElementById('recipeForm').addEventListener('submit', (e) => {
@@ -128,29 +131,32 @@ class RecipeFormManager {
 
         preview.src = url;
         preview.classList.remove('hidden');
-        placeholder.classList.add('hidden');
-        removeBtn.classList.remove('hidden');
+        if (placeholder) placeholder.classList.add('hidden');
+        if (removeBtn) removeBtn.classList.remove('hidden');
     }
 
     removeImage() {
         this.selectedImage = null;
         document.getElementById('imagePreview').classList.add('hidden');
-        document.querySelector('.upload-placeholder').classList.remove('hidden');
-        document.getElementById('btnRemoveImage').classList.add('hidden');
+        const placeholder = document.querySelector('.upload-placeholder');
+        if (placeholder) placeholder.classList.remove('hidden');
+        const removeBtn = document.getElementById('btnRemoveImage');
+        if (removeBtn) removeBtn.classList.add('hidden');
         document.getElementById('imageInput').value = '';
     }
 
     // --- Listas Dinámicas ---
     addIngredient(data = null) {
         const container = document.getElementById('ingredientsList');
-        const id = Date.now() + Math.random();
+        // Usar clases del nuevo diseño (components.css form components)
 
         const item = document.createElement('div');
-        item.className = 'dynamic-item animate-fade-in';
+        item.className = 'flex items-center gap-3 group animate-fade-in';
         item.innerHTML = `
-            <input type="text" class="ingredient-input" placeholder="Ej: 500g de harina" value="${data ? data.raw_text || data.name_es : ''}" required>
-            <button type="button" class="btn-remove-small">
-                <span class="material-symbols-outlined">delete</span>
+            <span class="material-symbols-outlined text-gray-300 cursor-move">drag_indicator</span>
+            <input type="text" class="form-input flex-1" placeholder="Ej. 2 tazas de harina" value="${data ? data.raw_text || data.name_es : ''}" required>
+            <button type="button" class="btn-remove-small text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1">
+                <span class="material-symbols-outlined text-[20px]">close</span>
             </button>
         `;
 
@@ -160,24 +166,32 @@ class RecipeFormManager {
 
     addStep(data = null) {
         const container = document.getElementById('stepsList');
+        const stepNum = container.children.length + 1;
 
         const item = document.createElement('div');
-        item.className = 'dynamic-item step-form-item animate-fade-in';
+        item.className = 'flex gap-4 group animate-fade-in';
         item.innerHTML = `
-            <div class="step-num-badge"></div>
-            <textarea class="step-input" placeholder="Describe el paso..." rows="2" required>${data ? data.instruction_es : ''}</textarea>
-            <button type="button" class="btn-remove-small">
-                <span class="material-symbols-outlined">delete</span>
+            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-sm flex items-center justify-center mt-1 step-number">${stepNum}</div>
+            <div class="flex-1">
+                <textarea class="form-textarea block w-full resize-none" placeholder="Describe este paso..." rows="2" required>${data ? data.instruction_es : ''}</textarea>
+            </div>
+            <button type="button" class="btn-remove-small text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all self-start mt-2 p-1">
+                <span class="material-symbols-outlined text-[20px]">delete</span>
             </button>
         `;
 
-        item.querySelector('.btn-remove-small').addEventListener('click', () => item.remove());
+        item.querySelector('.btn-remove-small').addEventListener('click', () => {
+            item.remove();
+            this.updateStepNumbers();
+        });
         container.appendChild(item);
-        this.updateStepNumbers();
     }
 
     updateStepNumbers() {
-        // Opcional: Re-enumerar pasos si se desea visualmente
+        const steps = document.getElementById('stepsList').querySelectorAll('.step-number');
+        steps.forEach((badge, index) => {
+            badge.textContent = index + 1;
+        });
     }
 
     // --- Persistencia ---
