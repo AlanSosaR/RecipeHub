@@ -1158,21 +1158,84 @@
         });
 
         // ── OCR Modal ───────────────────────────────────
-        const ocrModal = document.getElementById('ocrModal');
-        document.getElementById('btnOCROpen').addEventListener('click', () => {
-            ocrModal.classList.add('open');
-        });
-        document.getElementById('btnCloseOCR').addEventListener('click', () => {
-            ocrModal.classList.remove('open');
-        });
-        ocrModal.addEventListener('click', e => {
-            if (e.target === ocrModal) ocrModal.classList.remove('open');
-        });
+        const btnOCROpen = document.getElementById('btnOCROpen');
+        const btnCloseOCR = document.getElementById('btnCloseOCR');
+        const btnCapture = document.getElementById('btnCapture');
+        const btnSwitchCamera = document.getElementById('btnSwitchCamera');
+        const btnGallery = document.getElementById('btnGallery');
+        const ocrGalleryInput = document.getElementById('ocrGalleryInput');
 
-        // ── Gallery button opens file picker ───────────
-        document.getElementById('btnGallery').addEventListener('click', () => {
-            document.getElementById('ocrGalleryInput').click();
-        });
+        if (btnOCROpen) {
+            btnOCROpen.addEventListener('click', () => {
+                if (window.ocr) window.ocr.openModal();
+            });
+        }
+
+        if (btnCloseOCR) {
+            btnCloseOCR.addEventListener('click', () => {
+                if (window.ocr) window.ocr.close();
+            });
+        }
+
+        if (btnCapture) {
+            btnCapture.addEventListener('click', () => {
+                if (window.ocr) window.ocr.capture();
+            });
+        }
+
+        if (btnSwitchCamera) {
+            btnSwitchCamera.addEventListener('click', () => {
+                if (window.ocr) window.ocr.switchCamera();
+            });
+        }
+
+        if (btnGallery) {
+            btnGallery.addEventListener('click', () => ocrGalleryInput.click());
+        }
+
+        if (ocrGalleryInput) {
+            ocrGalleryInput.addEventListener('change', (e) => {
+                if (window.ocr && e.target.files[0]) {
+                    window.ocr.handleGallery(e.target.files[0]);
+                }
+            });
+        }
+
+        // --- Result Actions ---
+        const btnImportOCR = document.getElementById('btnImportOCR');
+        if (btnImportOCR) {
+            btnImportOCR.addEventListener('click', () => {
+                const text = document.getElementById('extractedText').value;
+                const name = document.getElementById('ocrRecipeName').value;
+
+                if (name) document.getElementById('recipeForm').name.value = name;
+
+                // Parse ingredients and steps into the main form
+                const parsed = window.ocrProcessor.parseRecipeText(text);
+
+                // Clear existing and add new
+                document.getElementById('ingredientsList').innerHTML = '';
+                document.getElementById('stepsList').innerHTML = '';
+
+                parsed.ingredients.forEach(ing => window.recipeForm.addIngredient(ing));
+                parsed.steps.forEach(step => {
+                    // Adapt step format for addStep
+                    window.recipeForm.addStep({ instruction_es: step.instruction });
+                });
+
+                if (window.ocr) window.ocr.close();
+                window.utils.showToast('Datos importados al formulario', 'success');
+            });
+        }
+
+        const btnRetryOCR = document.getElementById('btnRetryOCR');
+        if (btnRetryOCR) {
+            btnRetryOCR.addEventListener('click', () => {
+                if (window.ocr) window.ocr.startCamera();
+                document.getElementById('ocrCameraState').style.display = 'flex';
+                document.getElementById('ocrResultState').style.display = 'none';
+            });
+        }
     </script>
 
 </body>

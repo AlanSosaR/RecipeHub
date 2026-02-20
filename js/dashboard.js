@@ -240,7 +240,7 @@ class DashboardManager {
                     <div class="meta-cell">--</div>
                     <div class="action-cell flex justify-end">
                          <button class="btn-favorite-m3 ${recipe.is_favorite ? 'active' : ''}" 
-                            onclick="event.stopPropagation(); window.dashboard.toggleFavorite('${recipe.id}')">
+                            onclick="event.stopPropagation(); window.dashboard.toggleFavorite('${recipe.id}', ${recipe.is_favorite})">
                             <span class="material-symbols-outlined pb-1">
                                 ${recipe.is_favorite ? 'star' : 'star_border'}
                             </span>
@@ -304,10 +304,20 @@ class DashboardManager {
         this.loadRecipes({ categoryId: categoryId });
     }
 
-    async toggleFavorite(recipeId) {
-        console.log('Toggle favorite:', recipeId);
-        // Lógica de Supabase vendrá aquí
-        window.utils.showToast('Receta guardada en favoritos');
+    async toggleFavorite(recipeId, currentStatus) {
+        const result = await window.db.toggleFavorite(recipeId, currentStatus);
+        if (result.success) {
+            window.utils.showToast(result.isFavorite ? 'Añadido a favoritos' : 'Eliminado de favoritos', 'success');
+
+            // Actualizar estado local y re-renderizar
+            const recipe = this.currentRecipes.find(r => r.id === recipeId);
+            if (recipe) {
+                recipe.is_favorite = result.isFavorite;
+                this.renderDashboardSections(this.currentRecipes);
+            }
+        } else {
+            window.utils.showToast('Error al actualizar favoritos', 'error');
+        }
     }
 
     openNewRecipeModal() {

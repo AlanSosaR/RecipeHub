@@ -140,5 +140,128 @@ class OCRProcessor {
     }
 }
 
-// Exponer instancia global
+/**
+ * OCRScanner - RecipeHub Premium
+ * Gestiona la interfaz de la cámara, captura de frames y comunicación con OCRProcessor.
+ */
+class OCRScanner {
+    constructor() {
+        this.stream = null;
+        this.videoElement = null;
+        this.currentFacingMode = 'environment';
+    }
+
+    async openModal() {
+        const modal = document.getElementById('ocrModal');
+        if (!modal) return;
+
+        modal.classList.add('open');
+        this.videoElement = document.getElementById('videoFeed');
+        await this.startCamera();
+
+        // Reset results state
+        document.getElementById('ocrCameraState').style.display = 'flex';
+        document.getElementById('ocrResultState').style.display = 'none';
+        document.getElementById('ocrLoading').style.display = 'none';
+    }
+
+    async close() {
+        const modal = document.getElementById('ocrModal');
+        if (modal) modal.classList.remove('open');
+        this.stopCamera();
+    }
+
+    async startCamera() {
+        if (this.stream) this.stopCamera();
+
+        try {
+            this.stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: this.currentFacingMode },
+                audio: false
+            });
+            if (this.videoElement) {
+                this.videoElement.srcObject = this.stream;
+                await this.videoElement.play();
+            }
+        } catch (err) {
+            console.error('Error al acceder a la cámara:', err);
+            window.utils.showToast('No se pudo acceder a la cámara. Revisa los permisos.', 'error');
+        }
+    }
+
+    stopCamera() {
+        if (this.stream) {
+            this.stream.getTracks().forEach(track => track.stop());
+            this.stream = null;
+        }
+    }
+
+    async switchCamera() {
+        this.currentFacingMode = this.currentFacingMode === 'user' ? 'environment' : 'user';
+        await this.startCamera();
+    }
+
+    async capture() {
+        if (!this.videoElement || !this.stream) return;
+
+        const loading = document.getElementById('ocrLoading');
+        loading.style.display = 'flex';
+
+        try {
+            // Dibujar frame en canvas oculto
+            const canvas = document.createElement('canvas');
+            canvas.width = this.videoElement.videoWidth;
+            canvas.height = this.videoElement.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(this.videoElement, 0, 0);
+
+            // Convertir a Blob/File
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.85));
+            const file = new File([blob], 'scan.jpg', { type: 'image/jpeg' });
+
+            // Procesar con OCRProcessor
+            const results = await window.ocrProcessor.processImage(file);
+
+            this.showResults(results);
+        } catch (error) {
+            console.error('OCR Error:', error);
+            window.utils.showToast('Error al procesar la imagen', 'error');
+        } finally {
+            loading.style.display = 'none';
+        }
+    }
+
+    showResults(results) {
+        this.stopCamera();
+        document.getElementById('ocrCameraState').style.display = 'none';
+        document.getElementById('ocrResultState').style.display = 'flex';
+
+        const textOutput = document.getElementById('extractedText');
+        if (textOutput) textOutput.value = results.text;
+
+        // Auto-parse for preview if possible
+        const parsed = window.ocrProcessor.parseRecipeText(results.text);
+        const nameInput = document.getElementById('ocrRecipeName');
+        if (nameInput) nameInput.value = parsed.name || '';
+    }
+
+    async handleGallery(file) {
+        if (!file) return;
+        const loading = document.getElementById('ocrLoading');
+        loading.style.display = 'flex';
+
+        try {
+            const results = await window.ocrProcessor.processImage(file);
+            this.showResults(results);
+        } catch (error) {
+            console.error('OCR Error:', error);
+            window.utils.showToast('Error al procesar archivo', 'error');
+        } finally {
+            loading.style.display = 'none';
+        }
+    }
+}
+
+// Exponer instancias globales
 window.ocrProcessor = new OCRProcessor();
+window.ocr = new OCRScanner();

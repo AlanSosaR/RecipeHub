@@ -596,6 +596,13 @@ ol {
 }
 
 @media (max-width: 1023px) {
+
+    .list-header,
+    .file-row {
+        grid-template-columns: 60px 1fr 60px;
+        /* Only Icon, Title, Action on small screens */
+    }
+
     .hidden-mobile-lg {
         display: none !important;
     }
