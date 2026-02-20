@@ -562,13 +562,15 @@ ol {
 .list-header,
 .file-row {
     display: grid;
-    grid-template-columns: 48px 2.5fr 1fr 1fr 1.5fr 40px;
-    gap: 12px;
+    grid-template-columns: 64px minmax(200px, 3fr) 140px 120px 160px 48px;
+    gap: 16px;
     align-items: center;
     padding: 0 24px;
     height: 52px;
     width: 100%;
     box-sizing: border-box;
+    text-decoration: none;
+    color: inherit;
 }
 
 .list-header {
@@ -578,7 +580,7 @@ ol {
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
 }
 
 .file-row {
@@ -695,6 +697,39 @@ ol {
     color: #5F6368;
     border-radius: 8px;
     transition: background 0.2s;
+}
+
+/* --- Content Cell Styles (Restored) --- */
+.title-cell {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--on-surface);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+}
+
+.meta-cell {
+    font-size: 14px;
+    color: var(--on-surface-variant);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+}
+
+/* Reset header backgrounds and paddings */
+.list-header .icon-cell,
+.list-header .meta-cell,
+.list-header .title-cell {
+    background: transparent;
+    padding: 0;
+    width: auto;
+    height: auto;
+    color: inherit;
 }
 
 .badge-tag {
