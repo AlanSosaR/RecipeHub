@@ -401,14 +401,58 @@
         .m3-field textarea {
             width: 100%;
             padding: 16px;
+            padding-right: 16px;
+            /* Default */
             font-family: var(--font-body);
             font-size: 16px;
             color: var(--md-on-surface);
-            background: var(--md-surface);
+            background: transparent;
             border: 1.5px solid var(--md-outline-var);
             border-radius: var(--md-shape-md);
             outline: none;
-            transition: border-color .15s;
+            transition: border .2s, box-shadow .2s;
+        }
+
+        .m3-field.has-action input,
+        .m3-field.has-action textarea {
+            padding-right: 48px;
+        }
+
+        .m3-field-action {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            color: var(--md-on-surface-var);
+            cursor: pointer;
+            z-index: 15;
+            transition: background .2s, color .2s;
+        }
+
+        .m3-field.textarea .m3-field-action {
+            top: 12px;
+            transform: none;
+        }
+
+        .m3-field-action:hover {
+            background: var(--md-surface-variant);
+            color: var(--md-error);
+        }
+
+        .m3-field-action .material-symbols-outlined {
+            font-size: 20px;
+        }
+
+        .m3-field input,
+        .m3-field textarea {
             appearance: none;
             -webkit-appearance: none;
         }
@@ -714,6 +758,25 @@
         }
 
         #ocrModal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #ocrCameraState,
+        #ocrResultState,
+        #ocrLoading {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #ocrCameraState.hidden,
+        #ocrResultState.hidden,
+        #ocrLoading.hidden {
+            display: none !important;
+        }
+
+        .ocr-modal-content {
             opacity: 1;
             visibility: visible;
         }

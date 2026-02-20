@@ -166,13 +166,13 @@ class RecipeFormManager {
         item.className = 'flex items-center gap-3 group animate-fade-in mb-4';
         item.innerHTML = `
             <span class="material-symbols-outlined text-gray-300 cursor-move">drag_indicator</span>
-            <div class="m3-field flex-1 mb-0" style="margin-bottom:0">
+            <div class="m3-field flex-1 mb-0 has-action" style="margin-bottom:0">
                 <input type="text" class="ingredient-input" placeholder=" " value="${data ? data.raw_text || data.name_es : ''}" required>
                 <label>Ingrediente</label>
+                <button type="button" class="m3-field-action del-btn" title="Eliminar">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
             </div>
-            <button type="button" class="del-btn text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1">
-                <span class="material-symbols-outlined text-[20px]">close</span>
-            </button>
         `;
 
         const input = item.querySelector('input');
@@ -194,13 +194,13 @@ class RecipeFormManager {
         item.className = 'flex gap-4 group animate-fade-in mb-4';
         item.innerHTML = `
             <div class="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-sm flex items-center justify-center mt-3 step-number">${stepNum}</div>
-            <div class="m3-field textarea flex-1 mb-0" style="margin-bottom:0">
+            <div class="m3-field textarea flex-1 mb-0 has-action" style="margin-bottom:0">
                 <textarea class="step-textarea block w-full resize-none" placeholder=" " rows="2" required>${data ? data.instruction_es : ''}</textarea>
                 <label>Descripción del paso</label>
+                <button type="button" class="m3-field-action del-btn" title="Eliminar">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
             </div>
-            <button type="button" class="del-btn text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all self-start mt-3 p-1">
-                <span class="material-symbols-outlined text-[20px]">delete</span>
-            </button>
         `;
 
         const textarea = item.querySelector('textarea');
