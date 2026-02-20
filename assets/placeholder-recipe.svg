@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+  <rect width="800" height="450" fill="#F0FDF4"/>
+  <circle cx="400" cy="220" r="110" fill="#D1FAE5" stroke="#A7F3D0" stroke-width="3"/>
+  <g transform="translate(360, 155)" fill="#064E3B">
+    <rect x="5" y="0" width="4" height="50" rx="2"/>
+    <rect x="12" y="0" width="4" height="50" rx="2"/>
+    <rect x="19" y="0" width="4" height="50" rx="2"/>
+    <rect x="0" y="48" width="28" height="4" rx="2"/>
+    <rect x="11" y="52" width="6" height="60" rx="3"/>
+  </g>
+  <g transform="translate(415, 155)" fill="#064E3B">
+    <rect x="8" y="0" width="6" height="112" rx="3"/>
+    <path d="M14 0 Q28 20 28 40 L14 40 Z" fill="#10B981"/>
+  </g>
+  <g stroke="#10B981" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.6">
+    <path d="M370 140 Q374 130 370 120 Q366 110 370 100"/>
+    <path d="M400 135 Q404 125 400 115 Q396 105 400 95"/>
+    <path d="M430 140 Q434 130 430 120 Q426 110 430 100"/>
+  </g>
+  <rect x="240" y="355" width="320" height="42" rx="21" fill="#064E3B" opacity="0.08"/>
+  <text x="400" y="381" text-anchor="middle" font-family="'Inter', sans-serif" font-size="15" font-weight="600" fill="#064E3B" opacity="0.7">Sin imagen disponible</text>
+</svg>
