@@ -534,56 +534,7 @@ ol {
     overflow: hidden;
 }
 
-/* File Row Styling (List View Item) */
-.file-row {
-    display: flex;
-    align-items: center;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--surface-variant);
-    cursor: pointer;
-    transition: background-color 0.2s;
-    background: white;
-}
-
-.file-row:last-child {
-    border-bottom: none;
-}
-
-.file-row:hover {
-    background-color: var(--surface-variant);
-}
-
-.file-row .icon-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-secondary);
-    margin-right: 16px;
-}
-
-.file-row:hover .icon-wrapper {
-    color: var(--primary);
-    /* Emerald hover effect */
-}
-
-.file-row .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.file-row .title {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-main);
-}
-
-.file-row .meta-mobile {
-    display: none;
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-top: 2px;
-}
+/* Obsolete flex-based .file-row removed to avoid conflicts with grid layout below */
 
 @media (max-width: 767px) {
     .file-row .meta-mobile {
@@ -607,39 +558,47 @@ ol {
     width: 100%;
 }
 
-.list-header {
+/* --- Unified List View Grid --- */
+.list-header,
+.file-row {
     display: grid;
-    grid-template-columns: 64px 1fr 120px 120px 80px 64px;
+    grid-template-columns: 64px 1fr 120px 140px 100px 60px;
     gap: 12px;
-    padding: 12px 24px;
-    background: transparent;
-    border-bottom: 2px solid var(--outline-variant);
-    color: var(--on-surface-variant);
-    font-size: 13px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
     align-items: center;
+    padding: 12px 24px;
     width: 100%;
     box-sizing: border-box;
 }
 
+.list-header {
+    background: transparent;
+    border-bottom: 1px solid var(--outline-variant);
+    color: var(--on-surface-variant);
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
 .file-row {
-    display: grid;
-    grid-template-columns: 64px 1fr 120px 120px 80px 64px;
-    gap: 12px;
-    align-items: center;
-    padding: 12px 24px;
     background: var(--surface);
     border-bottom: 1px solid var(--outline-variant);
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 100%;
-    box-sizing: border-box;
 }
 
 .file-row:hover {
     background: var(--surface-container-low);
+}
+
+.hidden-mobile-lg {
+    display: grid !important;
+}
+
+@media (max-width: 1023px) {
+    .hidden-mobile-lg {
+        display: none !important;
+    }
 }
 
 @media (max-width: 767px) {
@@ -673,9 +632,14 @@ ol {
     transition: background 0.2s;
 }
 
-.file-row:hover .icon-cell {
-    background: var(--secondary-container);
-    color: var(--on-secondary-container);
+/* Ensure header cells don't have fixed sizes if they are grid items */
+.list-header .icon-cell,
+.list-header .meta-cell,
+.list-header .title-cell {
+    width: auto;
+    height: auto;
+    background: transparent;
+    padding: 0;
 }
 
 .title-cell {
