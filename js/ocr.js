@@ -42,7 +42,8 @@ class OCRProcessor {
      * Parsea un texto crudo en una estructura de receta: nombre, ingredientes, pasos.
      */
     parseRecipeText(text) {
-        const lines = text.split('\n')
+        // Robust line splitting (handles \r\n and multiple spaces)
+        const lines = text.split(/\r?\n/)
             .map(l => l.trim())
             .filter(l => l.length > 0);
 
@@ -117,8 +118,12 @@ class OCRProcessor {
      * Extrae cantidad, unidad y nombre de una línea de ingrediente.
      */
     parseIngredient(line) {
-        // Limpiamos bullets comunes
-        let clean = line.replace(/^[-•*◦▪▫+]\s*/, '');
+        // Clean bullets and em-dashes
+        let clean = line.replace(/^[-•*◦▪▫+—–]\s*/, '').trim();
+        // Remove common coffee labels that aren't ingredients but can be parsed as such
+        if (clean.toLowerCase().startsWith('variedad') || clean.toLowerCase().startsWith('proceso')) {
+            clean = clean.replace(/^(asvariedad|proceso)\s*[:—–-]?\s*/i, '');
+        }
         if (clean.length < 2) return null;
 
         // Regex para capturar: [cantidad] [unidad] [nombre]

@@ -307,14 +307,24 @@ class RecipeFormManager {
 
             // 2. Guardar Ingredientes
             if (ingredients.length > 0) {
-                const ingredientsData = ingredients.map(ing => ({ name_es: ing.name }));
-                await window.db.addIngredients(recipeId, ingredientsData);
+                const ingredientsData = ingredients.map(ing => ({
+                    name_es: ing.name,
+                    quantity: ing.quantity,
+                    unit_es: ing.unit,
+                    raw_text: `${ing.quantity || ''} ${ing.unit || ''} ${ing.name}`.trim()
+                }));
+                const ingResult = await window.db.addIngredients(recipeId, ingredientsData);
+                if (!ingResult.success) console.warn('Error guardando ingredientes:', ingResult.error);
             }
 
             // 3. Guardar Pasos
             if (steps.length > 0) {
-                const stepsData = steps.map(step => ({ instruction_es: step.instruction }));
-                await window.db.addSteps(recipeId, stepsData);
+                const stepsData = steps.map(step => ({
+                    instruction_es: step.instruction,
+                    step_number: step.number
+                }));
+                const stepResult = await window.db.addSteps(recipeId, stepsData);
+                if (!stepResult.success) console.warn('Error guardando pasos:', stepResult.error);
             }
 
             window.utils.showToast('¡Receta creada con éxito!', 'success');
