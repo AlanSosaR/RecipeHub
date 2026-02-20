@@ -26,17 +26,20 @@
     <style>
         :root {
             --primary: #064E3B;
-            /* Verde Esmeralda del proyecto */
             --primary-light: #ECFDF5;
             --secondary: #FF7A50;
-            /* Naranja acento */
+            --surface: #FFFFFF;
+            --surface-container-low: #F7F9F8;
+            --outline-variant: #E1E3E1;
+            --on-surface-variant: #444746;
         }
 
         .ocr-container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 24px;
-            padding-top: 80px;
+            padding-top: 100px;
+            min-height: 100vh;
         }
 
         .ocr-step {
@@ -62,27 +65,30 @@
 
         .dropzone {
             width: 100%;
-            height: 240px;
-            border: 2px dashed #E5E7EB;
-            border-radius: 24px;
+            height: 320px;
+            border: 2px dashed var(--outline-variant);
+            border-radius: 28px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s ease;
-            background: white;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--surface-container-low);
+            padding: 40px;
+            text-align: center;
         }
 
         .dropzone:hover {
             border-color: var(--primary);
             background: var(--primary-light);
+            transform: scale(0.99);
         }
 
         .dropzone.dragover {
             border-color: var(--primary);
-            background: #D1FAE5;
+            background: var(--primary-light);
+            box-shadow: 0 0 0 4px var(--primary-light);
         }
 
         .preview-image {
@@ -200,6 +206,27 @@
             }
         }
 
+        .scanning-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            box-shadow: 0 0 8px var(--primary);
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% {
+                top: 0%;
+            }
+
+            100% {
+                top: 100%;
+            }
+        }
+
         /* M3 Style Form Inputs for OCR */
         .form-input {
             width: 100%;
@@ -222,12 +249,34 @@
             left: 0;
             right: 0;
             z-index: 100;
-            background: white;
-            border-bottom: 1px solid #F3F4F6;
-            height: 64px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--outline-variant);
+            height: 72px;
             display: flex;
             align-items: center;
-            padding: 0 20px;
+            padding: 0 24px;
+        }
+
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--outline-variant);
+            transition: all 0.3s;
+        }
+
+        .step-dot.active {
+            width: 24px;
+            border-radius: 4px;
+            background: var(--primary);
         }
     </style>
 </head>
@@ -242,17 +291,30 @@
     </header>
 
     <main class="ocr-container">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <div id="dot1" class="step-dot active"></div>
+            <div id="dot2" class="step-dot"></div>
+            <div id="dot3" class="step-dot"></div>
+        </div>
+
         <!-- PASO 1: Capturar Imagen -->
         <div id="step1" class="ocr-step active">
-            <h2 style="font-size: 24px; margin-bottom: 8px;">Captura o Sube la Foto</h2>
-            <p style="color: #6B7280; margin-bottom: 24px;">Toma una foto de tu receta o sube una imagen existente de tu
-                galería.</p>
+            <div style="margin-bottom: 32px;">
+                <h2 class="brand-font" style="font-size: 32px; color: #111827; margin-bottom: 12px;">Prepara tu escáner
+                </h2>
+                <p style="color: var(--on-surface-variant); font-size: 16px;">Sube una foto clara de tu receta para
+                    digitalizarla al instante.</p>
+            </div>
 
             <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
-                <span class="material-symbols-rounded"
-                    style="font-size: 48px; color: var(--primary); margin-bottom: 12px;">photo_camera</span>
-                <p style="font-weight: 500; color: #374151;">Toca para seleccionar archivo</p>
-                <p style="font-size: 12px; color: #9CA3AF; margin-top: 4px;">PNG, JPG hasta 10MB</p>
+                <div
+                    style="background: var(--primary); color: white; width: 64px; height: 64px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 8px 16px rgba(6, 78, 59, 0.2);">
+                    <span class="material-symbols-rounded" style="font-size: 32px;">add_a_photo</span>
+                </div>
+                <p style="font-weight: 600; color: #111827; font-size: 18px;">Selecciona o arrastra una imagen</p>
+                <p style="font-size: 14px; color: var(--on-surface-variant); margin-top: 8px;">Formatos JPG, PNG
+                    compatibles</p>
             </div>
 
             <input type="file" id="fileInput" accept="image/*" capture="environment" style="display: none;"
@@ -288,20 +350,25 @@
 
         <!-- PASO 2: Procesando -->
         <div id="step2" class="ocr-step">
-            <h2 style="font-size: 24px; margin-bottom: 8px;">Procesando...</h2>
-            <p style="color: #6B7280; margin-bottom: 24px;">Estamos convirtiendo tu imagen en texto digital.</p>
+            <div style="margin-bottom: 32px;">
+                <h2 class="brand-font" style="font-size: 32px; color: #111827; margin-bottom: 12px;">Analizando...</h2>
+                <p style="color: var(--on-surface-variant); font-size: 16px;">Estamos extrayendo los secretos de tu
+                    receta.</p>
+            </div>
 
-            <div style="text-align: center;">
-                <img id="previewImage" class="preview-image" alt="Preview">
-
-                <div style="display: flex; flex-direction: column; align-items: center; margin: 32px 0;">
-                    <div class="spinner"></div>
-                    <p id="processingStatus" style="margin-top: 16px; font-weight: 500; color: var(--primary);">
-                        Iniciando Tesseract...</p>
+            <div style="text-align: center; position: relative;">
+                <div style="position: relative; display: inline-block;">
+                    <img id="previewImage" class="preview-image" alt="Preview">
+                    <div id="scanningLine" class="scanning-line hidden"></div>
                 </div>
 
-                <div class="progress-container">
-                    <div id="progressBar" class="progress-bar"></div>
+                <div style="display: flex; flex-direction: column; align-items: center; margin: 32px 0;">
+                    <p id="processingStatus"
+                        style="margin-bottom: 16px; font-weight: 600; color: var(--primary); font-size: 18px;">
+                        Iniciando OCR...</p>
+                    <div class="progress-container" style="max-width: 400px;">
+                        <div id="progressBar" class="progress-bar"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -428,12 +495,15 @@
         async function startOCR(file) {
             const status = document.getElementById('processingStatus');
             const bar = document.getElementById('progressBar');
+            const scanLine = document.getElementById('scanningLine');
+
+            if (scanLine) scanLine.classList.remove('hidden');
 
             try {
                 const results = await window.ocrProcessor.processImage(file, m => {
                     if (m.status === 'recognizing text') {
                         const p = Math.round(m.progress * 100);
-                        status.textContent = `Analizando texto... ${p}%`;
+                        status.textContent = `Leyendo... ${p}%`;
                         bar.style.width = p + '%';
                     }
                 });
@@ -444,17 +514,19 @@
                 // Confidence Badge
                 const badge = document.getElementById('confidenceBadge');
                 const conf = Math.round(results.confidence);
-                badge.textContent = `${conf}% Confianza`;
+                badge.textContent = `${conf}%`;
                 badge.className = 'confidence-badge ' + (conf > 80 ? 'confidence-high' : conf > 50 ? 'confidence-medium' : 'confidence-low');
 
                 // Parse
                 parsedData = window.ocrProcessor.parseRecipeText(results.text);
                 renderParsedData();
 
+                if (scanLine) scanLine.classList.add('hidden');
                 setTimeout(() => goToStep(3), 500);
             } catch (err) {
                 console.error(err);
-                alert('Error al procesar la imagen');
+                if (scanLine) scanLine.classList.add('hidden');
+                alert('No pudimos leer la imagen. Intenta con más luz.');
                 goToStep(1);
             }
         }
@@ -503,6 +575,7 @@
                 // 1. Crear Receta
                 const recipeRes = await window.db.createRecipe({
                     name_es: parsedData.name,
+                    category_id: '463d1444-c8e1-42ac-86ed-1fac331cd821', // Categoría General por defecto
                     ocr_raw_text: rawText,
                     ocr_confidence: ocrResults.confidence,
                     created_from_ocr: true
@@ -555,6 +628,10 @@
 
         function goToStep(s) {
             document.querySelectorAll('.ocr-step').forEach((el, i) => el.classList.toggle('active', i === (s - 1)));
+            // Update dots
+            document.querySelectorAll('.step-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === (s - 1));
+            });
         }
 
         function goBack() {

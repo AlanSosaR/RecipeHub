@@ -174,7 +174,7 @@ class DatabaseManager {
                 recipe_id: recipeId,
                 name_es: ing.name_es,
                 raw_text: ing.raw_text || ing.name_es,
-                unit: ing.unit || null,
+                unit_es: ing.unit_es || ing.unit || null,
                 quantity: ing.quantity || null
             }));
 
@@ -195,7 +195,7 @@ class DatabaseManager {
             const items = steps.map((step, idx) => ({
                 recipe_id: recipeId,
                 instruction_es: step.instruction_es,
-                step_order: idx + 1
+                step_number: step.step_order || step.step_number || (idx + 1)
             }));
 
             const { error } = await window.supabaseClient

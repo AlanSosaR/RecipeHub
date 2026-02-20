@@ -4,7 +4,7 @@
 class DashboardManager {
     constructor() {
         this.currentFilters = {};
-        this.viewMode = 'grid'; // Default view mode
+        this.viewMode = 'list'; // Enforce list view
         this.currentFilter = 'all';
     }
 
@@ -80,51 +80,12 @@ class DashboardManager {
             });
         });
 
-        // Listener para cerrar drawer al hacer click fuera
         const overlay = document.getElementById('mobile-drawer-overlay');
         if (overlay) {
             overlay.addEventListener('click', () => this.toggleMobileMenu(false));
         }
-
-        // View Toggles
-        const btnList = document.getElementById('view-list');
-        const btnGrid = document.getElementById('view-grid');
-        if (btnList) btnList.addEventListener('click', () => this.toggleView('list'));
-        if (btnGrid) btnGrid.addEventListener('click', () => this.toggleView('grid'));
     }
 
-    toggleView(mode) {
-        this.viewMode = mode;
-
-        // Update buttons
-        const btnList = document.getElementById('view-list');
-        const btnGrid = document.getElementById('view-grid');
-
-        if (mode === 'list') {
-            if (btnList) {
-                btnList.style.background = 'var(--primary-light)';
-                btnList.style.color = 'var(--primary)';
-            }
-            if (btnGrid) {
-                btnGrid.style.background = 'transparent';
-                btnGrid.style.color = '#94A3B8';
-            }
-        } else {
-            if (btnGrid) {
-                btnGrid.style.background = 'var(--primary-light)';
-                btnGrid.style.color = 'var(--primary)';
-            }
-            if (btnList) {
-                btnList.style.background = 'transparent';
-                btnList.style.color = '#94A3B8';
-            }
-        }
-
-        // Re-render
-        if (this.currentRecipes) {
-            this.renderDashboardSections(this.currentRecipes);
-        }
-    }
 
     toggleMobileMenu(forceState = null) {
         const drawer = document.getElementById('mobile-drawer');
@@ -250,78 +211,45 @@ class DashboardManager {
         if (emptyState) emptyState.classList.add('hidden');
 
         // Toggle container classes
-        if (this.viewMode === 'list') {
-            container.classList.add('list-view');
-            container.classList.remove('recipes-grid');
-        } else {
-            container.classList.remove('list-view');
-            container.classList.add('recipes-grid');
-        }
+        container.classList.add('list-view');
+        container.classList.remove('recipes-grid');
 
-        if (this.viewMode === 'list') {
-            const header = `
-                <div class="list-header hidden-mobile-lg">
-                    <div class="icon-cell"></div>
-                    <div class="title-cell">Nombre</div>
-                    <div class="meta-cell">Categoría</div>
-                    <div class="meta-cell">Modificado</div>
-                    <div class="meta-cell">Tiempo</div>
-                    <div class="action-cell"></div>
+        const header = `
+            <div class="list-header hidden-mobile-lg">
+                <div class="icon-cell"></div>
+                <div class="title-cell">Nombre</div>
+                <div class="meta-cell">Categoría</div>
+                <div class="meta-cell">Modificado</div>
+                <div class="meta-cell">Tiempo</div>
+                <div class="action-cell"></div>
+            </div>
+        `;
+        const rows = recipes.map(recipe => {
+            const date = new Date(recipe.updated_at).toLocaleDateString();
+            return `
+                <div class="file-row group" onclick="window.location.href='recipe-detail.html?id=${recipe.id}'">
+                    <div class="icon-cell">
+                        <span class="material-symbols-outlined" style="font-size: 24px; color: #9CA3AF;">description</span>
+                    </div>
+                    <div class="title-cell">
+                        <span class="title">${recipe.name_es}</span>
+                        <div class="meta-mobile">General • ${date}</div>
+                    </div>
+                    <div class="meta-cell"><span class="badge-tag">General</span></div>
+                    <div class="meta-cell">${date}</div>
+                    <div class="meta-cell">--</div>
+                    <div class="action-cell flex justify-end">
+                         <button class="btn-favorite-m3 ${recipe.is_favorite ? 'active' : ''}" 
+                            onclick="event.stopPropagation(); window.dashboard.toggleFavorite('${recipe.id}')">
+                            <span class="material-symbols-outlined pb-1">
+                                ${recipe.is_favorite ? 'star' : 'star_border'}
+                            </span>
+                        </button>
+                    </div>
                 </div>
             `;
-            const rows = recipes.map(recipe => {
-                const date = new Date(recipe.updated_at).toLocaleDateString();
-                return `
-                    <div class="file-row group" onclick="window.location.href='recipe-detail.html?id=${recipe.id}'">
-                        <div class="icon-cell">
-                            <span class="material-symbols-outlined" style="font-size: 24px; color: #9CA3AF;">description</span>
-                        </div>
-                        <div class="title-cell">
-                            <span class="title">${recipe.name_es}</span>
-                            <div class="meta-mobile">General • ${date}</div>
-                        </div>
-                        <div class="meta-cell"><span class="badge-tag">General</span></div>
-                        <div class="meta-cell">${date}</div>
-                        <div class="meta-cell">--</div>
-                        <div class="action-cell flex justify-end">
-                             <button class="p-2 rounded-full hover:bg-gray-100 transition-colors" 
-                                onclick="event.stopPropagation(); window.dashboard.toggleFavorite('${recipe.id}')">
-                                <span class="material-symbols-outlined text-[20px] ${recipe.is_favorite ? 'fill-1 text-primary' : ''}">
-                                    ${recipe.is_favorite ? 'star' : 'star_border'}
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            container.innerHTML = header + rows;
-        } else {
-            container.innerHTML = recipes.map(recipe => `
-                <div class="card-recipe animate-fade-in group cursor-pointer" onclick="window.location.href='recipe-detail.html?id=${recipe.id}'">
-                    <div class="card-recipe__img relative overflow-hidden flex items-center justify-center bg-gray-50" style="aspect-ratio: 1/1;">
-                        ${recipe.primaryImage ?
-                    `<img src="${recipe.primaryImage}" alt="${recipe.name_es}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">` :
-                    `<span class="material-symbols-outlined text-[48px] text-gray-300">description</span>`
-                }
-                        <div class="card-recipe__favorite absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-400 hover:text-primary"
-                                onclick="event.stopPropagation(); window.dashboard.toggleFavorite('${recipe.id}')">
-                                <span class="material-symbols-outlined text-[18px] ${recipe.is_favorite ? 'fill-1 text-primary' : ''}">
-                                    ${recipe.is_favorite ? 'star' : 'star_border'}
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-recipe__info p-3">
-                        <h3 class="text-sm font-medium text-gray-900 truncate mb-1">${recipe.name_es}</h3>
-                        <div class="flex items-center justify-between">
-                            <span class="text-[11px] text-gray-500 font-medium px-2 py-0.5 bg-gray-100 rounded-full">General</span>
-                            <span class="text-[11px] text-gray-400">${new Date(recipe.updated_at).toLocaleDateString()}</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
+        }).join('');
+        container.innerHTML = header + rows;
     }
 
     // Métodos renderFeatured y renderMore eliminados por redundancia en diseño Drive
