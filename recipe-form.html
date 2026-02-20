@@ -17,25 +17,27 @@
         rel="stylesheet">
 
     <!-- CSS -->
+    <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/components.css">
 
     <style>
         /* ─── M3 Token System ─────────────────────────── */
         :root {
-            --md-primary: #FF6B35;
-            --md-primary-dim: #E85D2B;
+            /* Esmeralda — igual que index y login */
+            --md-primary: #064E3B;
+            --md-primary-dim: #003324;
             --md-on-primary: #FFFFFF;
-            --md-primary-container: #FFDDD0;
-            --md-on-primary-container: #5A1400;
+            --md-primary-container: #D1FAE5;
+            --md-on-primary-container: #064E3B;
 
-            --md-surface: #FFFBF8;
-            --md-surface-1: #FFF5F0;
-            --md-surface-2: #FFEEE6;
-            --md-surface-variant: #F3EDE9;
+            --md-surface: #FAFAFA;
+            --md-surface-1: #F0FDF4;
+            --md-surface-2: #DCFCE7;
+            --md-surface-variant: #F1F5F1;
             --md-on-surface: #1C1B1B;
-            --md-on-surface-var: #52443E;
-            --md-outline: #857570;
-            --md-outline-var: #D7C3BC;
+            --md-on-surface-var: #3D5A47;
+            --md-outline: #64748B;
+            --md-outline-var: #CBD5E1;
 
             --md-error: #BA1A1A;
             --md-error-container: #FFDAD6;
@@ -1023,7 +1025,7 @@
                     <button id="btnRetryOCR"
                         style="padding:14px;background:white;border:1px solid #ddd;border-radius:14px;font-weight:600;font-size:14px;cursor:pointer;">Reintentar</button>
                     <button id="btnImportOCR"
-                        style="padding:14px;background:#FF6B35;color:white;border:none;border-radius:14px;font-weight:600;font-size:14px;cursor:pointer;">Usar
+                        style="padding:14px;background:#064E3B;color:white;border:none;border-radius:14px;font-weight:600;font-size:14px;cursor:pointer;">Usar
                         Texto</button>
                 </div>
             </div>
@@ -1032,7 +1034,7 @@
             <div id="ocrLoading"
                 style="position:absolute;inset:0;background:rgba(255,255,255,.92);z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;">
                 <div
-                    style="width:40px;height:40px;border:3px solid #FF6B35;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite;">
+                    style="width:40px;height:40px;border:3px solid #064E3B;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite;">
                 </div>
                 <p style="font-size:14px;font-weight:500;color:#555;">Procesando receta...</p>
             </div>
