@@ -57,6 +57,7 @@ class RecipeDetailManager {
         if (recipe.primaryImage) {
             heroEl.style.backgroundImage = `url(${recipe.primaryImage})`;
         } else {
+            heroEl.style.backgroundImage = `url(${window.DEFAULT_RECIPE_IMAGE})`;
             heroEl.classList.add('no-image');
         }
 

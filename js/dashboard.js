@@ -268,7 +268,7 @@ class DashboardManager {
                 return `
             <div class="card-recipe animate-fade-in group cursor-pointer" onclick="window.location.href='recipe-detail.html?id=${recipe.id}'">
                 <div class="card-recipe__img relative overflow-hidden">
-                    <img src="${recipe.primaryImage || 'assets/placeholder-recipe.jpg'}" alt="${recipe.name_es}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <img src="${recipe.primaryImage || window.DEFAULT_RECIPE_IMAGE}" alt="${recipe.name_es}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                     <button class="absolute top-2 right-2 p-1.5 bg-white/90 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white text-gray-600 hover:text-red-500" 
                         onclick="event.stopPropagation(); window.dashboard.toggleFavorite('${recipe.id}')">
                         <span class="material-symbols-outlined text-[20px] ${recipe.is_favorite ? 'fill-1 text-primary' : ''}">
@@ -321,7 +321,7 @@ class DashboardManager {
         resultsGrid.innerHTML = recipes.map(recipe => `
             <div class="card-recipe animate-fade-in" onclick="window.location.href='recipe-detail.html?id=${recipe.id}'">
                 <div class="card-recipe__img">
-                    <img src="${recipe.primaryImage || 'assets/placeholder-recipe.jpg'}" alt="${recipe.name_es}">
+                    <img src="${recipe.primaryImage || window.DEFAULT_RECIPE_IMAGE}" alt="${recipe.name_es}">
                 </div>
                 <div class="card-recipe__content">
                     <h4>${recipe.name_es}</h4>
