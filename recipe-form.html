@@ -918,11 +918,11 @@
             <div class="form-wrapper">
                 <form id="recipeForm">
 
-                    <!-- ── Card 1: Photo + Basics ── -->
+                    <!-- ── Unified Recipe Card ── -->
                     <div class="m3-card">
                         <p class="m3-card-title">
-                            <span class="material-symbols-outlined">image</span>
-                            Información General
+                            <span class="material-symbols-outlined">description</span>
+                            Nueva Receta
                         </p>
 
                         <!-- Image upload -->
@@ -942,46 +942,15 @@
                             <label for="name">Nombre de la receta *</label>
                         </div>
 
-                        <!-- Category + Time -->
-                        <div class="m3-grid-2">
-                            <div class="m3-field">
-                                <select id="category" name="category_id" required>
-                                    <option value="">Cargando...</option>
-                                </select>
-                                <label for="category">Categoría *</label>
-                            </div>
-                            <div class="m3-field" style="position:relative;">
-                                <input id="time" name="prep_time_minutes" type="number" placeholder=" " min="1">
-                                <label for="time">Tiempo de preparación</label>
-                                <span class="suffix" style="top:50%;transform:translateY(-50%);">min</span>
-                            </div>
-                        </div>
-
-                        <!-- Difficulty + Servings -->
-                        <div class="m3-grid-2">
-                            <div class="m3-field">
-                                <select id="difficulty" name="difficulty">
-                                    <option value="easy">Fácil</option>
-                                    <option value="medium">Media</option>
-                                    <option value="hard">Difícil</option>
-                                </select>
-                                <label for="difficulty">Dificultad</label>
-                            </div>
-                            <div class="m3-field">
-                                <input id="servings" name="servings" type="number" placeholder=" " min="1">
-                                <label for="servings">Porciones</label>
-                            </div>
-                        </div>
-
                         <!-- Description -->
                         <div class="m3-field textarea">
                             <textarea id="description" name="description_es" placeholder=" " rows="3"></textarea>
                             <label for="description">Descripción</label>
                         </div>
-                    </div>
 
-                    <!-- ── Card 2: Ingredients ── -->
-                    <div class="m3-card">
+                        <div class="divider" style="height:1px; background:var(--md-outline-var); margin:32px 0;"></div>
+
+                        <!-- Ingredients -->
                         <div class="m3-list-header">
                             <h3>
                                 <span class="material-symbols-outlined">grocery</span>
@@ -992,11 +961,11 @@
                                 Añadir
                             </button>
                         </div>
-                        <div id="ingredientsList"></div>
-                    </div>
+                        <div id="ingredientsList" style="margin-bottom: 32px;"></div>
 
-                    <!-- ── Card 3: Steps ── -->
-                    <div class="m3-card">
+                        <div class="divider" style="height:1px; background:var(--md-outline-var); margin:32px 0;"></div>
+
+                        <!-- Steps -->
                         <div class="m3-list-header">
                             <h3>
                                 <span class="material-symbols-outlined">format_list_numbered</span>
@@ -1011,7 +980,7 @@
                     </div>
 
                     <!-- ── Save ── -->
-                    <div style="display:flex;justify-content:flex-end;">
+                    <div style="display:flex;justify-content:flex-end;margin-top:24px;">
                         <button type="submit" id="btnSave" class="m3-fab-save">
                             <span class="material-symbols-outlined">save</span>
                             Guardar Receta

@@ -42,67 +42,53 @@
                 </button>
             </div>
             <div class="hero-content">
-                <span class="category-badge" id="recipeCategory">Categoría</span>
                 <h1 id="recipeTitle">Cargando receta...</h1>
-                <div class="recipe-quick-stats">
-                    <div class="stat-bubble">
-                        <span class="material-symbols-outlined">schedule</span>
-                        <span id="recipeTime">0'</span>
-                    </div>
-                    <div class="stat-bubble">
-                        <span class="material-symbols-outlined">restaurant</span>
-                        <span id="recipeDifficulty">Fácil</span>
-                    </div>
+            </div>
+    </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="detail-main">
+        <!-- Tabs -->
+        <div class="detail-tabs">
+            <button class="tab-item active" data-tab="overview">Resumen</button>
+            <button class="tab-item" data-tab="ingredients">Ingredientes</button>
+            <button class="tab-item" data-tab="steps">Pasos</button>
+        </div>
+
+        <div class="tab-content-wrapper">
+            <!-- Overview Tab -->
+            <div id="tab-overview" class="tab-content active">
+                <div class="content-section">
+                    <h3>Descripción</h3>
+                    <p id="recipeDescription">No hay descripción disponible.</p>
                 </div>
-            </div>
-        </section>
-
-        <!-- Main Content -->
-        <main class="detail-main">
-            <!-- Tabs -->
-            <div class="detail-tabs">
-                <button class="tab-item active" data-tab="overview">Resumen</button>
-                <button class="tab-item" data-tab="ingredients">Ingredientes</button>
-                <button class="tab-item" data-tab="steps">Pasos</button>
-            </div>
-
-            <div class="tab-content-wrapper">
-                <!-- Overview Tab -->
-                <div id="tab-overview" class="tab-content active">
-                    <div class="content-section">
-                        <h3>Descripción</h3>
-                        <p id="recipeDescription">No hay descripción disponible.</p>
-                    </div>
-                    <div class="content-section">
-                        <h3>Información Adicional</h3>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <span class="label">Porciones</span>
-                                <span class="value" id="recipeServings">--</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Creada</span>
-                                <span class="value" id="recipeDate">--</span>
-                            </div>
+                <div class="content-section">
+                    <h3>Información Adicional</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="label">Creada</span>
+                            <span class="value" id="recipeDate">--</span>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Ingredients Tab -->
-                <div id="tab-ingredients" class="tab-content">
-                    <ul class="ingredient-checklist" id="ingredientsList">
-                        <!-- Cargar dinámicamente -->
-                    </ul>
-                </div>
+            <!-- Ingredients Tab -->
+            <div id="tab-ingredients" class="tab-content">
+                <ul class="ingredient-checklist" id="ingredientsList">
+                    <!-- Cargar dinámicamente -->
+                </ul>
+            </div>
 
-                <!-- Steps Tab -->
-                <div id="tab-steps" class="tab-content">
-                    <div class="steps-timeline" id="stepsList">
-                        <!-- Cargar dinámicamente -->
-                    </div>
+            <!-- Steps Tab -->
+            <div id="tab-steps" class="tab-content">
+                <div class="steps-timeline" id="stepsList">
+                    <!-- Cargar dinámicamente -->
                 </div>
             </div>
-        </main>
+        </div>
+    </main>
     </div>
 
     <!-- Scripts -->

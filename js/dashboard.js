@@ -265,9 +265,6 @@ class DashboardManager {
                         </div>
                         <div class="content">
                             <span class="title">${recipe.name_es}</span>
-                            <div class="meta">
-                                ${recipe.category_name || 'General'} • ${recipe.prep_time_minutes || '0'} min 
-                            </div>
                         </div>
                         <!-- Actions (Visible on Hover/Mobile) -->
                          <button class="mobile-action p-2 rounded-full hover:bg-gray-100" 
@@ -303,12 +300,8 @@ class DashboardManager {
                     </div>
                     <div class="card-recipe__meta flex items-center gap-3 text-xs text-gray-500">
                         <div class="flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[14px]">schedule</span>
-                            <span>${recipe.prep_time_minutes || '20'} min</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[14px]">local_fire_department</span>
-                            <span>${recipe.calories || '150'} kcal</span>
+                            <span class="material-symbols-outlined text-[14px]">description</span>
+                            <span>Ver receta</span>
                         </div>
                     </div>
                 </div>

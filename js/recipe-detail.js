@@ -63,18 +63,9 @@ class RecipeDetailManager {
 
         // Text data
         document.getElementById('recipeTitle').textContent = recipe.name_es;
-        document.getElementById('recipeCategory').textContent = recipe.category?.name_es || 'Sin categoría';
         document.getElementById('recipeDescription').textContent = recipe.description_es || 'Sin descripción';
-        document.getElementById('recipeTime').textContent = `${recipe.prep_time_minutes || 0}'`;
-        document.getElementById('recipeServings').textContent = recipe.servings || '--';
 
-        // Difficulty
-        const difficultyMap = {
-            'easy': 'Fácil',
-            'medium': 'Media',
-            'hard': 'Difícil'
-        };
-        document.getElementById('recipeDifficulty').textContent = difficultyMap[recipe.difficulty] || 'Fácil';
+        // Difficulty removed from UI
 
         // Date
         const date = new Date(recipe.created_at).toLocaleDateString();

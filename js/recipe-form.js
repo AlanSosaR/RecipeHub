@@ -24,8 +24,7 @@ class RecipeFormManager {
             return;
         }
 
-        // 2. Cargar categorías en el select
-        await this.loadCategories();
+        // 2. No cargar categorías (usaremos General por defecto)
 
         // 3. Si es edición, cargar datos de la receta
         if (this.isEditing) {
@@ -39,23 +38,7 @@ class RecipeFormManager {
         this.setupEventListeners();
     }
 
-    async loadCategories() {
-        const select = document.getElementById('category');
-        const result = await window.db.getMyCategories();
-
-        if (result.success) {
-            select.innerHTML = result.categories.map(cat => `
-                <option value="${cat.id}">${cat.name_es}</option>
-            `).join('');
-
-            // Trigger has-value logic
-            if (select.value) select.classList.add('has-value');
-            select.addEventListener('change', () => {
-                if (select.value) select.classList.add('has-value');
-                else select.classList.remove('has-value');
-            });
-        }
-    }
+    // Categorías ya no se cargan dinámicamente en el select
 
     async loadRecipeData() {
         document.getElementById('formTitle').textContent = 'Editar Receta';
@@ -69,10 +52,6 @@ class RecipeFormManager {
             const form = document.getElementById('recipeForm');
             form.name.value = r.name_es;
             form.description.value = r.description_es || '';
-            form.category_id.value = r.category_id;
-            form.difficulty.value = r.difficulty;
-            form.prep_time_minutes.value = r.prep_time_minutes;
-            form.servings.value = r.servings;
 
             // Imagen
             if (r.images && r.images.length > 0) {
@@ -233,13 +212,14 @@ class RecipeFormManager {
             btnSave.disabled = true;
             btnSave.innerHTML = '<span class="spinner-small"></span> Guardando...';
 
+            // Obtener ID de categoría 'General'
+            const catsResult = await window.db.getMyCategories();
+            const generalCat = catsResult.categories.find(c => c.name_es === 'General') || catsResult.categories[0];
+
             const recipeData = {
                 name_es: form.name.value,
                 description_es: form.description.value,
-                category_id: form.category_id.value,
-                difficulty: form.difficulty.value,
-                prep_time_minutes: parseInt(form.prep_time_minutes.value) || 0,
-                servings: parseInt(form.servings.value) || 0
+                category_id: generalCat ? generalCat.id : null
             };
 
             let recipeId = this.recipeId;
