@@ -120,14 +120,7 @@ class RecipeDetailManager {
     }
 
     setupEventListeners() {
-        // Tab Switching
-        const tabs = document.querySelectorAll('.tab-item');
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const target = tab.getAttribute('data-tab');
-                this.switchTab(target);
-            });
-        });
+        // Tabs removed - All content shown at once
 
         // Favorite Button
         document.getElementById('btnFavorite').addEventListener('click', (e) => {
@@ -141,15 +134,7 @@ class RecipeDetailManager {
         });
     }
 
-    switchTab(tabId) {
-        // Update tab buttons
-        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-        document.querySelector(`.tab-item[data-tab="${tabId}"]`).classList.add('active');
-
-        // Update content
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.getElementById(`tab-${tabId}`).classList.add('active');
-    }
+    // switchTab removed - No longer needed for unified view
 
     async toggleFavorite() {
         const favBtn = document.getElementById('btnFavorite');

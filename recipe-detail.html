@@ -49,42 +49,55 @@
 
     <!-- Main Content -->
     <main class="detail-main">
-        <!-- Tabs -->
-        <div class="detail-tabs">
-            <button class="tab-item active" data-tab="overview">Resumen</button>
-            <button class="tab-item" data-tab="ingredients">Ingredientes</button>
-            <button class="tab-item" data-tab="steps">Pasos</button>
-        </div>
-
-        <div class="tab-content-wrapper">
-            <!-- Overview Tab -->
-            <div id="tab-overview" class="tab-content active">
-                <div class="content-section">
-                    <h3>Descripción</h3>
-                    <p id="recipeDescription">No hay descripción disponible.</p>
+        <div class="detail-content-unified">
+            <!-- Description Section -->
+            <div class="content-section">
+                <div class="section-header" style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+                    <span class="material-symbols-outlined" style="color:var(--primary)">description</span>
+                    <h3 style="margin:0">Descripción</h3>
                 </div>
-                <div class="content-section">
-                    <h3>Información Adicional</h3>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="label">Creada</span>
-                            <span class="value" id="recipeDate">--</span>
-                        </div>
-                    </div>
-                </div>
+                <p id="recipeDescription">No hay descripción disponible.</p>
             </div>
 
-            <!-- Ingredients Tab -->
-            <div id="tab-ingredients" class="tab-content">
+            <div class="divider" style="height:1px; background:var(--outline-variant); margin:32px 0;"></div>
+
+            <!-- Ingredients Section -->
+            <div class="content-section">
+                <div class="section-header" style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+                    <span class="material-symbols-outlined" style="color:var(--primary)">grocery</span>
+                    <h3 style="margin:0">Ingredientes</h3>
+                </div>
                 <ul class="ingredient-checklist" id="ingredientsList">
                     <!-- Cargar dinámicamente -->
                 </ul>
             </div>
 
-            <!-- Steps Tab -->
-            <div id="tab-steps" class="tab-content">
+            <div class="divider" style="height:1px; background:var(--outline-variant); margin:32px 0;"></div>
+
+            <!-- Steps Section -->
+            <div class="content-section">
+                <div class="section-header" style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+                    <span class="material-symbols-outlined" style="color:var(--primary)">format_list_numbered</span>
+                    <h3 style="margin:0">Pasos de preparación</h3>
+                </div>
                 <div class="steps-timeline" id="stepsList">
                     <!-- Cargar dinámicamente -->
+                </div>
+            </div>
+
+            <div class="divider" style="height:1px; background:var(--outline-variant); margin:32px 0;"></div>
+
+            <!-- Additional Info Section -->
+            <div class="content-section" style="padding-bottom: 40px;">
+                <div class="section-header" style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+                    <span class="material-symbols-outlined" style="color:var(--primary)">info</span>
+                    <h3 style="margin:0">Mas información</h3>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="label">Creada</span>
+                        <span class="value" id="recipeDate">--</span>
+                    </div>
                 </div>
             </div>
         </div>
