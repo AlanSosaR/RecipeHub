@@ -3,7 +3,8 @@
 
 class DashboardManager {
     constructor() {
-        this.currentRecipes = [];
+        this.currentFilters = {};
+        this.viewMode = 'grid'; // Default view mode
         this.currentFilter = 'all';
     }
 
@@ -81,6 +82,45 @@ class DashboardManager {
         const overlay = document.getElementById('mobile-drawer-overlay');
         if (overlay) {
             overlay.addEventListener('click', () => this.toggleMobileMenu(false));
+        }
+
+        // View Toggles
+        const btnList = document.getElementById('view-list');
+        const btnGrid = document.getElementById('view-grid');
+        if (btnList) btnList.addEventListener('click', () => this.toggleView('list'));
+        if (btnGrid) btnGrid.addEventListener('click', () => this.toggleView('grid'));
+    }
+
+    toggleView(mode) {
+        this.viewMode = mode;
+
+        // Update buttons
+        const btnList = document.getElementById('view-list');
+        const btnGrid = document.getElementById('view-grid');
+
+        if (mode === 'list') {
+            if (btnList) {
+                btnList.style.background = 'var(--primary-light)';
+                btnList.style.color = 'var(--primary)';
+            }
+            if (btnGrid) {
+                btnGrid.style.background = 'transparent';
+                btnGrid.style.color = '#94A3B8';
+            }
+        } else {
+            if (btnGrid) {
+                btnGrid.style.background = 'var(--primary-light)';
+                btnGrid.style.color = 'var(--primary)';
+            }
+            if (btnList) {
+                btnList.style.background = 'transparent';
+                btnList.style.color = '#94A3B8';
+            }
+        }
+
+        // Re-render
+        if (this.currentRecipes) {
+            this.renderDashboardSections(this.currentRecipes);
         }
     }
 
@@ -191,13 +231,47 @@ class DashboardManager {
         const emptyState = document.getElementById('emptyState');
         if (emptyState) emptyState.classList.add('hidden');
 
-        container.innerHTML = recipes.map(recipe => `
+        // Toggle container classes
+        if (this.viewMode === 'list') {
+            container.classList.add('list-view');
+            container.classList.remove('recipes-grid'); // Remove grid class implies default block or flex
+        } else {
+            container.classList.remove('list-view');
+            container.classList.add('recipes-grid');
+        }
+
+        container.innerHTML = recipes.map(recipe => {
+            if (this.viewMode === 'list') {
+                return `
+                    <div class="file-row group" onclick="window.location.href='recipe-detail.html?id=${recipe.id}'">
+                        <div class="icon-wrapper">
+                            <span class="material-symbols-outlined" style="font-size: 24px;">description</span>
+                        </div>
+                        <div class="content">
+                            <span class="title">${recipe.name_es}</span>
+                            <div class="meta">
+                                ${recipe.category_name || 'General'} • ${recipe.prep_time_minutes || '0'} min 
+                            </div>
+                        </div>
+                        <!-- Actions (Visible on Hover/Mobile) -->
+                         <button class="mobile-action p-2 rounded-full hover:bg-gray-100" 
+                            onclick="event.stopPropagation(); window.dashboard.toggleFavorite('${recipe.id}')">
+                            <span class="material-symbols-outlined text-[20px] ${recipe.is_favorite ? 'fill-1 text-primary' : ''}">
+                                ${recipe.is_favorite ? 'star' : 'star_border'}
+                            </span>
+                        </button>
+                    </div>
+                `;
+            } else {
+                return `
             <div class="card-recipe animate-fade-in group cursor-pointer" onclick="window.location.href='recipe-detail.html?id=${recipe.id}'">
                 <div class="card-recipe__img relative overflow-hidden">
                     <img src="${recipe.primaryImage || 'assets/placeholder-recipe.jpg'}" alt="${recipe.name_es}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                     <button class="absolute top-2 right-2 p-1.5 bg-white/90 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white text-gray-600 hover:text-red-500" 
                         onclick="event.stopPropagation(); window.dashboard.toggleFavorite('${recipe.id}')">
-                        <span class="material-symbols-outlined text-[20px]">favorite_border</span>
+                        <span class="material-symbols-outlined text-[20px] ${recipe.is_favorite ? 'fill-1 text-primary' : ''}">
+                            ${recipe.is_favorite ? 'favorite' : 'favorite_border'}
+                        </span>
                     </button>
                      <div class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex justify-end">
                          <span class="text-white text-xs font-medium flex items-center gap-1">
@@ -223,7 +297,9 @@ class DashboardManager {
                     </div>
                 </div>
             </div>
-        `).join('');
+        `;
+            }
+        }).join('');
     }
 
     // Métodos renderFeatured y renderMore eliminados por redundancia en diseño Drive
@@ -266,16 +342,17 @@ class DashboardManager {
         if (result.success) {
             const categories = result.categories;
             chipsContainer.innerHTML = `
-                <div class="flex items-center gap-3 p-4 card-hover" onclick="window.dashboard.handleCategory('all', this)" style="min-width: 200px; background: #F9FAFB; border: 1px solid #F1F5F9; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s ease;">
-                    <span class="material-symbols-outlined fill-1" style="color: #94A3B8;">folder</span>
-                    <span style="font-size: 14px; font-weight: 500; color: #374151;">Todas</span>
-                </div>
                 ${categories.map(cat => `
-                    <div class="flex items-center gap-3 p-4 card-hover" onclick="window.dashboard.handleCategory('${cat.id}', this)" style="min-width: 200px; background: #F9FAFB; border: 1px solid #F1F5F9; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s ease;">
-                        <span class="material-symbols-outlined fill-1" style="color: #94A3B8;">folder</span>
-                        <span style="font-size: 14px; font-weight: 500; color: #374151;">${cat.name_es}</span>
+                    <div class="folder-card group" onclick="window.dashboard.handleCategory('${cat.id}', this)">
+                        <span class="material-symbols-outlined icon border-none">folder</span>
+                        <span class="title">${cat.name_es}</span>
+                        <span class="subtitle">Ver recetas</span>
                     </div>
                 `).join('')}
+                 <div class="folder-card new-folder group" onclick="window.utils.showToast('Crear carpeta próximamente')">
+                    <span class="material-symbols-outlined icon">create_new_folder</span>
+                    <span class="title">Nueva Carpeta</span>
+                </div>
             `;
         }
     }
