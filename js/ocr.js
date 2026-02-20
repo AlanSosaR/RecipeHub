@@ -37,6 +37,18 @@ class OCRManager {
 
         const btnImport = document.getElementById('btnImportOCR');
         if (btnImport) btnImport.addEventListener('click', () => this.importToForm());
+
+        const btnSaveDirect = document.getElementById('btnSaveDirectOCR');
+        if (btnSaveDirect) btnSaveDirect.addEventListener('click', () => this.saveDirectly());
+
+        // Field listeners for M3 effects
+        const ocrNameInput = document.getElementById('ocrRecipeName');
+        if (ocrNameInput) {
+            ocrNameInput.addEventListener('input', () => {
+                if (ocrNameInput.value) ocrNameInput.classList.add('has-value');
+                else ocrNameInput.classList.remove('has-value');
+            });
+        }
     }
 
     // --- Modal Management ---
@@ -152,6 +164,12 @@ Pasos:
             document.getElementById('ocrResultState').classList.remove('hidden');
 
             document.getElementById('extractedText').value = mockText;
+
+            // Suggested Title (First non-empty line)
+            const suggestion = mockText.split('\n').filter(l => l.trim())[0] || '';
+            const nameField = document.getElementById('ocrRecipeName');
+            nameField.value = suggestion;
+            if (suggestion) nameField.classList.add('has-value');
         }, 1500);
     }
 
@@ -208,6 +226,114 @@ Pasos:
 
         window.utils.showToast('Receta importada correctamente', 'success');
         this.closeModal();
+    }
+
+    async saveDirectly() {
+        const name = document.getElementById('ocrRecipeName').value.trim();
+        const text = document.getElementById('extractedText').value.trim();
+
+        if (!name) {
+            window.utils.showToast('Por favor, asigne un nombre a la receta', 'error');
+            return;
+        }
+
+        document.getElementById('ocrLoading').classList.remove('hidden');
+        const loadingText = document.getElementById('ocrLoading').querySelector('p');
+        loadingText.textContent = 'Creando receta...';
+
+        try {
+            // 1. Parsear texto completo
+            const parsed = this.parseFullText(text);
+
+            // 2. Crear receta base
+            const recipeData = {
+                name_es: name,
+                description_es: parsed.description,
+                prep_time_minutes: parsed.time || 30,
+                difficulty: 'medium',
+                user_id: window.authManager.currentUser.id
+            };
+
+            const result = await window.db.createRecipe(recipeData);
+            if (!result.success) throw new Error(result.error);
+
+            const recipeId = result.recipe.id;
+
+            // 3. Guardar Ingredientes
+            if (parsed.ingredients.length > 0) {
+                loadingText.textContent = 'Guardando ingredientes...';
+                await window.db.addIngredients(recipeId, parsed.ingredients);
+            }
+
+            // 4. Guardar Pasos
+            if (parsed.steps.length > 0) {
+                loadingText.textContent = 'Guardando preparación...';
+                await window.db.addSteps(recipeId, parsed.steps);
+            }
+
+            window.utils.showToast('¡Receta creada con éxito!', 'success');
+
+            setTimeout(() => {
+                window.location.href = `recipe-detail.html?id=${recipeId}`;
+            }, 800);
+
+        } catch (error) {
+            console.error('Error en guardado directo OCR:', error);
+            window.utils.showToast('Error al crear la receta', 'error');
+            document.getElementById('ocrLoading').classList.add('hidden');
+        }
+    }
+
+    parseFullText(text) {
+        const lines = text.split('\n');
+        const result = {
+            description: '',
+            ingredients: [],
+            steps: [],
+            time: 30
+        };
+
+        let currentSection = null;
+        let descLines = [];
+
+        lines.forEach((line, idx) => {
+            const clean = line.trim();
+            if (!clean) return;
+            const lower = clean.toLowerCase();
+
+            // Detectar secciones
+            if (lower.includes('ingredientes')) {
+                currentSection = 'ingredients';
+                return;
+            }
+            if (lower.includes('pasos') || lower.includes('preparación') || lower.includes('instrucciones')) {
+                currentSection = 'steps';
+                return;
+            }
+
+            // Si es la primera o segunda línea y no es sección, podría ser parte de descripción
+            if (!currentSection && idx > 0 && idx < 4) {
+                descLines.push(clean);
+                return;
+            }
+
+            // Procesar items
+            if (currentSection === 'ingredients') {
+                const raw = clean.replace(/^[-*•]\s*/, '');
+                result.ingredients.push({ name_es: raw, raw_text: raw });
+            } else if (currentSection === 'steps') {
+                const raw = clean.replace(/^\d+[\.|)]\s*/, '');
+                result.steps.push({ instruction_es: raw });
+            }
+        });
+
+        result.description = descLines.join(' ').substring(0, 200);
+        return result;
+    }
+
+    // Mantener para compatibilidad interna
+    parseText(text) {
+        return this.parseFullText(text);
     }
 }
 

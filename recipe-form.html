@@ -1016,20 +1016,34 @@
             <!-- Result state -->
             <div id="ocrResultState"
                 style="flex:1;flex-direction:column;padding:20px;background:#F9F9F9;overflow-y:auto;display:none;">
+
+                <!-- Recipe Name Input (New) -->
+                <div class="m3-field" style="margin-bottom:16px;">
+                    <input id="ocrRecipeName" type="text" placeholder=" ">
+                    <label>Nombre de la receta</label>
+                </div>
+
                 <h3 style="font-weight:700;margin-bottom:12px;font-size:15px;">Texto Detectado</h3>
                 <div
-                    style="background:white;border-radius:16px;padding:16px;border:1px solid #eee;flex:1;display:flex;flex-direction:column;min-height:160px;">
+                    style="background:white;border-radius:16px;padding:16px;border:1px solid #eee;flex:1;display:flex;flex-direction:column;min-height:160px;margin-bottom:16px;">
                     <textarea id="extractedText"
                         style="width:100%;flex:1;border:none;outline:none;font-size:14px;color:#333;background:transparent;resize:none;min-height:140px;"
                         placeholder="El texto aparecerá aquí..."></textarea>
                 </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
                     <button id="btnRetryOCR"
                         style="padding:14px;background:white;border:1px solid #ddd;border-radius:14px;font-weight:600;font-size:14px;cursor:pointer;">Reintentar</button>
                     <button id="btnImportOCR"
-                        style="padding:14px;background:#064E3B;color:white;border:none;border-radius:14px;font-weight:600;font-size:14px;cursor:pointer;">Usar
-                        Texto</button>
+                        style="padding:14px;background:#E8F5E9;color:#064E3B;border:none;border-radius:14px;font-weight:600;font-size:14px;cursor:pointer;">Importar
+                        al Form</button>
                 </div>
+
+                <button id="btnSaveDirectOCR"
+                    style="margin-top:12px;width:100%;padding:14px;background:#064E3B;color:white;border:none;border-radius:14px;font-weight:600;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+                    <span class="material-symbols-outlined" style="font-size:18px">cloud_upload</span>
+                    Crear Receta Ahora
+                </button>
             </div>
 
             <!-- Loading -->

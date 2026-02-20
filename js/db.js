@@ -163,6 +163,49 @@ class DatabaseManager {
         }
     }
 
+    // --- Bulk insertions ---
+    async addIngredients(recipeId, ingredients) {
+        try {
+            const items = ingredients.map(ing => ({
+                recipe_id: recipeId,
+                name_es: ing.name_es,
+                raw_text: ing.raw_text || ing.name_es,
+                unit: ing.unit || null,
+                quantity: ing.quantity || null
+            }));
+
+            const { error } = await window.supabaseClient
+                .from('ingredients')
+                .insert(items);
+
+            if (error) throw error;
+            return { success: true };
+        } catch (error) {
+            console.error('❌ Error insertando ingredientes:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    async addSteps(recipeId, steps) {
+        try {
+            const items = steps.map((step, idx) => ({
+                recipe_id: recipeId,
+                instruction_es: step.instruction_es,
+                step_order: idx + 1
+            }));
+
+            const { error } = await window.supabaseClient
+                .from('preparation_steps')
+                .insert(items);
+
+            if (error) throw error;
+            return { success: true };
+        } catch (error) {
+            console.error('❌ Error insertando pasos:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
     // ============================================
     // IMAGES
     // ============================================
