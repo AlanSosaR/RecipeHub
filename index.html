@@ -367,107 +367,106 @@
                     <!-- Dinámico -->
                 </div>
             </nav>
-    </div>
 
-    <div style="margin-top: auto; padding: 24px;">
-        <button onclick="window.authManager.signOut()" class="btn nav-item"
-            style="width: 100%; border: none; background: none; color: #EF4444; display: flex; align-items: center; gap: 12px;">
-            <span class="material-symbols-outlined">logout</span>
-            <span>Cerrar Sesión</span>
-        </button>
-    </div>
-    </aside>
+            <div style="margin-top: auto; padding: 24px;">
+                <button onclick="window.authManager.signOut()" class="btn nav-item"
+                    style="width: 100%; border: none; background: none; color: #EF4444; display: flex; align-items: center; gap: 12px;">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span>Cerrar Sesión</span>
+                </button>
+            </div>
+        </aside>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <header class="top-bar">
-            <div class="search-wrapper">
-                <span class="material-symbols-outlined">search</span>
-                <input type="text" id="searchInput" placeholder="Buscar en mi recetario...">
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-wrapper">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="text" id="searchInput" placeholder="Buscar en mi recetario...">
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <button class="btn-icon">
+                        <span class="material-symbols-outlined">notifications</span>
+                    </button>
+                    <div
+                        style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); display: flex; align-items: center; justify-content: center; color: var(--secondary); font-weight: 700; font-size: 12px;">
+                        <span id="user-avatar-initials">CH</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Banner Hero -->
+            <section
+                style="background: linear-gradient(135deg, #059669 0%, #064E3B 100%); border-radius: 24px; padding: 40px; color: white; margin-bottom: 40px; position: relative; overflow: hidden;">
+                <div style="position: relative; z-index: 2;">
+                    <h2 id="hero-greeting"
+                        style="font-size: 32px; font-weight: 800; margin: 0 0 8px 0; font-family: var(--font-display);">
+                        Hola, Chef</h2>
+                    <p style="opacity: 0.9; font-size: 16px; margin: 0;">¿Qué vamos a cocinar hoy?</p>
+                </div>
+                <span class="material-symbols-outlined"
+                    style="position: absolute; right: -20px; bottom: -20px; font-size: 200px; opacity: 0.1;">restaurant</span>
+            </section>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                <h3 id="view-title" style="font-size: 20px; font-weight: 700; color: var(--on-surface);">Mis Recetas
+                </h3>
+                <button class="btn-primary" onclick="window.location.href='recipe-form.html'"
+                    style="padding: 10px 20px; border-radius: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <span class="material-symbols-outlined">add</span>
+                    Nueva Receta
+                </button>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 16px;">
-                <button class="btn-icon">
-                    <span class="material-symbols-outlined">notifications</span>
-                </button>
-                <div
-                    style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); display: flex; align-items: center; justify-content: center; color: var(--secondary); font-weight: 700; font-size: 12px;">
-                    <span id="user-avatar-initials">CH</span>
+            <!-- Grid de Recetas -->
+            <div id="recipesGrid" class="recipes-grid">
+                <div class="loading-inline">
+                    <div class="spinner-sm"></div>
+                    <p style="margin-left: 12px; color: var(--text-secondary);">Cargando recetas...</p>
                 </div>
             </div>
-        </header>
 
-        <!-- Banner Hero -->
-        <section
-            style="background: linear-gradient(135deg, #059669 0%, #064E3B 100%); border-radius: 24px; padding: 40px; color: white; margin-bottom: 40px; position: relative; overflow: hidden;">
-            <div style="position: relative; z-index: 2;">
-                <h2 id="hero-greeting"
-                    style="font-size: 32px; font-weight: 800; margin: 0 0 8px 0; font-family: var(--font-display);">
-                    Hola, Chef</h2>
-                <p style="opacity: 0.9; font-size: 16px; margin: 0;">¿Qué vamos a cocinar hoy?</p>
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden" style="text-align: center; padding: 80px 0;">
+                <div style="font-size: 64px; color: #E5E7EB; margin-bottom: 24px;">
+                    <span class="material-symbols-outlined" style="font-size: 80px;">folder_open</span>
+                </div>
+                <h4 style="font-size: 18px; font-weight: 700; color: var(--on-surface);">Aún no tienes recetas</h4>
+                <p style="color: var(--on-surface-variant); margin-top: 8px;">Comienza digitalizando tus recetas en
+                    papel o agrega una manualmente.</p>
+                <button class="btn-primary" style="margin-top: 24px;" onclick="window.location.href='ocr.html'">
+                    <span class="material-symbols-outlined">document_scanner</span>
+                    Escanear Receta
+                </button>
             </div>
-            <span class="material-symbols-outlined"
-                style="position: absolute; right: -20px; bottom: -20px; font-size: 200px; opacity: 0.1;">restaurant</span>
-        </section>
+        </main>
 
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
-            <h3 id="view-title" style="font-size: 20px; font-weight: 700; color: var(--on-surface);">Mis Recetas
-            </h3>
-            <button class="btn-primary" onclick="window.location.href='recipe-form.html'"
-                style="padding: 10px 20px; border-radius: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                <span class="material-symbols-outlined">add</span>
-                Nueva Receta
+        <!-- Mobile Nav Bar (Drive Style) -->
+        <nav class="mobile-nav-bar lg:hidden">
+            <button class="nav-item-mobile active" data-view="recipes">
+                <span class="material-symbols-outlined">home</span>
+                <span>Inicio</span>
             </button>
-        </div>
-
-        <!-- Grid de Recetas -->
-        <div id="recipesGrid" class="recipes-grid">
-            <div class="loading-inline">
-                <div class="spinner-sm"></div>
-                <p style="margin-left: 12px; color: var(--text-secondary);">Cargando recetas...</p>
-            </div>
-        </div>
-
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden" style="text-align: center; padding: 80px 0;">
-            <div style="font-size: 64px; color: #E5E7EB; margin-bottom: 24px;">
-                <span class="material-symbols-outlined" style="font-size: 80px;">folder_open</span>
-            </div>
-            <h4 style="font-size: 18px; font-weight: 700; color: var(--on-surface);">Aún no tienes recetas</h4>
-            <p style="color: var(--on-surface-variant); margin-top: 8px;">Comienza digitalizando tus recetas en
-                papel o agrega una manualmente.</p>
-            <button class="btn-primary" style="margin-top: 24px;" onclick="window.location.href='ocr.html'">
-                <span class="material-symbols-outlined">document_scanner</span>
-                Escanear Receta
+            <button class="nav-item-mobile" data-view="favorites">
+                <span class="material-symbols-outlined">star</span>
+                <span>Favoritos</span>
             </button>
-        </div>
-    </main>
-
-    <!-- Mobile Nav Bar (Drive Style) -->
-    <nav class="mobile-nav-bar lg:hidden">
-        <button class="nav-item-mobile active" data-view="recipes">
-            <span class="material-symbols-outlined">home</span>
-            <span>Inicio</span>
-        </button>
-        <button class="nav-item-mobile" data-view="favorites">
-            <span class="material-symbols-outlined">star</span>
-            <span>Favoritos</span>
-        </button>
-        <button class="nav-item-mobile" onclick="window.location.href='ocr.html'">
-            <div
-                style="background: var(--primary); color: white; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);">
-                <span class="material-symbols-outlined">document_scanner</span>
-            </div>
-        </button>
-        <button class="nav-item-mobile" data-view="shared">
-            <span class="material-symbols-outlined">group</span>
-            <span>Social</span>
-        </button>
-        <button class="nav-item-mobile" id="user-menu-mobile">
-            <span class="material-symbols-outlined">person</span>
-            <span>Perfil</span>
-        </button>
-    </nav>
+            <button class="nav-item-mobile" onclick="window.location.href='ocr.html'">
+                <div
+                    style="background: var(--primary); color: white; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);">
+                    <span class="material-symbols-outlined">document_scanner</span>
+                </div>
+            </button>
+            <button class="nav-item-mobile" data-view="shared">
+                <span class="material-symbols-outlined">group</span>
+                <span>Social</span>
+            </button>
+            <button class="nav-item-mobile" id="user-menu-mobile">
+                <span class="material-symbols-outlined">person</span>
+                <span>Perfil</span>
+            </button>
+        </nav>
     </div>
 
     <!-- Scripts -->
