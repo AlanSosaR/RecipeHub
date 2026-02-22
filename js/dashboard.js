@@ -285,13 +285,13 @@ class DashboardManager {
                                 ${recipe.is_favorite ? 'star' : 'star_border'}
                             </span>
                         </button>
-                        <button class="btn-icon-m3" title="Más opciones" onclick="event.stopPropagation(); window.dashboard.showMoreOptions('${recipe.id}')">
+                        <button class="btn-icon-m3" title="Más opciones" onclick="window.dashboard.showMoreOptions('${recipe.id}', event)">
                             <span class="material-symbols-outlined">more_vert</span>
                         </button>
                     </div>
                 </div>
                 <!-- Mobile Actions -->
-                <button class="btn-icon-m3 mobile-action-btn" onclick="event.stopPropagation(); window.dashboard.showMoreOptions('${recipe.id}')">
+                <button class="btn-icon-m3 mobile-action-btn" onclick="window.dashboard.showMoreOptions('${recipe.id}', event)">
                     <span class="material-symbols-outlined">more_vert</span>
                 </button>
             </div>
@@ -396,8 +396,91 @@ class DashboardManager {
         });
     }
 
-    showMoreOptions(recipeId) {
-        window.utils.showToast('Más opciones próximamente', 'info');
+    showMoreOptions(recipeId, event) {
+        if (event) event.stopPropagation();
+
+        const recipe = this.currentRecipes.find(r => r.id === recipeId);
+        if (!recipe) return;
+
+        // Limpiar cualquier menú existente
+        const existingMenu = document.querySelector('.dropbox-menu-m3');
+        if (existingMenu) existingMenu.remove();
+
+        const menu = document.createElement('div');
+        menu.className = 'dropbox-menu-m3';
+
+        menu.innerHTML = `
+            <div class="dropbox-menu-header">
+                <h4>${recipe.name_es}</h4>
+            </div>
+            <button class="context-menu-item" onclick="window.dashboard.downloadRecipe('${recipe.id}')">
+                <span class="material-symbols-outlined">download</span>
+                Descargar
+            </button>
+            <button class="context-menu-item" onclick="window.location.href='recipe-detail.html?id=${recipe.id}'">
+                <span class="material-symbols-outlined">open_in_new</span>
+                Abrir en...
+            </button>
+            <div class="context-menu-divider"></div>
+            <button class="context-menu-item" onclick="window.dashboard.copyLink('${recipe.id}')">
+                <span class="material-symbols-outlined">link</span>
+                Copiar enlace
+            </button>
+            <button class="context-menu-item" onclick="window.dashboard.shareRecipe('${recipe.id}')">
+                <span class="material-symbols-outlined">share</span>
+                Compartir
+            </button>
+            <button class="context-menu-item">
+                <span class="material-symbols-outlined">manage_accounts</span>
+                Administrar permisos
+            </button>
+            <div class="context-menu-divider"></div>
+            <button class="context-menu-item" onclick="window.location.href='recipe-form.html?id=${recipe.id}'">
+                <span class="material-symbols-outlined">edit</span>
+                Editar receta
+            </button>
+            <button class="context-menu-item">
+                <span class="material-symbols-outlined">drive_file_rename_outline</span>
+                Renombrar
+            </button>
+            <button class="context-menu-item" onclick="window.dashboard.toggleFavorite('${recipe.id}', ${recipe.is_favorite})">
+                <span class="material-symbols-outlined">${recipe.is_favorite ? 'star' : 'star_border'}</span>
+                ${recipe.is_favorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+            </button>
+        `;
+
+        document.body.appendChild(menu);
+
+        // Posicionamiento dinámico
+        const rect = event.target.getBoundingClientRect();
+        const menuWidth = 220;
+        const menuHeight = menu.offsetHeight;
+
+        let top = rect.bottom + 8;
+        let left = rect.right - menuWidth;
+
+        // Ajustar si se sale de la pantalla
+        if (top + menuHeight > window.innerHeight) {
+            top = rect.top - menuHeight - 8;
+        }
+        if (left < 0) left = 8;
+
+        menu.style.top = `${top}px`;
+        menu.style.left = `${left}px`;
+
+        // Cerrar al hacer clic fuera
+        const closeMenu = (e) => {
+            if (!menu.contains(e.target)) {
+                menu.remove();
+                document.removeEventListener('mousedown', closeMenu);
+            }
+        };
+        setTimeout(() => document.addEventListener('mousedown', closeMenu), 10);
+    }
+
+    downloadRecipe(recipeId) {
+        window.utils.showToast('Descarga iniciada...', 'success');
+        // Lógica de descarga real aquí
     }
 }
 

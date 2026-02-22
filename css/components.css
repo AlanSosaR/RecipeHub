@@ -3659,20 +3659,44 @@ select.input-field {
     justify-content: flex-end;
     align-items: center;
     padding-right: 16px;
+    position: relative;
+    /* Para el posicionamiento de las acciones */
 }
 
 .row-actions-dropbox {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
     opacity: 0;
     transform: translateX(10px);
     transition: all 0.2s var(--m3-easing);
+    background: var(--surface-container-low);
+    /* Fondo para que sobresalga */
+    padding: 4px 8px;
+    border-radius: 8px;
+    position: absolute;
+    right: 16px;
+    z-index: 5;
+    pointer-events: none;
 }
 
 .file-row-m3:hover .row-actions-dropbox {
     opacity: 1;
     transform: translateX(0);
+    pointer-events: auto;
+}
+
+/* Ocultar metadata al hacer hover para dejar espacio a las acciones */
+.file-row-m3:hover .col-date,
+.file-row-m3:hover .col-access {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s var(--m3-easing);
+}
+
+.col-date,
+.col-access {
+    transition: opacity 0.3s var(--m3-easing);
 }
 
 /* Dropbox Highlight for Share Button on Hover */
@@ -3728,10 +3752,76 @@ select.input-field {
 
     .col-category,
     .col-access,
-    .col-date {
+    .col-date,
+    .col-actions {
         display: none !important;
-        /* Hide secondary info on mobile list */
+        /* Hide secondary info on mobile list to keep only 3 items in grid */
     }
+
+    .mobile-action-btn {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        grid-column: 3;
+        /* Ensure it's in the third column */
+    }
+}
+
+/* Dropbox Context Menu */
+.dropbox-menu-m3 {
+    position: fixed;
+    background: #252525;
+    /* Dark Dropbox style */
+    border: 1px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    z-index: 2000;
+    min-width: 220px;
+    padding: 8px 0;
+    color: white;
+}
+
+.dropbox-menu-header {
+    padding: 8px 16px 12px;
+    border-bottom: 1px solid #333;
+    margin-bottom: 4px;
+}
+
+.dropbox-menu-header h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.context-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    width: 100%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #e0e0e0;
+    font-size: 14px;
+    transition: background 0.2s;
+    text-align: left;
+}
+
+.context-menu-item:hover {
+    background: #333;
+}
+
+.context-menu-item .material-symbols-outlined {
+    font-size: 20px;
+    color: #aaa;
+}
+
+.context-menu-divider {
+    height: 1px;
+    background: #333;
+    margin: 4px 0;
 }
 
 /* Brand Identity: Restore Orange */
