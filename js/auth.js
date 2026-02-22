@@ -103,26 +103,18 @@ class AuthManager {
             });
 
             if (authError) throw authError;
+            if (!authData.user) throw new Error('No se pudo crear el usuario de autenticación');
 
             // 2. Crear perfil en users
-            const { data: userData, error: userError } = await window.supabaseClient
-                .from('users')
-                .insert([{
-                    auth_user_id: authData.user.id,
-                    email,
-                    first_name: firstName,
-                    last_name: lastName,
-                    collection_name: `Recetario de ${firstName}`
-                }])
-                .select()
-                .single();
+            const profileCreated = await this.createProfile(authData.user);
 
-            if (userError) throw userError;
+            if (!profileCreated) {
+                // Si falla la creación del perfil pero el usuario de auth ya existe, 
+                // el usuario podrá intentar loguearse y el signIn manejará la creación del perfil.
+                console.warn('Usuario de auth creado pero falló el perfil inicial. Se reintentará en el login.');
+            }
 
-            // 3. Crear categorías predeterminadas
-            await this.createDefaultCategories(userData.id);
-
-            return { success: true, user: userData };
+            return { success: true, user: authData.user };
 
         } catch (error) {
             console.error('❌ Error en registro:', error);
@@ -147,7 +139,14 @@ class AuthManager {
                 .eq('auth_user_id', data.user.id)
                 .single();
 
-            if (userError) throw userError;
+            if (userError && userError.code === 'PGRST116') {
+                console.log('Perfil no encontrado en login, creando uno nuevo...');
+                const profileCreated = await this.createProfile(data.user);
+                if (!profileCreated) throw new Error('No se pudo crear el perfil de usuario');
+                return { success: true, user: this.currentUser };
+            } else if (userError) {
+                throw userError;
+            }
 
             this.currentUser = userData;
             this.session = data.session;
