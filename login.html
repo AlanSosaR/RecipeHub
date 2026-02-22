@@ -237,6 +237,10 @@
 
         <!-- Form -->
         <form id="unified-form">
+            <div id="name-group" class="input-group" style="display: none;">
+                <label class="login-label" for="name">Nombre Completo</label>
+                <input class="input-premium" id="name" placeholder="Tu nombre" type="text" autocomplete="name" />
+            </div>
             <div class="input-group">
                 <label class="login-label" for="email">Email</label>
                 <input class="input-premium" id="email" placeholder="nombre@ejemplo.com" type="email" required
@@ -246,6 +250,10 @@
                 <label class="login-label" for="password">Contraseña</label>
                 <input class="input-premium" id="password" placeholder="••••••••" type="password" required
                     autocomplete="current-password" />
+            </div>
+            <div id="confirm-password-group" class="input-group" style="display: none;">
+                <label class="login-label" for="confirm-password">Confirmar Contraseña</label>
+                <input class="input-premium" id="confirm-password" placeholder="••••••••" type="password" />
             </div>
 
             <button type="submit" id="btn-submit" class="btn-full btn-primary-gradient">
@@ -277,6 +285,10 @@
             const subtitle = document.getElementById('main-subtitle');
             const btnSubmit = document.getElementById('btn-submit');
             const switchText = document.getElementById('switch-text');
+            const nameGroup = document.getElementById('name-group');
+            const confirmGroup = document.getElementById('confirm-password-group');
+            const nameInput = document.getElementById('name');
+            const confirmInput = document.getElementById('confirm-password');
 
             // Smooth opacity transition for text
             title.style.opacity = '0';
@@ -286,11 +298,19 @@
                     subtitle.textContent = "Ingresa a tu colección privada de recetas.";
                     btnSubmit.querySelector('span').textContent = "Ingresar";
                     switchText.textContent = "¿No tienes cuenta? Regístrate";
+                    nameGroup.style.display = 'none';
+                    confirmGroup.style.display = 'none';
+                    nameInput.required = false;
+                    confirmInput.required = false;
                 } else {
                     title.textContent = "Crear Cuenta";
                     subtitle.textContent = "Únete para guardar tus recetas familiares.";
                     btnSubmit.querySelector('span').textContent = "Registrarse";
                     switchText.textContent = "¿Ya tienes cuenta? Ingresa";
+                    nameGroup.style.display = 'block';
+                    confirmGroup.style.display = 'block';
+                    nameInput.required = true;
+                    confirmInput.required = true;
                 }
                 title.style.opacity = '1';
             }, 200);
@@ -300,8 +320,38 @@
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const name = document.getElementById('name').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
             const btn = document.getElementById('btn-submit');
             const span = btn.querySelector('span');
+
+            // Validation
+            if (!isLogin) {
+                if (password.length < 6) {
+                    if (window.utils && window.utils.showToast) {
+                        window.utils.showToast('La contraseña debe tener al menos 6 caracteres', 'error');
+                    } else {
+                        alert('La contraseña debe tener al menos 6 caracteres');
+                    }
+                    return;
+                }
+                if (password !== confirmPassword) {
+                    if (window.utils && window.utils.showToast) {
+                        window.utils.showToast('Las contraseñas no coinciden', 'error');
+                    } else {
+                        alert('Las contraseñas no coinciden');
+                    }
+                    return;
+                }
+                if (!name.trim()) {
+                    if (window.utils && window.utils.showToast) {
+                        window.utils.showToast('El nombre es obligatorio', 'error');
+                    } else {
+                        alert('El nombre es obligatorio');
+                    }
+                    return;
+                }
+            }
 
             // Loading state
             const originalText = span.textContent;
@@ -318,9 +368,18 @@
                         throw new Error(result.error);
                     }
                 } else {
-                    const result = await window.authManager.signUp(email, password, 'Chef', '');
+                    // Split name into first and last if possible
+                    const nameParts = name.trim().split(' ');
+                    const firstName = nameParts[0];
+                    const lastName = nameParts.slice(1).join(' ');
+
+                    const result = await window.authManager.signUp(email, password, firstName, lastName);
                     if (result.success) {
-                        alert('¡Cuenta creada! Por favor revisa tu email.');
+                        if (window.utils && window.utils.showToast) {
+                            window.utils.showToast('¡Cuenta creada! Por favor revisa tu email.', 'success');
+                        } else {
+                            alert('¡Cuenta creada! Por favor revisa tu email.');
+                        }
                         handleSwitch();
                     } else {
                         throw new Error(result.error);
@@ -357,11 +416,11 @@
 
     <!-- Register Service Worker (PWA) -->
     <script>
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("/sw.js")
-          .then(r => console.log("SW registered:", r.scope))
-          .catch(e => console.warn("SW registration failed:", e));
-      }
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/sw.js")
+                .then(r => console.log("SW registered:", r.scope))
+                .catch(e => console.warn("SW registration failed:", e));
+        }
     </script>
 </body>
 
