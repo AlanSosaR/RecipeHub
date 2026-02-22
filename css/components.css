@@ -595,7 +595,8 @@ ol {
 .list-header,
 .file-row {
     display: grid;
-    grid-template-columns: 64px minmax(200px, 3fr) 140px 120px 160px 48px;
+    /* icon | name | category | access | updated | actions */
+    grid-template-columns: 56px 1fr 140px 120px 160px 100px;
     gap: 16px;
     align-items: center;
     padding: 0 24px;
@@ -614,6 +615,9 @@ ol {
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.12em;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .file-row {
@@ -621,10 +625,14 @@ ol {
     border-bottom: 1px solid var(--outline-variant);
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 64px;
+    /* Slightly taller for items */
 }
 
 .file-row:hover {
     background: var(--surface-container-low);
+    transform: none;
+    /* No scaling in list view */
 }
 
 .hidden-mobile-lg {

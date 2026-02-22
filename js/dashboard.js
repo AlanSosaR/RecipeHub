@@ -217,15 +217,17 @@ class DashboardManager {
         const header = `
             <div class="list-header hidden-mobile-lg">
                 <div class="icon-cell"></div>
-                <div class="title-cell">Nombre</div>
-                <div class="meta-cell">Categoría</div>
-                <div class="meta-cell">Acceso</div>
-                <div class="meta-cell">Última modificación</div>
+                <div class="title-cell">NOMBRE</div>
+                <div class="meta-cell">CATEGORÍA</div>
+                <div class="meta-cell">ACCESO</div>
+                <div class="meta-cell">ÚLTIMA MODIFICACIÓN</div>
                 <div class="action-cell"></div>
             </div>
         `;
         const rows = recipes.map(recipe => {
-            const date = new Date(recipe.updated_at).toLocaleDateString();
+            const date = new Date(recipe.updated_at).toLocaleDateString('es-ES', {
+                day: '2-digit', month: '2-digit', year: 'numeric'
+            });
             return `
                 <div class="file-row group" onclick="window.location.href='recipe-detail.html?id=${recipe.id}'">
                     <div class="icon-cell">
@@ -234,14 +236,13 @@ class DashboardManager {
                     <div class="title-cell">
                         <span class="title">${recipe.name_es}</span>
                     </div>
-                    <div class="meta-cell"><span class="badge-tag">General</span></div>
+                    <div class="meta-cell">
+                        <span class="badge-tag">General</span>
+                    </div>
                     <div class="meta-cell">Solo tú</div>
                     <div class="meta-cell">${date}</div>
                     <div class="action-cell">
                         <div class="row-actions">
-                            <button class="btn-action-icon" title="Compartir" onclick="event.stopPropagation(); window.utils.showToast('Enlace copiado', 'success')">
-                                <span class="material-symbols-outlined">share</span>
-                            </button>
                             <button class="btn-action-icon" title="Editar" onclick="event.stopPropagation(); window.location.href='recipe-form.html?id=${recipe.id}'">
                                 <span class="material-symbols-outlined">edit</span>
                             </button>
