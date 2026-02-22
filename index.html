@@ -275,141 +275,277 @@
 </head>
 
 <body>
-    <div class="landing-card-expressive">
-        <!-- Language Switcher INSIDE the card -->
-        <div class="language-toggle" onclick="toggleLanguage()">
-            <span class="material-symbols-outlined" style="font-size: 16px">language</span>
-            <span id="lang-label">EN</span>
-        </div>
-
-        <div class="curved-header-bg"></div>
-
-        <!-- VIEW: LANDING -->
-        <div id="view-landing" class="view-content fade-m3">
-            <div class="landing-icon-badge">
-                <div class="landing-icon-inner">
-                    <span class="material-symbols-outlined" style="font-size: 64px">menu_book</span>
-                </div>
+    <div id="landing-section">
+        <div class="landing-card-expressive">
+            <!-- Language Switcher INSIDE the card -->
+            <div class="language-toggle" onclick="toggleLanguage()">
+                <span class="material-symbols-outlined" style="font-size: 16px">language</span>
+                <span id="lang-label">EN</span>
             </div>
 
-            <h1
-                style="font-family: var(--font-display); font-size: 40px; font-weight: 800; margin: 32px 0 8px 0; color: var(--on-surface);">
-                RecipeHub<span style="color: var(--secondary);">.</span>
-            </h1>
-            <p id="landing-subtitle"
-                style="color: var(--on-surface-variant); font-size: 16px; font-weight: 500; text-align: center;">
-                Your personal digital cookbook.
-            </p>
+            <div class="curved-header-bg"></div>
 
-            <div class="features-grid">
-                <div class="feature-item">
-                    <div class="feature-icon-box">
+            <!-- VIEW: LANDING -->
+            <div id="view-landing" class="view-content fade-m3">
+                <div class="landing-icon-badge">
+                    <div class="landing-icon-inner">
+                        <span class="material-symbols-outlined" style="font-size: 64px">menu_book</span>
+                    </div>
+                </div>
+
+                <h1
+                    style="font-family: var(--font-display); font-size: 40px; font-weight: 800; margin: 32px 0 8px 0; color: var(--on-surface);">
+                    RecipeHub<span style="color: var(--secondary);">.</span>
+                </h1>
+                <p id="landing-subtitle"
+                    style="color: var(--on-surface-variant); font-size: 16px; font-weight: 500; text-align: center;">
+                    Your personal digital cookbook.
+                </p>
+
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon-box">
+                            <span class="material-symbols-outlined">document_scanner</span>
+                        </div>
+                        <h3 id="feat-ocr-title">OCR Scan</h3>
+                        <p id="feat-ocr-desc">Digitize paper recipes</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon-box">
+                            <span class="material-symbols-outlined">restaurant_menu</span>
+                        </div>
+                        <h3 id="feat-plan-title">Meal Plan</h3>
+                        <p id="feat-plan-desc">Organize your week</p>
+                    </div>
+                </div>
+
+                <button class="btn-m3-full" onclick="window.location.href='login.html?mode=register'">
+                    <span id="btn-get-started">Get Started</span>
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+
+                <div class="btn-m3-text" style="color: var(--on-surface-variant);">
+                    <span id="txt-login-prompt">Already have an account?</span>
+                    <a href="login.html" style="color: var(--secondary); font-weight: 700; text-decoration: none;"
+                        id="lnk-login">Log In</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD VIEW (Hidden by default) -->
+        <div id="dashboard-app" class="dashboard-app hidden">
+            <!-- Sidebar Desktop -->
+            <aside class="sidebar">
+                <div class="sidebar-logo">
+                    <span class="material-symbols-outlined">menu_book</span>
+                    <span>RecipeHub</span>
+                </div>
+
+                <nav class="sidebar-nav">
+                    <a href="#" class="nav-item active" data-view="recipes">
+                        <span class="material-symbols-outlined">home</span>
+                        <span>Recetas</span>
+                    </a>
+                    <a href="#" class="nav-item" data-view="favorites">
+                        <span class="material-symbols-outlined">star</span>
+                        <span>Favoritos</span>
+                    </a>
+                    <a href="#" class="nav-item" data-view="shared">
+                        <span class="material-symbols-outlined">share</span>
+                        <span>Compartidas</span>
+                    </a>
+
+                    <div
+                        style="margin: 24px 32px 8px; font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.05em;">
+                        Categorías
+                    </div>
+                    <div id="sidebar-categories" class="sidebar-nav" style="padding: 0 16px;">
+                        <!-- Dinámico -->
+                    </div>
+                </nav>
+
+                <div style="margin-top: auto; padding: 24px;">
+                    <button onclick="window.authManager.signOut()" class="btn nav-item"
+                        style="width: 100%; border: none; background: none; color: #EF4444; display: flex; align-items: center; gap: 12px;">
+                        <span class="material-symbols-outlined">logout</span>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <header class="top-bar">
+                    <div class="search-wrapper">
+                        <span class="material-symbols-outlined">search</span>
+                        <input type="text" id="searchInput" placeholder="Buscar en mi recetario...">
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <button class="btn-icon">
+                            <span class="material-symbols-outlined">notifications</span>
+                        </button>
+                        <div
+                            style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); display: flex; align-items: center; justify-content: center; color: var(--secondary); font-weight: 700; font-size: 12px;">
+                            <span id="user-avatar-initials">CH</span>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Banner Hero -->
+                <section
+                    style="background: linear-gradient(135deg, #059669 0%, #064E3B 100%); border-radius: 24px; padding: 40px; color: white; margin-bottom: 40px; position: relative; overflow: hidden;">
+                    <div style="position: relative; z-index: 2;">
+                        <h2 id="hero-greeting"
+                            style="font-size: 32px; font-weight: 800; margin: 0 0 8px 0; font-family: var(--font-display);">
+                            Hola, Chef</h2>
+                        <p style="opacity: 0.9; font-size: 16px; margin: 0;">¿Qué vamos a cocinar hoy?</p>
+                    </div>
+                    <span class="material-symbols-outlined"
+                        style="position: absolute; right: -20px; bottom: -20px; font-size: 200px; opacity: 0.1;">restaurant</span>
+                </section>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                    <h3 id="view-title" style="font-size: 20px; font-weight: 700; color: var(--on-surface);">Mis Recetas
+                    </h3>
+                    <button class="btn-primary" onclick="window.location.href='recipe-form.html'"
+                        style="padding: 10px 20px; border-radius: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                        <span class="material-symbols-outlined">add</span>
+                        Nueva Receta
+                    </button>
+                </div>
+
+                <!-- Grid de Recetas -->
+                <div id="recipesGrid" class="recipes-grid">
+                    <!-- Dinámico -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="hidden" style="text-align: center; padding: 80px 0;">
+                    <div style="font-size: 64px; color: #E5E7EB; margin-bottom: 24px;">
+                        <span class="material-symbols-outlined" style="font-size: 80px;">folder_open</span>
+                    </div>
+                    <h4 style="font-size: 18px; font-weight: 700; color: var(--on-surface);">Aún no tienes recetas</h4>
+                    <p style="color: var(--on-surface-variant); margin-top: 8px;">Comienza digitalizando tus recetas en
+                        papel o agrega una manualmente.</p>
+                    <button class="btn-primary" style="margin-top: 24px;" onclick="window.location.href='ocr.html'">
+                        <span class="material-symbols-outlined">document_scanner</span>
+                        Escanear Receta
+                    </button>
+                </div>
+            </main>
+
+            <!-- Mobile Nav Bar (Drive Style) -->
+            <nav class="mobile-nav-bar lg:hidden">
+                <button class="nav-item-mobile active" data-view="recipes">
+                    <span class="material-symbols-outlined">home</span>
+                    <span>Inicio</span>
+                </button>
+                <button class="nav-item-mobile" data-view="favorites">
+                    <span class="material-symbols-outlined">star</span>
+                    <span>Favoritos</span>
+                </button>
+                <button class="nav-item-mobile" onclick="window.location.href='ocr.html'">
+                    <div
+                        style="background: var(--primary); color: white; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);">
                         <span class="material-symbols-outlined">document_scanner</span>
                     </div>
-                    <h3 id="feat-ocr-title">OCR Scan</h3>
-                    <p id="feat-ocr-desc">Digitize paper recipes</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon-box">
-                        <span class="material-symbols-outlined">restaurant_menu</span>
-                    </div>
-                    <h3 id="feat-plan-title">Meal Plan</h3>
-                    <p id="feat-plan-desc">Organize your week</p>
-                </div>
-            </div>
-
-            <button class="btn-m3-full" onclick="window.location.href='login.html?mode=register'">
-                <span id="btn-get-started">Get Started</span>
-                <span class="material-symbols-outlined">arrow_forward</span>
-            </button>
-
-            <div class="btn-m3-text" style="color: var(--on-surface-variant);">
-                <span id="txt-login-prompt">Already have an account?</span>
-                <a href="login.html" style="color: var(--secondary); font-weight: 700; text-decoration: none;"
-                    id="lnk-login">Log In</a>
-            </div>
+                </button>
+                <button class="nav-item-mobile" data-view="shared">
+                    <span class="material-symbols-outlined">group</span>
+                    <span>Social</span>
+                </button>
+                <button class="nav-item-mobile" id="user-menu-mobile">
+                    <span class="material-symbols-outlined">person</span>
+                    <span>Perfil</span>
+                </button>
+            </nav>
         </div>
-    </div>
-    </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js"></script>
-    <script src="js/supabase-client.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/utils.js"></script>
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="js/config.js"></script>
+        <script src="js/supabase-client.js"></script>
+        <script src="js/auth.js"></script>
+        <script src="js/db.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/dashboard.js"></script>
 
-    <script>
-        let currentLang = 'ES';
+        <script>
+            let currentLang = 'es';
 
-        const pageTranslations = {
-            ES: {
-                landingTitle: "RecipeHub",
-                landingSubtitle: "Tu recetario digital personal.",
-                featOcrTitle: "Escaneo OCR",
-                featOcrDesc: "Digitaliza recetas en papel",
-                featPlanTitle: "Plan de Comidas",
-                featPlanDesc: "Organiza tu semana",
-                btnGetStarted: "Comenzar",
-                txtLoginPrompt: "¿Ya tienes cuenta?",
-                lnkLogin: "Inicia sesión"
-            },
-            EN: {
-                landingTitle: "RecipeHub",
-                landingSubtitle: "Your personal digital cookbook.",
-                featOcrTitle: "OCR Scan",
-                featOcrDesc: "Digitize paper recipes",
-                featPlanTitle: "Meal Plan",
-                featPlanDesc: "Organize your week",
-                btnGetStarted: "Get Started",
-                txtLoginPrompt: "Already have an account?",
-                lnkLogin: "Log In"
-            }
-        };
+            const pageTranslations = {
+                es: {
+                    landingTitle: "RecipeHub",
+                    landingSubtitle: "Tu recetario digital personal.",
+                    featOcrTitle: "Escaneo OCR",
+                    featOcrDesc: "Digitaliza recetas en papel",
+                    featPlanTitle: "Plan de Comidas",
+                    featPlanDesc: "Organiza tu semana",
+                    btnGetStarted: "Comenzar",
+                    txtLoginPrompt: "¿Ya tienes cuenta?",
+                    lnkLogin: "Inicia sesión"
+                },
+                en: {
+                    landingTitle: "RecipeHub",
+                    landingSubtitle: "Your personal digital cookbook.",
+                    featOcrTitle: "OCR Scan",
+                    featOcrDesc: "Digitize paper recipes",
+                    featPlanTitle: "Meal Plan",
+                    featPlanDesc: "Organize your week",
+                    btnGetStarted: "Get Started",
+                    txtLoginPrompt: "Already have an account?",
+                    lnkLogin: "Log In"
+                }
+            };
 
-        function toggleLanguage() {
-            currentLang = currentLang === 'ES' ? 'EN' : 'ES';
-            localStorage.setItem('preferredLang', currentLang);
-            document.getElementById('lang-label').textContent = currentLang;
-            updateTranslations();
-        }
-
-        function updateTranslations() {
-            const t = pageTranslations[currentLang];
-            // Update every piece of text
-            document.getElementById('landing-subtitle').textContent = t.landingSubtitle;
-            document.getElementById('feat-ocr-title').textContent = t.featOcrTitle;
-            document.getElementById('feat-ocr-desc').textContent = t.featOcrDesc;
-            document.getElementById('feat-plan-title').textContent = t.featPlanTitle;
-            document.getElementById('feat-plan-desc').textContent = t.featPlanDesc;
-            document.getElementById('btn-get-started').textContent = t.btnGetStarted;
-
-            // Handle the footer text carefully to not break the link
-            const promptSpan = document.getElementById('txt-login-prompt');
-            if (promptSpan) {
-                promptSpan.textContent = t.txtLoginPrompt;
-            }
-            document.getElementById('lnk-login').textContent = t.lnkLogin;
-
-            // Update button label
-            document.getElementById('lang-label').textContent = currentLang;
-        }
-
-        window.addEventListener('load', () => {
-            // Restore preference
-            const savedLang = localStorage.getItem('preferredLang');
-            if (savedLang) {
-                currentLang = savedLang;
-                document.getElementById('lang-label').textContent = currentLang;
+            function toggleLanguage() {
+                currentLang = currentLang === 'es' ? 'en' : 'es';
+                localStorage.setItem('preferredLang', currentLang);
+                updateTranslations();
             }
 
-            // Check auth
-            window.authManager.checkAuth().then(isAuth => {
-                if (isAuth) window.location.href = 'index.html';
+            function updateTranslations() {
+                const t = pageTranslations[currentLang];
+                // Update every piece of text
+                if (document.getElementById('landing-subtitle'))
+                    document.getElementById('landing-subtitle').textContent = t.landingSubtitle;
+
+                if (document.getElementById('feat-ocr-title'))
+                    document.getElementById('feat-ocr-title').textContent = t.featOcrTitle;
+
+                if (document.getElementById('feat-ocr-desc'))
+                    document.getElementById('feat-ocr-desc').textContent = t.featOcrDesc;
+
+                if (document.getElementById('feat-plan-title'))
+                    document.getElementById('feat-plan-title').textContent = t.featPlanTitle;
+
+                if (document.getElementById('feat-plan-desc'))
+                    document.getElementById('feat-plan-desc').textContent = t.featPlanDesc;
+
+                if (document.getElementById('btn-get-started'))
+                    document.getElementById('btn-get-started').textContent = t.btnGetStarted;
+
+                const promptSpan = document.getElementById('txt-login-prompt');
+                if (promptSpan) promptSpan.textContent = t.txtLoginPrompt;
+
+                if (document.getElementById('lnk-login'))
+                    document.getElementById('lnk-login').textContent = t.lnkLogin;
+
+                const label = document.getElementById('lang-label');
+                if (label) label.textContent = currentLang.toUpperCase();
+            }
+
+            window.addEventListener('load', () => {
+                // Restore preference
+                const savedLang = localStorage.getItem('preferredLang');
+                if (savedLang) {
+                    currentLang = savedLang;
+                }
+                updateTranslations();
+                // dashboard.js init() will handle the auth check and view switching
             });
-            updateTranslations();
-        });
-    </script>
+        </script>
 </body>
 
 </html>
