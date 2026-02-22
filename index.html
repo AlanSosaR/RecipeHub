@@ -319,16 +319,10 @@
                     </div>
                 </div>
 
-                <button class="btn-m3-full" onclick="window.location.href='login.html?mode=register'">
+                <button class="btn-m3-full" onclick="window.location.href='login.html'">
                     <span id="btn-get-started">Get Started</span>
                     <span class="material-symbols-outlined">arrow_forward</span>
                 </button>
-
-                <div class="btn-m3-text" style="color: var(--on-surface-variant);">
-                    <span id="txt-login-prompt">Already have an account?</span>
-                    <a href="login.html" style="color: var(--secondary); font-weight: 700; text-decoration: none;"
-                        id="lnk-login">Log In</a>
-                </div>
             </div>
         </div>
 
@@ -482,9 +476,7 @@
                     featOcrDesc: "Digitaliza recetas en papel",
                     featPlanTitle: "Plan de Comidas",
                     featPlanDesc: "Organiza tu semana",
-                    btnGetStarted: "Comenzar",
-                    txtLoginPrompt: "¿Ya tienes cuenta?",
-                    lnkLogin: "Inicia sesión"
+                    btnGetStarted: "Comenzar"
                 },
                 en: {
                     landingTitle: "RecipeHub",
@@ -493,9 +485,7 @@
                     featOcrDesc: "Digitize paper recipes",
                     featPlanTitle: "Meal Plan",
                     featPlanDesc: "Organize your week",
-                    btnGetStarted: "Get Started",
-                    txtLoginPrompt: "Already have an account?",
-                    lnkLogin: "Log In"
+                    btnGetStarted: "Get Started"
                 }
             };
 
@@ -526,11 +516,7 @@
                 if (document.getElementById('btn-get-started'))
                     document.getElementById('btn-get-started').textContent = t.btnGetStarted;
 
-                const promptSpan = document.getElementById('txt-login-prompt');
-                if (promptSpan) promptSpan.textContent = t.txtLoginPrompt;
 
-                if (document.getElementById('lnk-login'))
-                    document.getElementById('lnk-login').textContent = t.lnkLogin;
 
                 const label = document.getElementById('lang-label');
                 if (label) label.textContent = currentLang.toUpperCase();
