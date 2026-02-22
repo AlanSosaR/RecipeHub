@@ -392,6 +392,7 @@
 
         function toggleLanguage() {
             currentLang = currentLang === 'ES' ? 'EN' : 'ES';
+            localStorage.setItem('preferredLang', currentLang);
             document.getElementById('lang-label').textContent = currentLang;
             updateTranslations();
         }
@@ -404,6 +405,7 @@
             document.getElementById('lbl-confirm').textContent = t.lblConfirm;
             document.getElementById('btn-back').textContent = t.btnBack;
 
+            // Update main button and switch text carefully to preserve internal structure if any
             if (isLogin) {
                 document.getElementById('auth-title').textContent = t.authTitleLogin;
                 document.getElementById('auth-subtitle').textContent = t.authSubtitleLogin;
@@ -507,6 +509,13 @@
         }
 
         window.addEventListener('load', () => {
+            // Restore preference
+            const savedLang = localStorage.getItem('preferredLang');
+            if (savedLang) {
+                currentLang = savedLang;
+                document.getElementById('lang-label').textContent = currentLang;
+            }
+
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('mode') === 'register') {
                 isLogin = false;
