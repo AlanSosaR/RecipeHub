@@ -342,7 +342,7 @@
     <script>
         let currentLang = 'ES';
 
-        const i18n = {
+        const pageTranslations = {
             ES: {
                 landingTitle: "RecipeHub",
                 landingSubtitle: "Tu recetario digital personal.",
@@ -375,7 +375,7 @@
         }
 
         function updateTranslations() {
-            const t = i18n[currentLang];
+            const t = pageTranslations[currentLang];
             // Update every piece of text
             document.getElementById('landing-subtitle').textContent = t.landingSubtitle;
             document.getElementById('feat-ocr-title').textContent = t.featOcrTitle;

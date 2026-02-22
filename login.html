@@ -343,7 +343,7 @@
         let isLogin = true;
         let currentLang = 'ES';
 
-        const i18n = {
+        const pageTranslations = {
             ES: {
                 authTitleLogin: "Bienvenido",
                 authSubtitleLogin: "Ingresa a tu colección privada de recetas.",
@@ -396,7 +396,7 @@
         }
 
         function updateTranslations() {
-            const t = i18n[currentLang];
+            const t = pageTranslations[currentLang];
             document.getElementById('lbl-name').textContent = t.lblName;
             document.getElementById('lbl-email').textContent = t.lblEmail;
             document.getElementById('lbl-password').textContent = t.lblPassword;
@@ -453,7 +453,7 @@
 
         document.getElementById('unified-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const t = i18n[currentLang];
+            const t = pageTranslations[currentLang];
             const btn = document.getElementById('btn-submit');
             const span = document.getElementById('btn-submit-text');
             const email = document.getElementById('email').value.trim();
