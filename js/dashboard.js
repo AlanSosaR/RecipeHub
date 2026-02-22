@@ -9,39 +9,48 @@ class DashboardManager {
     }
 
     async init() {
-        console.log('🚀 Inicializando RecipeHub Premium...');
+        try {
+            console.log('🚀 Inicializando RecipeHub Premium...');
 
-        // 1. Verificar autenticación silenciosamente
-        const isAuthenticated = await window.authManager.checkAuth();
+            // 1. Verificar autenticación silenciosamente
+            const isAuthenticated = await window.authManager.checkAuth();
 
-        const landingEl = document.getElementById('landing-section');
-        const dashboardEl = document.getElementById('dashboard-app'); // Nuevo ID contenedor principal
+            const landingEl = document.getElementById('landing-section');
+            const dashboardEl = document.getElementById('dashboard-app');
 
-        if (!isAuthenticated) {
-            console.log('💡 Mostrando modo landing');
-            document.body.classList.add('mode-landing');
+            if (!isAuthenticated) {
+                console.log('💡 Modo Landing: Usuario no detectado');
+                document.body.classList.add('mode-landing');
+                if (landingEl) landingEl.classList.remove('hidden');
+                if (dashboardEl) dashboardEl.classList.add('hidden');
+                return;
+            }
+
+            console.log('✅ Modo Dashboard: Usuario detectado:', window.authManager.currentUser);
+            document.body.classList.remove('mode-landing');
+            if (landingEl) landingEl.classList.add('hidden');
+            if (dashboardEl) dashboardEl.classList.remove('hidden');
+
+            // Actualizar datos de usuario en la UI
+            this.updateUserUI();
+
+            // 2. Cargar datos iniciales
+            console.log('📦 Cargando categorías y recetas...');
+            this.loadCategories().catch(e => console.error('Error cargando categorías:', e));
+            await this.loadRecipes().catch(e => console.error('Error cargando recetas:', e));
+
+            console.log('✨ Dashboard listo');
+
+            this.setupEventListeners();
+
+            // 3. Inicializar menú móvil
+            if (window.setupMobileMenu) window.setupMobileMenu();
+        } catch (error) {
+            console.error('❌ Error crítico en Dashboard.init:', error);
+            // Fallback: mostrar landing si algo falla mucho
+            const landingEl = document.getElementById('landing-section');
             if (landingEl) landingEl.classList.remove('hidden');
-            if (dashboardEl) dashboardEl.classList.add('hidden');
-            return;
         }
-
-        console.log('✅ Usuario logueado, preparando dashboard premium');
-        document.body.classList.remove('mode-landing');
-        if (landingEl) landingEl.classList.add('hidden');
-        if (dashboardEl) dashboardEl.classList.remove('hidden');
-
-        // Actualizar datos de usuario en la UI
-        this.updateUserUI();
-
-        // 2. Cargar datos iniciales (Paralelo para mejor UX)
-        // Cargar categorías primero o en paralelo para que siempre se vean
-        this.loadCategories();
-        await this.loadRecipes(); // Esperamos este porque define el estado vacío/grid
-
-        this.setupEventListeners();
-
-        // 3. Inicializar menú móvil
-        if (window.setupMobileMenu) window.setupMobileMenu();
     }
 
     updateUserUI() {
