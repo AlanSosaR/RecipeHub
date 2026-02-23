@@ -194,6 +194,7 @@ class ShareModalManager {
     async share() {
         if (this.selectedUsers.length === 0) return;
 
+        const btnShare = this.btnShare;
         const permissionEl = document.getElementById('share-permission');
         const permissionValue = permissionEl ? permissionEl.value : 'view';
         // Mapear al valor que acepta la BD
@@ -201,43 +202,54 @@ class ShareModalManager {
 
         const names = this.selectedUsers.map(u => u.name).join(', ');
 
-        // Obtener el ID del perfil del propietario actual
-        const ownerProfileId = await this.getCurrentProfileId(window.authManager.currentUser.id);
-        if (!ownerProfileId) {
-            window.utils.showToast('No se pudo obtener tu perfil. Intenta recargar la página.', 'error');
-            return;
-        }
+        try {
+            window.setButtonLoading(btnShare, true, 'Compartiendo...');
 
-        // Guardar en shared_recipes para cada destinatario
-        const insertions = this.selectedUsers.map(user => ({
-            owner_user_id: ownerProfileId,
-            recipe_id: this.recipeId,
-            recipient_user_id: user.id,
-            permission: dbPermission,
-            status: 'pending'
-        }));
+            // Obtener el ID del perfil del propietario actual
+            const ownerProfileId = await this.getCurrentProfileId(window.authManager.currentUser.id);
+            if (!ownerProfileId) {
+                window.showSnackbar('No se pudo obtener tu perfil. Intenta recargar la página.', 4000);
+                window.setButtonLoading(btnShare, false);
+                return;
+            }
 
-        const { error } = await window.supabaseClient
-            .from('shared_recipes')
-            .insert(insertions);
+            // Guardar en shared_recipes para cada destinatario
+            const insertions = this.selectedUsers.map(user => ({
+                owner_user_id: ownerProfileId,
+                recipe_id: this.recipeId,
+                recipient_user_id: user.id,
+                permission: dbPermission,
+                status: 'pending'
+            }));
 
-        if (error) {
+            const { error } = await window.supabaseClient
+                .from('shared_recipes')
+                .insert(insertions);
+
+            if (error) throw error;
+
+            // Notificación local para demo
+            const recipe = window.dashboard
+                ? window.dashboard.currentRecipes.find(r => r.id === this.recipeId)
+                : null;
+
+            if (recipe && window.notificationManager) {
+                window.notificationManager.simulateNotificationReceived(recipe, permissionValue);
+            }
+
+            window.showSnackbar(`✅ Compartido con ${names}`, 4000);
+
+            // Pequeño retraso antes de cerrar para que el usuario lea el mensaje o vea el estado
+            setTimeout(() => {
+                this.close();
+                window.setButtonLoading(btnShare, false);
+            }, 800);
+
+        } catch (error) {
             console.error('Error compartiendo:', error);
-            window.utils.showToast('Error al compartir la receta', 'error');
-            return;
+            window.showSnackbar('Error al compartir la receta', 4000);
+            window.setButtonLoading(btnShare, false);
         }
-
-        // Notificación local para demo
-        const recipe = window.dashboard
-            ? window.dashboard.currentRecipes.find(r => r.id === this.recipeId)
-            : null;
-
-        if (recipe && window.notificationManager) {
-            window.notificationManager.simulateNotificationReceived(recipe, permissionValue);
-        }
-
-        window.utils.showToast(`✅ Compartido con ${names}`, 'success');
-        this.close();
     }
 
     copyLink() {

@@ -141,7 +141,7 @@ ol {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    z-index: 1000;
+    z-index: 6000;
     pointer-events: none;
 }
 
@@ -4097,7 +4097,7 @@ html[data-auth-likely="true"] #dashboard-app {
     align-items: center;
     gap: 12px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    z-index: 5000;
+    z-index: 6000;
     transition: all 0.4s var(--m3-easing);
     min-width: 320px;
     justify-content: flex-start;
