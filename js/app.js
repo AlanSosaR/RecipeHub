@@ -77,7 +77,7 @@ function setupLoginScreen() {
             <div class="auth-bg fade-in">
                 <div class="login-card">
                     <div class="icon-container">
-                        <img src="assets/icons/icon.svg" alt="RecipeHub Logo" style="width: 48px; height: 48px;">
+                        <span class="material-symbols-outlined" style="color: var(--primary); font-size: 48px;">menu_book</span>
                     </div>
 
                     <h1>${title}</h1>
