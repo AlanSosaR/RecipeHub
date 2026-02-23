@@ -279,6 +279,9 @@ class DashboardManager {
                         <button class="btn-icon-m3" title="Editar" onclick="event.stopPropagation(); window.location.href='recipe-form.html?id=${recipe.id}'">
                             <span class="material-symbols-outlined">edit</span>
                         </button>
+                        <button class="btn-icon-m3" title="Eliminar" style="color: var(--md-error);" onclick="event.stopPropagation(); window.dashboard.confirmDelete('${recipe.id}')">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
                         <button class="btn-icon-m3 ${recipe.is_favorite ? 'active' : ''}" 
                             title="Favorito"
                             onclick="event.stopPropagation(); window.dashboard.toggleFavorite('${recipe.id}', ${recipe.is_favorite})">
@@ -448,6 +451,11 @@ class DashboardManager {
                 <span class="material-symbols-outlined">${recipe.is_favorite ? 'star' : 'star_border'}</span>
                 ${recipe.is_favorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}
             </button>
+            <div class="context-menu-divider"></div>
+            <button class="context-menu-item" style="color: var(--md-error);" onclick="window.dashboard.confirmDelete('${recipe.id}')">
+                <span class="material-symbols-outlined">delete</span>
+                Eliminar receta
+            </button>
         `;
 
         document.body.appendChild(menu);
@@ -482,6 +490,25 @@ class DashboardManager {
     downloadRecipe(recipeId) {
         window.utils.showToast('Descarga iniciada...', 'success');
         // Lógica de descarga real aquí
+    }
+
+    async confirmDelete(recipeId) {
+        window.showActionSnackbar('¿Seguro que desea eliminar la receta?', 'ELIMINAR', async () => {
+            const result = await window.db.deleteRecipe(recipeId);
+            if (result.success) {
+                window.utils.showToast('Receta eliminada correctamente', 'success');
+                // Quitar de la lista local y re-renderizar
+                this.currentRecipes = this.currentRecipes.filter(r => r.id !== recipeId);
+                this.renderRecipesGrid(this.currentRecipes);
+
+                // Si el sidebar de detalles estaba abierto con esta receta, cerrarlo
+                if (this.selectedRecipeId === recipeId) {
+                    this.toggleDetailsSidebar(false);
+                }
+            } else {
+                window.utils.showToast('Error al eliminar la receta', 'error');
+            }
+        });
     }
 }
 
