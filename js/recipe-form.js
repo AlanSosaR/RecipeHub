@@ -270,7 +270,7 @@ class RecipeFormManager {
                 await window.db.addSteps(recipeId, stepsData);
             }
 
-            window.ui.showToast('¡Receta guardada con éxito!', 'success');
+            window.utils.showToast('¡Receta guardada con éxito!', 'success');
 
             setTimeout(() => {
                 window.location.href = `recipe-detail.html?id=${recipeId}`;
@@ -278,7 +278,7 @@ class RecipeFormManager {
 
         } catch (error) {
             console.error('Error salvando receta:', error);
-            window.ui.showToast('Error al guardar la receta', 'error');
+            window.utils.showToast('Error al guardar la receta', 'error');
             btnSave.disabled = false;
             btnSave.textContent = 'Guardar Receta';
         }

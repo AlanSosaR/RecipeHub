@@ -37,7 +37,7 @@ class RecipeDetailManager {
 
             if (!result.success) {
                 console.error('Error cargando receta:', result.error);
-                window.ui.showToast('No se pudo encontrar la receta', 'error');
+                window.utils.showToast('No se pudo encontrar la receta', 'error');
                 return;
             }
 
@@ -160,16 +160,27 @@ class RecipeDetailManager {
         const result = await window.db.toggleFavorite(this.recipeId, isCurrentlyFavorite);
 
         if (result.success) {
-            this.currentRecipe.is_favorite = !isCurrentlyFavorite;
-            favBtn.classList.toggle('active');
-            favBtn.querySelector('span').style.fontVariationSettings = `'FILL' ${this.currentRecipe.is_favorite ? 1 : 0}`;
-
-            window.ui.showToast(
-                this.currentRecipe.is_favorite ? 'Agregado a favoritos' : 'Eliminado de favoritos',
+            window.utils.showToast(
+                result.isFavorite ? 'Añadido a favoritos' : 'Eliminado de favoritos',
                 'success'
             );
+            this.currentRecipe.is_favorite = result.isFavorite;
+            this.updateFavoriteButtonUI(result.isFavorite);
         } else {
-            window.ui.showToast('Error al actualizar favoritos', 'error');
+            window.utils.showToast('Error al actualizar favoritos', 'error');
+        }
+    }
+
+    updateFavoriteButtonUI(isFavorite) {
+        const favBtn = document.getElementById('btnFavorite');
+        if (!favBtn) return;
+
+        if (isFavorite) {
+            favBtn.classList.add('active');
+            favBtn.querySelector('span').style.fontVariationSettings = "'FILL' 1";
+        } else {
+            favBtn.classList.remove('active');
+            favBtn.querySelector('span').style.fontVariationSettings = "'FILL' 0";
         }
     }
 }
