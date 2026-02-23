@@ -8,7 +8,7 @@
 
     <!-- PWA -->
     <link rel="manifest" href="manifest.webmanifest">
-    <meta name="theme-color" content="#064E3B">
+    <meta name="theme-color" content="#EA580C">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -33,21 +33,21 @@
     <style>
         /* ─── M3 Token System ─────────────────────────── */
         :root {
-            /* Esmeralda — igual que index y login */
-            --md-primary: #064E3B;
-            --md-primary-dim: #003324;
+            /* Naranja — igual que index y login */
+            --md-primary: #EA580C;
+            --md-primary-dim: #9A3412;
             --md-on-primary: #FFFFFF;
-            --md-primary-container: #D1FAE5;
-            --md-on-primary-container: #064E3B;
+            --md-primary-container: #FFEDD5;
+            --md-on-primary-container: #EA580C;
 
             --md-surface: #FAFAFA;
-            --md-surface-1: #F0FDF4;
-            --md-surface-2: #DCFCE7;
-            --md-surface-variant: #F1F5F1;
+            --md-surface-1: #FFF7ED;
+            --md-surface-2: #FFEDD5;
+            --md-surface-variant: #FFF4ED;
             --md-on-surface: #1C1B1B;
-            --md-on-surface-var: #3D5A47;
-            --md-outline: #64748B;
-            --md-outline-var: #CBD5E1;
+            --md-on-surface-var: #57443D;
+            --md-outline: #857570;
+            --md-outline-var: #FDE6D2;
 
             --md-error: #BA1A1A;
             --md-error-container: #FFDAD6;
@@ -129,7 +129,7 @@
         }
 
         .m3-nav-item:hover {
-            background: rgba(255, 107, 53, .08);
+            background: rgba(234, 88, 12, .08);
             color: var(--md-primary);
         }
 
@@ -585,7 +585,7 @@
         }
 
         .m3-add-btn:hover {
-            background: rgba(255, 107, 53, .08);
+            background: rgba(234, 88, 12, .08);
         }
 
         .m3-add-btn .material-symbols-outlined {
@@ -741,7 +741,7 @@
 
         .m3-fab-save:hover {
             background: var(--md-primary-dim);
-            box-shadow: 0 6px 16px rgba(255, 107, 53, .35);
+            box-shadow: 0 6px 16px rgba(234, 88, 12, .35);
         }
 
         .m3-fab-save:active {
@@ -1260,11 +1260,11 @@
 
     <!-- Register Service Worker (PWA) -->
     <script>
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("/sw.js")
-          .then(r => console.log("SW registered:", r.scope))
-          .catch(e => console.warn("SW registration failed:", e));
-      }
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/sw.js")
+                .then(r => console.log("SW registered:", r.scope))
+                .catch(e => console.warn("SW registration failed:", e));
+        }
     </script>
 </body>
 

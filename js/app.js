@@ -241,7 +241,7 @@ async function renderRecipeGrid() {
     if (!recipes || recipes.length === 0) {
         grid.innerHTML = `
             <div class="empty-state col-span-2">
-                <span class="material-symbols-outlined text-5xl">menu_book</span>
+                <span class="material-symbols-outlined text-5xl">restaurant</span>
                 <p>Aún no tienes recetas</p>
                 <button class="btn-primary" onclick="window.navigateTo('add-recipe')">
                     <span class="material-symbols-outlined">add</span>
