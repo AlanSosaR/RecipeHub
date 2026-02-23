@@ -3491,16 +3491,27 @@ select.input-field {
 }
 
 .user-avatar-m3 {
-    width: 48px;
-    height: 48px;
-    border-radius: 24px;
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    /* Expressive M3 Shape */
     background: var(--primary);
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
-    font-size: 18px;
+    font-weight: 800;
+    font-size: 24px;
+    box-shadow:
+        0 4px 12px rgba(16, 185, 129, 0.25),
+        0 0 0 4px white,
+        0 12px 24px -8px rgba(0, 0, 0, 0.15);
+    /* Elevated look */
+    transition: transform 0.3s var(--m3-easing);
+}
+
+.user-avatar-m3:hover {
+    transform: scale(1.05) rotate(2deg);
 }
 
 .user-info-m3 {
@@ -3509,9 +3520,10 @@ select.input-field {
 }
 
 .user-greeting {
-    font-weight: 700;
-    color: var(--primary);
-    font-size: 14px;
+    font-weight: 800;
+    color: #000000;
+    font-size: 16px;
+    letter-spacing: -0.2px;
 }
 
 .user-status {
@@ -3839,10 +3851,10 @@ html[data-auth-likely="true"] #dashboard-app {
 .list-header-m3 {
     height: 48px;
     border-bottom: 1px solid var(--outline-variant);
-    color: var(--on-surface-variant);
+    color: #000000;
     font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
 }
 
 .file-row-m3 {
@@ -4137,7 +4149,9 @@ html[data-auth-likely="true"] #dashboard-app {
         z-index: 102;
         box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
     }
-}.snackbar-actions {
+}
+
+.snackbar-actions {
     display: flex;
     gap: 8px;
 }
@@ -4145,7 +4159,8 @@ html[data-auth-likely="true"] #dashboard-app {
 .snackbar-btn {
     background: transparent;
     border: none;
-    color: #34D399; /* Emerald 400 */
+    color: #34D399;
+    /* Emerald 400 */
     font-weight: 700;
     font-size: 14px;
     cursor: pointer;
