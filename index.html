@@ -31,15 +31,11 @@
     <link rel="stylesheet" href="css/responsive.css">
 
     <script>
-        // Anti-flicker: Hide landing immediately if user was likely logged in
-        if (localStorage.getItem('sb-auth-token') || localStorage.getItem('supabase.auth.token')) {
-            document.documentElement.classList.add('auth-likely');
-            window.addEventListener('DOMContentLoaded', () => {
-                const landing = document.getElementById('landing-section');
-                if (landing) landing.classList.add('hidden');
-                const dashboard = document.getElementById('dashboard-app');
-                if (dashboard) dashboard.classList.remove('hidden');
-            });
+        // Anti-flicker: Improved logic to prevent landing page flicker
+        const hasSession = Object.keys(localStorage).some(key => key.includes('auth-token'));
+        if (hasSession) {
+            document.documentElement.setAttribute('data-auth-likely', 'true');
+            // We use a CSS rule to hide the landing if this attribute is present
         }
     </script>
 

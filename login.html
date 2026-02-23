@@ -475,7 +475,15 @@
                 if (isLogin) {
                     const res = await window.authManager.signIn(email, password);
                     if (res.success) {
-                        window.location.href = 'index.html';
+                        if (window.showSnackbar) {
+                            window.showSnackbar("Ha iniciado sesión en RecipeHub");
+                        } else if (window.utils && window.utils.showToast) {
+                            window.utils.showToast("Ha iniciado sesión en RecipeHub", "success");
+                        }
+
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1500);
                     } else {
                         throw new Error(res.error);
                     }

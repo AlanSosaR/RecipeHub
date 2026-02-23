@@ -60,4 +60,21 @@ window.utils = {
     formatDate: window.formatDate
 };
 
+/**
+ * Muestra el Snackbar M3 Premium
+ */
+window.showSnackbar = (message, duration = 4000) => {
+    const snackbar = document.getElementById('global-snackbar');
+    if (!snackbar) return;
+
+    const messageEl = snackbar.querySelector('.message');
+    if (messageEl) messageEl.textContent = message;
+
+    snackbar.classList.add('active');
+
+    setTimeout(() => {
+        snackbar.classList.remove('active');
+    }, duration);
+};
+
 console.log('✅ Utilidades inicializadas');

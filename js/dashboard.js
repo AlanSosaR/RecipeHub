@@ -28,6 +28,7 @@ class DashboardManager {
             }
 
             console.log('✅ Modo Dashboard: Usuario detectado:', window.authManager.currentUser);
+            document.documentElement.setAttribute('data-auth-likely', 'true');
             if (landingEl) landingEl.classList.add('hidden');
             if (dashboardEl) dashboardEl.classList.remove('hidden');
 
