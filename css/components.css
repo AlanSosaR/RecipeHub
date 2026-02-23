@@ -2085,7 +2085,7 @@ select.input-field {
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
-    color: #FFFFFF;
+    color: #10B981;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2148,7 +2148,7 @@ select.input-field {
 .detail-hero.no-image .btn-action-circle {
     background: var(--surface-variant);
     border-color: var(--outline-variant);
-    color: var(--on-surface);
+    color: #10B981;
 }
 
 .detail-hero.no-image .hero-overlay {
@@ -2160,7 +2160,7 @@ select.input-field {
     height: 48px;
     background: #FFFFFF;
     border-radius: 50%;
-    color: var(--on-surface);
+    color: #10B981;
     display: flex;
     align-items: center;
     justify-content: center;
