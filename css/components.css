@@ -2001,11 +2001,11 @@ select.input-field {
 }
 
 .detail-hero.no-image {
-    height: 100px;
+    height: auto;
     background: var(--surface) !important;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid var(--outline-variant);
+    display: block;
+    align-items: stretch;
+    border-bottom: none;
 }
 
 .detail-hero.no-image .hero-overlay {
@@ -2047,10 +2047,20 @@ select.input-field {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.8) 100%);
 }
 
+.detail-action-bar {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    z-index: 100;
+    transition: background 0.3s;
+}
+
 .btn-back {
-    position: absolute;
-    top: 24px;
-    left: 24px;
     width: 48px;
     height: 48px;
     background: rgba(255, 255, 255, 0.2);
@@ -2061,9 +2071,8 @@ select.input-field {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.2s, background 0.2s;
 }
 
 .btn-back:hover {
@@ -2072,12 +2081,39 @@ select.input-field {
 }
 
 .hero-actions {
-    position: absolute;
-    top: 24px;
-    right: 24px;
     display: flex;
     gap: 12px;
-    z-index: 10;
+}
+
+.btn-action-circle {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.detail-hero.no-image .detail-action-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--outline-variant);
+}
+
+.detail-hero.no-image .btn-back,
+.detail-hero.no-image .btn-action-circle {
+    background: var(--surface-variant);
+    border-color: var(--outline-variant);
+    color: var(--on-surface);
+}
+
+.detail-hero.no-image .hero-overlay {
+    background: none;
 }
 
 .btn-action-circle {
@@ -2153,15 +2189,29 @@ select.input-field {
     background: #FFFFFF;
     border-top-left-radius: 32px;
     border-top-right-radius: 32px;
-    margin-top: -32px;
+    margin-top: -48px;
     position: relative;
-    z-index: 10;
-    padding: 32px;
+    z-index: 20;
+    padding: 32px 24px;
     max-width: 900px;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
     box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 767px) {
+    .detail-main {
+        padding: 24px 20px;
+        margin-top: -40px;
+    }
+
+    .recipe-detail-app.no-image .detail-main {
+        margin-top: 0;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        padding-top: 12px;
+    }
 }
 
 .detail-tabs {
