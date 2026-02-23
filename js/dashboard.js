@@ -57,7 +57,7 @@ class DashboardManager {
         // Actualizar saludo en sidebar
         const sidebarGreeting = document.getElementById('sidebar-user-greeting');
         if (sidebarGreeting) {
-            sidebarGreeting.textContent = `Hola, ${user.first_name || 'Chef'}`;
+            sidebarGreeting.textContent = `Chef ${user.first_name || ''}`;
         }
 
         // Actualizar iniciales
