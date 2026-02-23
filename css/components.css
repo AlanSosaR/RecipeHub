@@ -1196,7 +1196,7 @@ select.input-field {
 
 .sidebar {
     width: 260px;
-    background: var(--surface);
+    background: #FFFFFF;
     border-right: 1px solid var(--outline);
     display: flex;
     flex-direction: column;
@@ -1263,12 +1263,15 @@ select.input-field {
     font-size: 20px;
     font-weight: 800;
     font-family: var(--font-display);
-    color: #FF7A50;
 }
 
-.sidebar-logo .material-symbols-outlined {
+.sidebar-logo .logo-text {
+    color: var(--logo-orange);
+}
+
+.sidebar-logo .logo-icon {
     font-size: 32px;
-    color: #FF7A50;
+    color: var(--primary);
 }
 
 .sidebar-nav {

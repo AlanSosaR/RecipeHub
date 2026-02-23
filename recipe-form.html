@@ -34,20 +34,20 @@
         /* ─── M3 Token System ─────────────────────────── */
         :root {
             /* Naranja — igual que index y login */
-            --md-primary: #EA580C;
-            --md-primary-dim: #9A3412;
+            --md-primary: #10B981;
+            --md-primary-dim: #059669;
             --md-on-primary: #FFFFFF;
-            --md-primary-container: #FFEDD5;
-            --md-on-primary-container: #EA580C;
+            --md-primary-container: #F0FDF4;
+            --md-on-primary-container: #059669;
 
-            --md-surface: #FAFAFA;
-            --md-surface-1: #FFF7ED;
-            --md-surface-2: #FFEDD5;
-            --md-surface-variant: #FFF4ED;
+            --md-surface: #FFFFFF;
+            --md-surface-1: #FFFFFF;
+            --md-surface-2: #F9FAFB;
+            --md-surface-variant: #F9FAFB;
             --md-on-surface: #1C1B1B;
-            --md-on-surface-var: #57443D;
-            --md-outline: #857570;
-            --md-outline-var: #FDE6D2;
+            --md-on-surface-var: #444746;
+            --md-outline: #E5E7EB;
+            --md-outline-var: #E5E7EB;
 
             --md-error: #BA1A1A;
             --md-error-container: #FFDAD6;
@@ -111,6 +111,10 @@
             font-size: 28px;
         }
 
+        .m3-sidebar .brand .brand-name {
+            color: var(--logo-orange);
+        }
+
         .m3-nav-item {
             display: flex;
             align-items: center;
@@ -129,7 +133,7 @@
         }
 
         .m3-nav-item:hover {
-            background: rgba(234, 88, 12, .08);
+            background: rgba(16, 185, 129, .08);
             color: var(--md-primary);
         }
 
@@ -585,7 +589,7 @@
         }
 
         .m3-add-btn:hover {
-            background: rgba(234, 88, 12, .08);
+            background: rgba(16, 185, 129, .08);
         }
 
         .m3-add-btn .material-symbols-outlined {
@@ -868,8 +872,8 @@
     <!-- ── Sidebar ── -->
     <nav class="m3-sidebar">
         <div class="brand">
-            <span class="material-symbols-outlined">cooking</span>
-            RecipeHub
+            <span class="material-symbols-outlined">menu_book</span>
+            <span class="brand-name">RecipeHub</span>
         </div>
 
         <a class="m3-nav-item" href="index.html">
