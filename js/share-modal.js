@@ -90,13 +90,12 @@ class ShareModalManager {
         this.suggestionsContainer.classList.remove('hidden');
 
         try {
-            const currentUser = window.authManager.currentUser;
-            const currentProfileId = await this.getCurrentProfileId(currentUser.id);
+            const currentAuthUser = window.authManager.currentUser;
 
             const { data: users, error } = await window.supabaseClient
                 .rpc('search_users', {
                     query: query,
-                    current_user_id: currentProfileId
+                    current_auth_user_id: currentAuthUser?.id || null
                 });
 
             if (error) throw error;
@@ -125,7 +124,7 @@ class ShareModalManager {
             .select('id')
             .eq('auth_user_id', authUserId)
             .single();
-        return data?.id || authUserId;
+        return data?.id;
     }
 
     renderSuggestions(users) {

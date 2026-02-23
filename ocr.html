@@ -26,38 +26,38 @@
 
     <style>
         :root {
-            --md-surface: #141414;
-            --md-surface-1: #1c1c1e;
-            --md-on-surface: #E8E8E8;
-            --md-on-surface-var: #aaaaaa;
-            --md-primary: #f97316;
-            --md-primary-container: rgba(249, 115, 22, 0.15);
-            --md-on-primary-container: #f97316;
-            --md-surface-variant: #1c1c1e;
-            --md-outline-var: #3a3a3a;
-            --md-outline: #555555;
-            --md-elev-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.2);
-            --md-elev-2: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 6px 2px rgba(0, 0, 0, 0.2);
+            --md-surface: #FFFFFF;
+            --md-surface-1: #F9FAFB;
+            --md-on-surface: #1B1B1F;
+            --md-on-surface-var: #444746;
+            --md-primary: #10B981;
+            --md-primary-container: #F0FDF4;
+            --md-on-primary-container: #059669;
+            --md-surface-variant: #F9FAFB;
+            --md-outline-var: #E5E7EB;
+            --md-outline: #C4C7C5;
+            --md-elev-1: 0 1px 2px rgba(0, 0, 0, 0.05), 0 1px 3px 1px rgba(0, 0, 0, 0.1);
+            --md-elev-2: 0 1px 2px rgba(0, 0, 0, 0.05), 0 2px 6px 2px rgba(0, 0, 0, 0.1);
             --md-shape-full: 9999px;
             --md-shape-xl: 28px;
             --md-shape-lg: 16px;
             --md-shape-md: 12px;
-            --md-error: #cf6679;
+            --md-error: #B3261E;
 
-            /* Legacy support */
-            --primary: #f97316;
-            --primary-light: rgba(249, 115, 22, 0.12);
-            --secondary: #fb923c;
-            --surface: #141414;
-            --surface-container-low: #1c1c1e;
-            --outline-variant: #3a3a3a;
-            --on-surface-variant: #aaaaaa;
-            --logo-orange: #f97316;
+            /* Legacy compatibility */
+            --primary: #10B981;
+            --primary-light: #F0FDF4;
+            --secondary: #34D399;
+            --surface: #FFFFFF;
+            --surface-container-low: #FFFFFF;
+            --outline-variant: #E5E7EB;
+            --on-surface-variant: #444746;
+            --logo-orange: #EA580C;
         }
 
         body {
             font-family: var(--font-body);
-            background: #141414;
+            background: #FFFFFF;
             color: var(--md-on-surface);
             height: 100dvh;
             overflow: hidden;
@@ -72,7 +72,7 @@
             flex-direction: column;
             height: 100%;
             overflow: hidden;
-            background: #141414;
+            background: #FFFFFF;
         }
 
         /* ─── Top App Bar ─────────────────────────────── */
@@ -84,7 +84,7 @@
             justify-content: space-between;
             padding: 0 24px;
             border-bottom: 1px solid var(--md-outline-var);
-            background: #1c1c1e;
+            background: #FFFFFF;
         }
 
         .m3-top-bar .left {
@@ -98,13 +98,14 @@
             height: 40px;
             border-radius: var(--md-shape-full);
             border: 1.5px solid var(--md-outline-var);
-            background: #2a2a2a;
+            background: #FFFFFF;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             color: var(--md-primary);
             transition: all .2s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
 
         .m3-icon-btn:hover {
@@ -128,7 +129,7 @@
             overflow-x: hidden;
             padding: 32px 24px;
             scroll-behavior: smooth;
-            background: #141414;
+            background: #FFFFFF;
         }
 
         .ocr-container {
@@ -231,14 +232,14 @@
             width: 100%;
             min-height: 300px;
             padding: 16px;
-            border: 1px solid var(--md-outline-var);
+            border: 1px solid #E5E7EB;
             border-radius: 16px;
             font-family: 'Inter', sans-serif;
             font-size: 14px;
             line-height: 1.6;
             resize: vertical;
-            background: var(--md-surface-1);
-            color: var(--md-on-surface);
+            background: #F9FAFB;
+            color: #1B1B1F;
         }
 
         .confidence-badge {
@@ -283,11 +284,12 @@
         }
 
         .parsed-section {
-            background: #1c1c1e;
+            background: white;
             padding: 20px;
             border-radius: 20px;
             margin-bottom: 16px;
-            border: 1px solid var(--md-outline-var);
+            border: 1px solid #F3F4F6;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
         }
 
         .parsed-item {
@@ -343,17 +345,17 @@
             width: 100%;
             padding: 12px 16px;
             border-radius: 12px;
-            border: 1px solid var(--md-outline-var);
+            border: 1px solid #D1D5DB;
             font-size: 14px;
             transition: border-color 0.2s;
-            background: #141414;
-            color: var(--md-on-surface);
+            background: white;
+            color: #1B1B1F;
         }
 
         .form-input:focus {
             outline: none;
             border-color: var(--md-primary);
-            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
 
         .header-fixed {
@@ -394,7 +396,7 @@
     </style>
 </head>
 
-<body style="background-color: #141414;">
+<body style="background-color: #FFFFFF;">
     <!-- Sidebar Overlay -->
     <div id="sidebar-overlay" class="sidebar-overlay"></div>
 
@@ -522,9 +524,9 @@
                     </div>
 
                     <div
-                        style="margin-top: 32px; padding: 20px; background: #1c1c1e; border-radius: 20px; border: 1px solid #3a3a3a;">
+                        style="margin-top: 32px; padding: 20px; background: white; border-radius: 20px; border: 1px solid #F3F4F6;">
                         <p
-                            style="font-size: 14px; color: var(--md-on-surface); font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                            style="font-size: 14px; color: #374151; font-weight: 600; display: flex; align-items: center; gap: 8px;">
                             <span class="material-symbols-outlined"
                                 style="font-size: 18px; color: #F59E0B;">lightbulb</span>
                             Consejos Pro:
