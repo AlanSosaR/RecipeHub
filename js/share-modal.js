@@ -235,10 +235,25 @@ class ShareModalManager {
 
             if (error) throw error;
 
-            // Notificación local para demo
-            const recipe = window.dashboard
-                ? window.dashboard.currentRecipes.find(r => r.id === this.recipeId)
-                : null;
+            // 2. Crear notificaciones en la BD para cada receptor
+            const notifications = this.selectedUsers.map(user => ({
+                user_id: user.id,
+                type: 'recipe_shared',
+                recipe_id: this.recipeId,
+                from_user_id: ownerProfileId,
+                leido: false
+            }));
+
+            await window.supabaseClient
+                .from('notifications')
+                .insert(notifications);
+
+            window.showSnackbar(`✅ Compartido con ${names}`, 4000);
+
+            // Si estamos en la vista de compartidos, recargar
+            if (window.dashboard && window.dashboard.currentView === 'shared') {
+                window.dashboard.loadRecipes({ shared: true });
+            }
 
             if (recipe && window.notificationManager) {
                 window.notificationManager.simulateNotificationReceived(recipe, permissionValue);

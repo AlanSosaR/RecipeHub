@@ -43,10 +43,11 @@ class DatabaseManager {
                     images:recipe_images(id, image_url, is_primary)
                 `)
             if (filters.shared) {
+                // Obtener IDs de recetas compartidas conmigo o por mí
                 const { data: sharedData, error: sharedError } = await window.supabaseClient
                     .from('shared_recipes')
-                    .select('recipe_id')
-                    .eq('recipient_user_id', window.authManager.currentUser.id);
+                    .select('recipe_id, owner_user_id, recipient_user_id, permission, status')
+                    .or(`recipient_user_id.eq.${window.authManager.currentUser.id},owner_user_id.eq.${window.authManager.currentUser.id}`);
 
                 if (sharedError) throw sharedError;
 
@@ -54,6 +55,9 @@ class DatabaseManager {
                 if (sharedIds.length === 0) {
                     return { success: true, recipes: [], fromCache: false };
                 }
+
+                // Mapeo para identificar si es recibida o enviada después
+                this._tempSharedData = sharedData;
                 query = query.in('id', sharedIds);
             } else {
                 query = query.eq('user_id', window.authManager.currentUser.id);
@@ -82,12 +86,23 @@ class DatabaseManager {
 
             if (error) throw error;
 
-            // Procesar imágenes
-            const recipes = data.map(recipe => ({
-                ...recipe,
-                primaryImage: recipe.images?.find(img => img.is_primary)?.image_url || null,
-                totalImages: recipe.images?.length || 0
-            }));
+            // Procesar imágenes y metadata de compartidos
+            const recipes = data.map(recipe => {
+                const sharedInfo = this._tempSharedData?.find(s => s.recipe_id === recipe.id);
+                const isReceived = sharedInfo?.recipient_user_id === window.authManager.currentUser.id;
+                const isSent = sharedInfo?.owner_user_id === window.authManager.currentUser.id;
+
+                return {
+                    ...recipe,
+                    primaryImage: recipe.images?.find(img => img.is_primary)?.image_url || null,
+                    totalImages: recipe.images?.length || 0,
+                    sharingContext: sharedInfo ? (isReceived ? 'received' : 'sent') : null,
+                    sharedPermission: sharedInfo?.permission || null
+                };
+            });
+
+            // Limpiar data temporal
+            this._tempSharedData = null;
 
             // Guardar en caché solo si no hay filtros activos
             if (!filters.search && !filters.categoryId && !filters.favorite) {

@@ -17,6 +17,11 @@ class DashboardManager {
             // 1. Verificar autenticación silenciosamente
             const isAuthenticated = await window.authManager.checkAuth();
 
+            // Inicializar notificaciones si hay autenticación
+            if (isAuthenticated && window.notificationManager) {
+                await window.notificationManager.init();
+            }
+
             const landingEl = document.getElementById('landing-section');
             const dashboardEl = document.getElementById('dashboard-app');
 
@@ -266,7 +271,10 @@ class DashboardManager {
                 <div class="col-category">
                     <span class="badge-tag">General</span>
                 </div>
-                <div class="col-access">Solo tú</div>
+                <div class="col-access">
+                    ${recipe.sharingContext === 'received' ? '<span style="color: var(--secondary); font-weight: 600;">Recibida</span>' :
+                recipe.sharingContext === 'sent' ? '<span style="color: var(--primary); font-weight: 600;">Compartida</span>' : 'Solo tú'}
+                </div>
                 <div class="col-date">${date}</div>
                 <div class="col-actions">
                     <div class="row-actions-dropbox">
