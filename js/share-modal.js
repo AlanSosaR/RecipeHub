@@ -148,7 +148,16 @@ class ShareModalManager {
         const permission = document.getElementById('share-permission').value;
         const names = this.selectedUsers.map(u => u.name).join(', ');
 
-        // Mock de envío
+        // Obtener datos de la receta
+        const recipe = window.dashboard
+            ? window.dashboard.currentRecipes.find(r => r.id === this.recipeId)
+            : null;
+
+        // Enviar notificación simulada al "destinatario" (en este caso el mismo usuario para demo)
+        if (recipe && window.notificationManager) {
+            window.notificationManager.simulateNotificationReceived(recipe, permission);
+        }
+
         window.utils.showToast(`✅ Compartido con ${names}`, 'success');
         this.close();
     }

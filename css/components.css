@@ -4502,3 +4502,148 @@ html[data-auth-likely="true"] #dashboard-app {
 .btn-copy-link .material-symbols-outlined {
     font-size: 20px;
 }
+
+/* ─── Notifications System ─── */
+.notifications-wrapper {
+    position: relative;
+}
+
+.badge-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 10px;
+    height: 10px;
+    background: #f97316;
+    /* Color naranja RecipeHub */
+    border: 2px solid #1B1B1F;
+    border-radius: 50%;
+}
+
+.notifications-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 12px;
+    width: 320px;
+    background: #1c1c1e;
+    border: 1px solid #3a3a3a;
+    border-radius: 16px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+    z-index: 4000;
+    overflow: hidden;
+    animation: menuFadeIn 200ms ease forwards;
+}
+
+@keyframes menuFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.notifications-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+.notifications-header h4 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.notifications-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    padding: 16px 20px;
+    border-bottom: 1px solid #3a3a3a;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    gap: 12px;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item:hover {
+    background: #2a2a2c;
+}
+
+.notification-icon-container {
+    width: 40px;
+    height: 40px;
+    background: #2a2a2a;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.notification-icon-container .material-symbols-outlined {
+    color: #f97316;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+    display: block;
+}
+
+.notification-desc {
+    font-size: 12px;
+    color: #aaaaaa;
+}
+
+.notification-meta {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+}
+
+.btn-notif-action {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-notif-primary {
+    background: #f97316;
+    color: white;
+}
+
+.btn-notif-secondary {
+    background: #3a3a3a;
+    color: white;
+}
+
+.notifications-empty {
+    padding: 32px 20px;
+    text-align: center;
+    color: #aaaaaa;
+}
+
+.notifications-empty p {
+    font-size: 13px;
+    margin: 0;
+}

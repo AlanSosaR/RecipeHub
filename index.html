@@ -424,9 +424,23 @@
                 </div>
 
                 <div class="top-bar-actions-m3">
-                    <button class="btn-icon-m3">
-                        <span class="material-symbols-outlined">notifications</span>
-                    </button>
+                    <div class="notifications-wrapper">
+                        <button id="btn-notifications" class="btn-icon-m3"
+                            onclick="window.notificationManager.toggleMenu(event)">
+                            <span class="material-symbols-outlined">notifications</span>
+                            <span id="notifications-badge" class="badge-dot hidden"></span>
+                        </button>
+                        <div id="notifications-menu" class="notifications-menu hidden">
+                            <div class="notifications-header">
+                                <h4>Notificaciones</h4>
+                            </div>
+                            <div id="notifications-list" class="notifications-list">
+                                <div class="notifications-empty">
+                                    <p>No tienes notificaciones nuevas</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </header>
             <div class="main-content-scroll">
@@ -561,6 +575,7 @@
         <script src="js/db.js?v=2"></script>
         <script src="js/utils.js?v=2"></script>
         <script src="js/share-modal.js?v=2"></script>
+        <script src="js/notifications.js?v=2"></script>
         <script src="js/dashboard.js?v=2"></script>
 
         <script>
