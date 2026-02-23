@@ -60,14 +60,18 @@ class RecipeDetailManager {
             heroEl.style.backgroundImage = `url(${recipe.primaryImage})`;
             heroEl.classList.remove('no-image');
             if (appEl) appEl.classList.remove('no-image');
+            heroEl.style.display = 'block'; // Mostrar si hay imagen
         } else {
             heroEl.style.backgroundImage = 'none';
             heroEl.classList.add('no-image');
             if (appEl) appEl.classList.add('no-image');
+            heroEl.style.display = 'block'; // Mostrar diseño compacto
         }
 
-        // Finalize render by showing hero (it might be hidden during loading)
-        heroEl.style.opacity = '1';
+        // Finalize render by showing hero
+        setTimeout(() => {
+            heroEl.style.opacity = '1';
+        }, 50);
 
         // Text data
         const titleMobile = document.getElementById('recipeTitleMobile');
@@ -165,17 +169,17 @@ class RecipeDetailManager {
     }
 
     async confirmDelete() {
-        if (confirm('¿Estás seguro de que deseas eliminar esta receta? Esta acción no se puede deshacer.')) {
+        window.showActionSnackbar('¿Seguro que desea eliminar la receta?', 'ELIMINAR', async () => {
             const result = await window.db.deleteRecipe(this.recipeId);
             if (result.success) {
-                window.showToast('Receta eliminada con éxito', 'success');
+                window.showToast('Receta eliminada correctamente', 'success');
                 setTimeout(() => {
                     window.location.href = 'index.html';
                 }, 1000);
             } else {
                 window.showToast('Error al eliminar la receta', 'error');
             }
-        }
+        });
     }
 
     // switchTab removed - No longer needed for unified view

@@ -64,17 +64,60 @@ window.utils = {
  * Muestra el Snackbar M3 Premium
  */
 window.showSnackbar = (message, duration = 4000) => {
-    const snackbar = document.getElementById('global-snackbar');
-    if (!snackbar) return;
+    let snackbar = document.getElementById('global-snackbar');
+    if (!snackbar) {
+        snackbar = document.createElement('div');
+        snackbar.id = 'global-snackbar';
+        snackbar.className = 'snackbar-m3';
+        snackbar.innerHTML = `
+            <div class="snackbar-content">
+                <span class="material-symbols-outlined icon">info</span>
+                <span class="message"></span>
+            </div>
+            <div class="snackbar-actions"></div>
+        `;
+        document.body.appendChild(snackbar);
+    }
 
     const messageEl = snackbar.querySelector('.message');
     if (messageEl) messageEl.textContent = message;
 
+    // Remove any previous action button
+    const actionsEl = snackbar.querySelector('.snackbar-actions');
+    if (actionsEl) actionsEl.innerHTML = '';
+
     snackbar.classList.add('active');
 
+    if (duration > 0) {
+        setTimeout(() => {
+            snackbar.classList.remove('active');
+        }, duration);
+    }
+};
+
+/**
+ * Muestra un Snackbar con un botón de acción
+ */
+window.showActionSnackbar = (message, actionText, onAction) => {
+    window.showSnackbar(message, 0); // duration 0 means it stays until action or manual close
+    const snackbar = document.getElementById('global-snackbar');
+    const actionsEl = snackbar.querySelector('.snackbar-actions');
+
+    const btn = document.createElement('button');
+    btn.className = 'snackbar-btn';
+    btn.textContent = actionText;
+    btn.onclick = () => {
+        snackbar.classList.remove('active');
+        if (onAction) onAction();
+    };
+
+    actionsEl.appendChild(btn);
+
+    // Auto-close after a bit if no action taken? No, better keep it for confirmation.
+    // But let's add a close timer anyway just in case.
     setTimeout(() => {
         snackbar.classList.remove('active');
-    }, duration);
+    }, 10000);
 };
 
 console.log('✅ Utilidades inicializadas');

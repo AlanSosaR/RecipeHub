@@ -2000,6 +2000,8 @@ select.input-field {
     background-repeat: no-repeat;
     opacity: 0;
     transition: opacity 0.3s ease;
+    display: none;
+    /* Oculto hasta que se decida si hay imagen */
 }
 
 .detail-hero.no-image {
@@ -2108,12 +2110,18 @@ select.input-field {
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
-    color: #FFFFFF;
+    color: #10b981;
+    /* Iconos verdes */
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: transform 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.btn-back {
+    color: #10b981;
+    /* Icono verde */
 }
 
 .btn-action-circle.btn-delete:hover {
@@ -4129,4 +4137,24 @@ html[data-auth-likely="true"] #dashboard-app {
         z-index: 102;
         box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
     }
+}.snackbar-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.snackbar-btn {
+    background: transparent;
+    border: none;
+    color: #34D399; /* Emerald 400 */
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background 0.2s;
+    text-transform: uppercase;
+}
+
+.snackbar-btn:hover {
+    background: rgba(52, 211, 153, 0.1);
 }
