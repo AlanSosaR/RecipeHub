@@ -2008,6 +2008,20 @@ select.input-field {
     border-bottom: none;
 }
 
+@media (min-width: 1024px) {
+    .recipe-detail-app.no-image .detail-hero {
+        background: var(--surface);
+    }
+
+    .recipe-detail-app.no-image .detail-action-bar {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 100;
+        border-bottom: 1px solid var(--outline-variant);
+    }
+}
+
 .detail-hero.no-image .hero-overlay {
     background: none;
 }

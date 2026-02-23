@@ -225,6 +225,32 @@
         height: 100vh;
         overflow-y: auto;
     }
+
+    /* Override: Single column when there is NO photo */
+    .recipe-detail-app.no-image {
+        flex-direction: column;
+        background: #FFFFFF;
+    }
+
+    .recipe-detail-app.no-image .detail-hero {
+        width: 100%;
+        height: auto;
+        position: static;
+    }
+
+    .recipe-detail-app.no-image .detail-main {
+        height: auto;
+        padding: 48px;
+        max-width: 1000px;
+        margin: 0 auto;
+        overflow-y: visible;
+    }
+
+    .recipe-detail-app.no-image .detail-action-bar {
+        padding: 24px 48px;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
 }
 
 /* ─── Login ─────────────────────────────────────────────────────── */
