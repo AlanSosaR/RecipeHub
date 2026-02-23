@@ -578,10 +578,14 @@
                     category_id: '463d1444-c8e1-42ac-86ed-1fac331cd821', // Categoría General por defecto
                     ocr_raw_text: rawText,
                     ocr_confidence: ocrResults.confidence,
-                    created_from_ocr: true
+                    created_from_ocr: true,
+                    pantry_es: '' // Campo inicial vacío para consistencia
                 });
 
-                if (!recipeRes.success) throw new Error(recipeRes.error);
+                if (!recipeRes.success) {
+                    console.error('❌ Error OCR createRecipe:', recipeRes.error);
+                    throw new Error(recipeRes.error);
+                }
                 const recipeId = recipeRes.recipe.id;
 
                 // 2. Ingredientes

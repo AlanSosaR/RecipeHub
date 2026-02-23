@@ -52,6 +52,7 @@ class RecipeFormManager {
             const form = document.getElementById('recipeForm');
             form.name.value = r.name_es;
             form.description.value = r.description_es || '';
+            if (form.pantry) form.pantry.value = r.pantry_es || '';
 
             // Imagen
             if (r.images && r.images.length > 0) {
@@ -219,6 +220,7 @@ class RecipeFormManager {
             const recipeData = {
                 name_es: form.name.value,
                 description_es: form.description.value,
+                pantry_es: form.pantry ? form.pantry.value : '',
                 category_id: generalCat ? generalCat.id : null
             };
 
@@ -232,7 +234,10 @@ class RecipeFormManager {
                 recipeId = result.recipe?.id;
             }
 
-            if (!result.success) throw new Error(result.error);
+            if (!result.success) {
+                console.error('❌ Error de creación/actualización:', result.error);
+                throw new Error(result.error);
+            }
 
             // 1. Guardar Imagen si hay una nueva
             if (this.selectedImage) {

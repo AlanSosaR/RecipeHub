@@ -333,7 +333,6 @@ class DatabaseManager {
                     recipe_id: recipeId,
                     image_url: publicUrl,
                     file_size: file.size,
-                    mime_type: file.type,
                     is_primary: false
                 }])
                 .select()

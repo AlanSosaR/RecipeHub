@@ -962,6 +962,12 @@
                             <label for="description">Descripción</label>
                         </div>
 
+                        <!-- Pantry Content -->
+                        <div class="m3-field textarea">
+                            <textarea id="pantry" name="pantry_es" placeholder=" " rows="2"></textarea>
+                            <label for="pantry">Despensa (Notas sobre ingredientes)</label>
+                        </div>
+
                         <div class="divider" style="height:1px; background:var(--md-outline-var); margin:32px 0;"></div>
 
                         <!-- Ingredients -->
@@ -1265,7 +1271,7 @@
     <!-- Register Service Worker (PWA) -->
     <script>
         if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("/sw.js")
+            navigator.serviceWorker.register("./sw.js")
                 .then(r => console.log("SW registered:", r.scope))
                 .catch(e => console.warn("SW registration failed:", e));
         }

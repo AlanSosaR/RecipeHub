@@ -69,6 +69,16 @@ class RecipeDetailManager {
         if (titleDesktop) titleDesktop.textContent = recipe.name_es;
         document.getElementById('recipeDescription').textContent = recipe.description_es || 'Sin descripción';
 
+        // Pantry Content
+        const pantrySection = document.getElementById('pantrySection');
+        const pantryEl = document.getElementById('recipePantry');
+        if (recipe.pantry_es) {
+            pantrySection.style.display = 'block';
+            pantryEl.textContent = recipe.pantry_es;
+        } else {
+            pantrySection.style.display = 'none';
+        }
+
         // Difficulty removed from UI
 
         // Date
