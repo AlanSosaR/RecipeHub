@@ -63,8 +63,12 @@ ol {
     align-items: center;
     justify-content: space-between;
     margin-bottom: var(--space-lg);
-    padding: 0 0.25rem;
+    padding: 12px 0.25rem;
     padding-left: clamp(1rem, 4vw, 3.5rem);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: #fff;
 }
 
 .dashboard-header h3 {
@@ -643,7 +647,7 @@ ol {
 }
 
 .list-header-m3 {
-    background: var(--surface);
+    background: #fff;
     border-bottom: 1px solid var(--outline-variant);
     color: var(--on-surface-variant);
     font-size: 11px;
@@ -651,8 +655,21 @@ ol {
     text-transform: uppercase;
     letter-spacing: 0.12em;
     position: sticky;
-    top: 0;
+    top: 48px;
     z-index: 10;
+}
+
+.recipe-list-body {
+    display: block;
+    overflow-y: auto;
+    max-height: calc(100vh - 160px);
+}
+
+/* Maintain grid layout for alignment while applying sticky behavior */
+.list-header-m3,
+.recipe-list-body .file-row-m3 {
+    display: grid;
+    width: 100%;
 }
 
 .file-row-m3 {
@@ -3876,24 +3893,34 @@ html[data-auth-likely="true"] #dashboard-app {
 }
 
 /* Grid Layout Definition */
-.list-header-m3,
-.file-row-m3 {
+.list-header-m3 {
     display: grid;
     grid-template-columns: 56px 1fr 140px 120px 160px 80px;
     align-items: center;
     padding: 0 16px;
-}
-
-.list-header-m3 {
     height: 48px;
     border-bottom: 1px solid var(--outline-variant);
-    color: #000000;
+    color: #000;
     font-size: 11px;
     font-weight: 900;
     letter-spacing: 0.8px;
+    position: sticky;
+    top: 48px;
+    z-index: 10;
+    background: #fff;
 }
 
-.file-row-m3 {
+.recipe-list-body {
+    display: block;
+    overflow-y: auto;
+    max-height: calc(100vh - 160px);
+}
+
+.recipe-list-body .file-row-m3 {
+    display: grid;
+    grid-template-columns: 56px 1fr 140px 120px 160px 80px;
+    align-items: center;
+    padding: 0 16px;
     height: 56px;
     border-bottom: 1px solid var(--outline-variant);
     cursor: pointer;
@@ -4551,13 +4578,20 @@ html[data-auth-likely="true"] #dashboard-app {
 
 .badge-dot {
     position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 10px;
-    height: 10px;
-    background: #00A676;
-    border: 2px solid #1a1a1a;
+    top: -4px;
+    right: -4px;
+    background: #ff3b30;
+    color: #ffffff;
     border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    z-index: 2;
 }
 
 .notifications-menu {

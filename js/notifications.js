@@ -35,27 +35,37 @@ class NotificationManager {
             const user = window.authManager.currentUser;
             if (!user) return;
 
+            // Buscamos notificaciones y unimos con shared_recipes para ver el permiso actual
             const { data, error } = await window.supabaseClient
                 .from('notifications')
                 .select(`
                     *,
                     from_user:users!from_user_id(first_name, last_name, email),
-                    recipe:recipes(id, name_es)
+                    recipe:recipes(id, name_es),
+                    shared_info:shared_recipes!recipe_id(permission, recipient_user_id)
                 `)
                 .eq('user_id', user.id)
+                .is('leido', false)
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
 
-            this.notifications = data.map(n => ({
-                id: n.id,
-                recipeId: n.recipe_id,
-                recipeName: n.recipe?.name_es || 'Receta compartida',
-                permission: n.type === 'recipe_shared' ? 'view' : 'view', // logic for permission if needed
-                timestamp: n.created_at,
-                sender: [n.from_user?.first_name, n.from_user?.last_name].filter(Boolean).join(' ') || n.from_user?.email || 'Alguien',
-                leido: n.leido
-            }));
+            this.notifications = data.map(n => {
+                // Encontrar el permiso específico para este usuario y receta
+                const shareInfo = Array.isArray(n.shared_info)
+                    ? n.shared_info.find(s => s.recipient_user_id === user.id)
+                    : n.shared_info;
+
+                return {
+                    id: n.id,
+                    recipeId: n.recipe_id,
+                    recipeName: n.recipe?.name_es || 'Receta compartida',
+                    permission: shareInfo?.permission || 'view',
+                    timestamp: n.created_at,
+                    sender: [n.from_user?.first_name, n.from_user?.last_name].filter(Boolean).join(' ') || n.from_user?.email || 'Alguien',
+                    leido: n.leido
+                };
+            });
 
             this.updateBadge();
         } catch (err) {
@@ -75,9 +85,7 @@ class NotificationManager {
                 table: 'notifications',
                 filter: `user_id=eq.${user.id}`
             }, payload => {
-                console.log('🔔 Nueva notificación recibida:', payload);
                 this.fetchNotifications();
-                // Opcional: mostrar toast
                 window.utils.showToast('¡Has recibido una nueva receta!', 'info');
             })
             .subscribe();
@@ -88,7 +96,7 @@ class NotificationManager {
         const unreadCount = this.notifications.filter(n => !n.leido).length;
         if (unreadCount > 0) {
             this.badge.classList.remove('hidden');
-            this.badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+            this.badge.textContent = unreadCount;
         } else {
             this.badge.classList.add('hidden');
         }
@@ -102,28 +110,9 @@ class NotificationManager {
         if (isHidden) {
             this.renderMenu();
             this.menu.classList.remove('hidden');
-            this.markAllAsRead();
+            // Ya no marcamos todo como leído al abrir, solo al hacer clic individual
         } else {
             this.menu.classList.add('hidden');
-        }
-    }
-
-    async markAllAsRead() {
-        const unread = this.notifications.filter(n => !n.leido);
-        if (unread.length === 0) return;
-
-        try {
-            const { error } = await window.supabaseClient
-                .from('notifications')
-                .update({ leido: true })
-                .in('id', unread.map(n => n.id));
-
-            if (error) throw error;
-
-            this.notifications.forEach(n => n.leido = true);
-            this.updateBadge();
-        } catch (err) {
-            console.error('Error marcando como leído:', err);
         }
     }
 
@@ -133,33 +122,59 @@ class NotificationManager {
         if (this.notifications.length === 0) {
             this.list.innerHTML = `
                 <div class="notifications-empty">
-                    <p>No tienes notificaciones</p>
+                    <p>Sin notificaciones</p>
                 </div>
             `;
             return;
         }
 
-        this.list.innerHTML = this.notifications.map(n => `
-            <div class="notification-item ${n.leido ? '' : 'unread'}" onclick="window.notificationManager.handleNotificationClick('${n.id}')">
-                <div class="notification-avatar">
-                    ${n.sender ? n.sender.charAt(0).toUpperCase() : '?'}
+        this.list.innerHTML = this.notifications.map(n => {
+            const permissionText = n.permission === 'view_and_copy'
+                ? '📋 Puedes agregar a tus recetas'
+                : '👁️ Solo puedes ver';
+
+            return `
+                <div class="notification-item ${n.leido ? '' : 'unread'}" onclick="window.notificationManager.handleNotificationClick('${n.id}')" style="background: transparent !important;">
+                    <div class="notification-avatar">
+                        ${n.sender ? n.sender.charAt(0).toUpperCase() : '?'}
+                    </div>
+                    <div class="notification-content">
+                        <span class="notification-main-text" style="color: white; display: block;">${n.sender} compartió una receta</span>
+                        <span class="notification-recipe-name" style="color: #00A676; font-weight: 700; display: block;">${n.recipeName}</span>
+                        <span class="notification-permission" style="color: #888; font-size: 11px; display: block; margin-top: 2px;">${permissionText}</span>
+                        <span class="notification-time" style="color: #666; font-size: 10px; display: block; margin-top: 4px;">${new Date(n.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
                 </div>
-                <div class="notification-content">
-                    <span class="notification-main-text">${n.sender} compartió una receta</span>
-                    <span class="notification-recipe-name">${n.recipeName}</span>
-                    <span class="notification-time">${new Date(n.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     async handleNotificationClick(notificationId) {
         const n = this.notifications.find(n => n.id === notificationId);
         if (!n) return;
 
-        // Abrir la receta
-        window.location.href = `recipe-detail.html?id=${n.recipeId}`;
-        this.menu.classList.add('hidden');
+        try {
+            // 1. Marcar como leída en DB
+            await window.supabaseClient
+                .from('notifications')
+                .update({ leido: true })
+                .eq('id', notificationId);
+
+            // 2. Eliminarla del panel local (según instrucción del usuario)
+            this.notifications = this.notifications.filter(item => item.id !== notificationId);
+
+            // 3. Actualizar UI
+            this.updateBadge();
+            this.renderMenu();
+
+            // 4. Abrir la receta
+            window.location.href = `recipe-detail.html?id=${n.recipeId}`;
+            this.menu.classList.add('hidden');
+        } catch (err) {
+            console.error('Error al procesar click de notificación:', err);
+            // Redirigir de todos modos por UX
+            window.location.href = `recipe-detail.html?id=${n.recipeId}`;
+        }
     }
 }
 
