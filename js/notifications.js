@@ -35,14 +35,17 @@ class NotificationManager {
             const user = window.authManager.currentUser;
             if (!user) return;
 
-            // Buscamos notificaciones y unimos con shared_recipes para ver el permiso actual
+            // Buscamos notificaciones y unimos con shared_recipes a través de recipes para ver el permiso actual
             const { data, error } = await window.supabaseClient
                 .from('notifications')
                 .select(`
                     *,
                     from_user:users!from_user_id(first_name, last_name, email),
-                    recipe:recipes(id, name_es),
-                    shared_info:shared_recipes!recipe_id(permission, recipient_user_id)
+                    recipe:recipes(
+                        id, 
+                        name_es, 
+                        shared_info:shared_recipes(permission, recipient_user_id)
+                    )
                 `)
                 .eq('user_id', user.id)
                 .is('leido', false)
@@ -51,10 +54,11 @@ class NotificationManager {
             if (error) throw error;
 
             this.notifications = data.map(n => {
-                // Encontrar el permiso específico para este usuario y receta
-                const shareInfo = Array.isArray(n.shared_info)
-                    ? n.shared_info.find(s => s.recipient_user_id === user.id)
-                    : n.shared_info;
+                // El shared_info ahora viene anidado en recipe
+                const shareInfoArray = n.recipe?.shared_info || [];
+                const shareInfo = Array.isArray(shareInfoArray)
+                    ? shareInfoArray.find(s => s.recipient_user_id === user.id)
+                    : shareInfoArray;
 
                 return {
                     id: n.id,

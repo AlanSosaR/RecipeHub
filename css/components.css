@@ -3475,6 +3475,7 @@ select.input-field {
 
 .search-container-m3 {
     flex: 1;
+    max-width: 700px; /* Limit its growth as requested */
     display: flex;
     justify-content: center;
 }
