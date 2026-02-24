@@ -495,8 +495,8 @@ class DashboardManager {
                 <span class="material-symbols-outlined">edit</span>
                 ${window.i18n ? window.i18n.t('formEditRecipe') : 'Editar receta'}
             </button>
-            <button class="context-menu-item">
-                <span class="material-symbols-outlined">drive_file_rename_outline</span>
+            <button class="context-menu-item" onclick="window.dashboard.startRename('${recipe.id}', event)">
+                <span class="material-symbols-outlined">edit_square</span>
                 ${window.i18n ? window.i18n.t('rename') : 'Renombrar'}
             </button>
             <button class="context-menu-item" onclick="window.dashboard.toggleFavorite('${recipe.id}', ${recipe.is_favorite})">
@@ -564,6 +564,89 @@ class DashboardManager {
                 window.utils.showToast(window.i18n ? window.i18n.t('deleteError') : 'Error al eliminar la receta', 'error');
             }
         });
+    }
+
+    startRename(recipeId, event) {
+        if (event) event.stopPropagation();
+
+        // Cerrar menú si está abierto
+        const menu = document.querySelector('.dropbox-menu-m3');
+        if (menu) menu.remove();
+
+        const recipe = this.currentRecipes.find(r => r.id === recipeId);
+        if (!recipe) return;
+
+        // Buscar el elemento contenedor (fila o card)
+        const selector = `[onclick*="${recipeId}"]`;
+        const container = document.querySelector(selector);
+        if (!container) return;
+
+        const nameEl = container.querySelector('.recipe-name, .recipe-card-title');
+        if (!nameEl) return;
+
+        const original = nameEl.textContent;
+        const input = document.createElement('input');
+        input.value = original;
+        input.style.cssText = `
+            border: 2px solid #1a73e8;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: inherit;
+            font-weight: 500;
+            width: 100%;
+            background: var(--bg);
+            color: var(--on-surface);
+            outline: none;
+            box-sizing: border-box;
+        `;
+
+        const save = async () => {
+            if (input.parentNode === null) return; // Ya se guardó o canceló
+
+            const newName = input.value.trim() || original;
+
+            // Restaurar el elemento original inmediatamente para feedback visual
+            const spanOrH4 = document.createElement(nameEl.tagName);
+            spanOrH4.className = nameEl.className;
+            spanOrH4.textContent = newName;
+            input.replaceWith(spanOrH4);
+
+            if (newName !== original) {
+                const result = await window.db.updateRecipe(recipeId, { name_es: newName });
+                if (result.success) {
+                    recipe.name_es = newName;
+                    window.utils.showToast(window.i18n ? window.i18n.t('renameSuccess') : 'Nombre actualizado', 'success');
+                } else {
+                    spanOrH4.textContent = original;
+                    window.utils.showToast(window.i18n ? window.i18n.t('renameError') : 'Error al renombrar', 'error');
+                }
+            }
+        };
+
+        const cancel = () => {
+            if (input.parentNode === null) return;
+            const spanOrH4 = document.createElement(nameEl.tagName);
+            spanOrH4.className = nameEl.className;
+            spanOrH4.textContent = original;
+            input.replaceWith(spanOrH4);
+        };
+
+        nameEl.replaceWith(input);
+        input.focus();
+        input.select();
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                save();
+            }
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                cancel();
+            }
+        });
+
+        input.addEventListener('blur', save);
     }
 }
 
