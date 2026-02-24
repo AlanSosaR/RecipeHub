@@ -78,8 +78,8 @@
             box-shadow:
                 0 24px 48px -12px rgba(0, 0, 0, 0.12),
                 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
-            width: 90%;
-            max-width: 420px;
+            width: min(460px, 92vw);
+            max-width: 460px;
             min-height: 720px;
             border: 1px solid var(--outline-variant);
             display: flex;
@@ -87,7 +87,9 @@
             overflow: hidden;
             position: relative;
             transition: all var(--m3-duration-long) var(--m3-easing);
-            margin: 0 auto;
+            margin: auto;
+            transform: scale(calc(0.67 + (100vw - 480px) / 3000));
+            transform-origin: top center;
         }
 
         /* Language Toggle - Absolute within the card's green header */
@@ -125,13 +127,12 @@
         .curved-header-bg {
             position: absolute;
             top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: clamp(200px, 40vw, 380px);
-            height: clamp(160px, 30vw, 280px);
+            left: 0;
+            right: 0;
+            height: 165px;
             background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-            border-bottom-left-radius: 50%;
-            border-bottom-right-radius: 50%;
+            border-bottom-left-radius: 50% 35%;
+            border-bottom-right-radius: 50% 35%;
             z-index: 1;
             box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2);
         }

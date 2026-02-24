@@ -78,10 +78,28 @@
 
 /* ─── Base Global ────────────────────────────────────────────────── */
 html {
-    font-size: 14px;
-    /* Base para rem */
+    font-size: 9.4px;
+    /* Base 14px * 0.67 */
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 9.4px;
+    }
+}
+
+@media (min-width: 1200px) {
+    html {
+        font-size: 10px;
+    }
+}
+
+@media (min-width: 1440px) {
+    html {
+        font-size: 10.5px;
+    }
 }
 
 body {
