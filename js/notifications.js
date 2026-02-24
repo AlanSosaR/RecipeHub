@@ -141,15 +141,13 @@ class NotificationManager {
 
         this.list.innerHTML = this.notifications.map(n => `
             <div class="notification-item ${n.leido ? '' : 'unread'}" onclick="window.notificationManager.handleNotificationClick('${n.id}')">
-                <div class="notification-icon-container">
-                    <span class="material-symbols-outlined">recipe_box</span>
+                <div class="notification-avatar">
+                    ${n.sender ? n.sender.charAt(0).toUpperCase() : '?'}
                 </div>
                 <div class="notification-content">
-                    <strong class="notification-title">${n.sender} compartió una receta</strong>
-                    <p class="notification-desc">"${n.recipeName}"</p>
-                    <div class="notification-meta">
-                         <span class="notif-time">${new Date(n.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    </div>
+                    <span class="notification-main-text">${n.sender} compartió una receta</span>
+                    <span class="notification-recipe-name">${n.recipeName}</span>
+                    <span class="notification-time">${new Date(n.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
             </div>
         `).join('');

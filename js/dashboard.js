@@ -253,7 +253,7 @@ class DashboardManager {
                 </div>
             `;
             const rows = recipes.map(recipe => this.renderRecipeRow(recipe)).join('');
-            container.innerHTML = header + rows;
+            container.innerHTML = header + `<div class="recipe-list-body">${rows}</div>`;
         }
     }
 
