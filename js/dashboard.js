@@ -40,6 +40,9 @@ class DashboardManager {
             // Actualizar datos de usuario en la UI
             this.updateUserUI();
 
+            // Aplicar tema guardado y actualizar icono
+            if (window.initTheme) window.initTheme();
+
             // 2. Cargar datos iniciales según la vista guardada
             console.log(`📦 Cargando vista: ${this.currentView}...`);
             const activeNavItem = document.querySelector(`.nav-item[data-view="${this.currentView}"]`);
@@ -101,6 +104,14 @@ class DashboardManager {
         const overlay = document.getElementById('sidebar-overlay');
         if (overlay) {
             overlay.addEventListener('click', () => this.toggleSidebar(false));
+        }
+
+        // Tema (Dark Mode)
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                if (window.toggleDarkMode) window.toggleDarkMode();
+            });
         }
     }
 

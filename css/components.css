@@ -3557,7 +3557,7 @@ select.input-field {
 
 .user-greeting {
     font-weight: 800;
-    color: #000000;
+    color: var(--on-surface);
     font-size: 16px;
     letter-spacing: -0.2px;
 }
@@ -3887,7 +3887,7 @@ html[data-auth-likely="true"] #dashboard-app {
 .list-header-m3 {
     height: 48px;
     border-bottom: 1px solid var(--outline-variant);
-    color: #000000;
+    color: var(--on-surface-variant);
     font-size: 11px;
     font-weight: 900;
     letter-spacing: 0.8px;
@@ -4834,5 +4834,17 @@ html[data-auth-likely="true"] #dashboard-app {
 .notifications-empty {
     color: #fff !important;
 }
-.dashboard-header { position: sticky; top: 0; z-index: 20; background: #fff; }
-.list-header-m3 { position: sticky; top: 48px; z-index: 10; background: #fff; }
+
+.dashboard-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--bg);
+}
+
+.list-header-m3 {
+    position: sticky;
+    top: 48px;
+    z-index: 10;
+    background: var(--bg);
+}

@@ -1,18 +1,23 @@
 // UI Helper functions
 
-window.toggleDarkMode = function () {
-    document.documentElement.classList.toggle('dark');
-    const isDark = document.documentElement.classList.contains('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+window.applyTheme = function (theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    const icon = document.getElementById('theme-icon');
+    if (icon) {
+        icon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
+    }
+    localStorage.setItem('theme', theme);
 }
 
 window.initTheme = function () {
-    if (localStorage.getItem('theme') === 'dark' ||
-        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
-    }
+    const saved = localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    window.applyTheme(saved);
+}
+
+window.toggleDarkMode = function () {
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    window.applyTheme(current === 'dark' ? 'light' : 'dark');
 }
 
 window.setupMobileMenu = function () {

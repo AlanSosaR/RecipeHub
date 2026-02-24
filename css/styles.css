@@ -20,15 +20,17 @@
     --secondary-light: #F0FDF4;
     --on-secondary: #064E3B;
 
-    /* Superficies */
-    --bg: #FFFFFF;
-    --surface: #FFFFFF;
-    --surface-variant: #FFFFFF;
-    --surface-card: #FFFFFF;
-    --outline: #E5E7EB;
+    /* Tema dinámico */
+    --bg: #ffffff;
+    --surface: #f5f5f5;
+    --on-surface: #1a1a1a;
+    --on-surface-variant: #555;
+    --border: #eeeeee;
+    --sidebar-bg: #ffffff;
 
-    --text-main: #1F2937;
-    --text-secondary: #6B7280;
+    --text-main: var(--on-surface);
+    --text-secondary: var(--on-surface-variant);
+    --outline: var(--border);
 
     --success: #10B981;
     --warning: #F59E0B;
@@ -60,20 +62,32 @@
     --font-body: 'Inter', sans-serif;
 
     /* Material 3 Tokens */
-    --surface-container-low: #FFFFFF;
-    --surface-container: #FFFFFF;
-    --surface-container-high: #F9FAFB;
-    --secondary-container: #F0FDF4;
-    --on-secondary-container: #059669;
-    --tertiary-container: #F9FAFB;
-    --on-tertiary-container: #1F2937;
-    --outline-variant: #E5E7EB;
-    --on-surface-variant: #444746;
-    --on-surface: #1B1B1F;
+    --surface-container-low: var(--bg);
+    --surface-container: var(--surface);
+    --surface-container-high: var(--surface);
+    --secondary-container: var(--primary-light);
+    --on-secondary-container: var(--primary-dark);
+    --tertiary-container: var(--surface);
+    --on-tertiary-container: var(--on-surface);
+    --outline-variant: var(--border);
 
     /* Transiciones */
     --transition-fast: 150ms ease-out;
     --transition-base: 250ms ease-out;
+}
+
+[data-theme="dark"] {
+    --bg: #0d0d0d;
+    --surface: #1a1a1a;
+    --on-surface: #f0f0f0;
+    --on-surface-variant: #aaaaaa;
+    --border: #2a2a2a;
+    --sidebar-bg: #111111;
+
+    /* Adaptar secundarios */
+    --primary-light: #064E3B;
+    --on-surface-variant: #aaaaaa;
+    --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.5);
 }
 
 /* ─── Base Global ────────────────────────────────────────────────── */
@@ -107,9 +121,9 @@ body {
     font-family: var(--font-body);
     font-size: clamp(13px, 1.1vw, 15px);
     line-height: 1.5;
-    background: var(--surface);
-    color: var(--text-main);
-    transition: background-color .3s ease, color .3s ease;
+    background: var(--bg);
+    color: var(--on-surface);
+    transition: background-color 0.2s ease, color 0.2s ease;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior-y: contain;
@@ -196,8 +210,8 @@ h3 {
 
 /* ─── Layout Drive ────────────────────────────────────────────── */
 .body-drive {
-    background-color: white;
-    color: var(--text-main);
+    background-color: var(--bg);
+    color: var(--on-surface);
     overflow: hidden;
     height: 100vh;
     display: flex;
@@ -206,8 +220,8 @@ h3 {
 .aside-drive {
     width: clamp(160px, 15vw, 220px);
     height: 100%;
-    background: white;
-    border-right: 1px solid #F1F5F9;
+    background: var(--bg);
+    border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     z-index: 20;
@@ -220,12 +234,12 @@ h3 {
     height: 100%;
     position: relative;
     overflow: hidden;
-    background: white;
+    background: var(--bg);
 }
 
 .top-bar-drive {
     padding: 16px 32px;
-    border-bottom: 1px solid #F1F5F9;
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
