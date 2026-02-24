@@ -66,8 +66,8 @@ class RecipeDetailManager {
 
         // Dates
         const dateOptions = { month: 'short', day: 'numeric', year: 'numeric' };
-        const createdDate = new Date(recipe.created_at).toLocaleDateString(isEn ? 'en-US' : 'es-ES', dateOptions);
-        const updatedDate = new Date(recipe.updated_at).toLocaleDateString(isEn ? 'en-US' : 'es-ES', dateOptions);
+        const createdDate = recipe.created_at ? new Date(recipe.created_at).toLocaleDateString(isEn ? 'en-US' : 'es-ES', dateOptions) : '--';
+        const updatedDate = recipe.updated_at ? new Date(recipe.updated_at).toLocaleDateString(isEn ? 'en-US' : 'es-ES', dateOptions) : (recipe.created_at ? createdDate : '--');
 
         const createdEl = document.getElementById('createdDate');
         const updatedEl = document.getElementById('updatedDate');
