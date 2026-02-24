@@ -4694,6 +4694,7 @@ html[data-auth-likely="true"] #dashboard-app {
     font-size: 13px;
     margin: 0;
 }
+
 /* ─── Permission Banner & Copy Button ─── */
 .permission-banner {
     background: #f8f9fa;
@@ -4705,20 +4706,24 @@ html[data-auth-likely="true"] #dashboard-app {
     flex-direction: column;
     gap: 12px;
 }
+
 .permission-info-row {
     display: flex;
     align-items: center;
     gap: 8px;
 }
+
 .permission-banner .material-symbols-outlined {
     color: #64748b;
     font-size: 20px;
 }
+
 .permission-banner .text {
     font-size: 13px;
     color: #475569;
     font-weight: 500;
 }
+
 .btn-copy-recipe {
     background: #00A676;
     color: white;
@@ -4735,23 +4740,87 @@ html[data-auth-likely="true"] #dashboard-app {
     transition: all 0.2s;
     width: fit-content;
 }
+
 .btn-copy-recipe:hover {
     background: #008f65;
     transform: translateY(-1px);
 }
 
-/* ─── Notification Bell Mobile Styles ─── */
+/* ─── Mobile Header Spacing & Styles (max-width: 768px) ─── */
 @media (max-width: 768px) {
-  .notifications-wrapper .btn-icon-m3 {
-    width: 36px; height: 36px;
-    display: flex; align-items: center; justify-content: center;
-    background: #f0f0f0; border-radius: 50%;
-  }
-  .notifications-wrapper .btn-icon-m3 span {
-    font-size: 20px; color: #00A676;
-  }
-  .notifications-wrapper .badge-dot {
-    width: 16px; height: 16px;
-    font-size: 9px; top: -2px; right: -2px;
-  }
+    .top-bar-m3 {
+        padding: 12px 16px !important;
+        /* 16px horizontal padding */
+        gap: 8px !important;
+        background: #fff;
+        margin-bottom: 8px;
+        height: 64px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    .hamburger-btn {
+        display: flex !important;
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        margin: 0;
+    }
+
+    .search-container-m3 {
+        flex: 1;
+        margin: 0;
+    }
+
+    .search-wrapper-m3 {
+        height: 40px !important;
+        border-radius: 20px !important;
+        padding: 0 12px !important;
+        gap: 8px !important;
+        max-width: none !important;
+    }
+
+    .search-wrapper-m3 input {
+        font-size: 14px;
+        width: 100%;
+    }
+
+    .notifications-wrapper {
+        margin: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .notifications-wrapper .btn-icon-m3 {
+        width: 36px !important;
+        height: 36px !important;
+        background: #e8f7f2 !important;
+        /* Specific brand light background */
+        color: #00A676 !important;
+        /* Icon color */
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border: none;
+        padding: 0;
+    }
+
+    .notifications-wrapper .btn-icon-m3 span {
+        font-size: 20px !important;
+        color: inherit !important;
+    }
+
+    .notifications-wrapper .badge-dot {
+        width: 10px !important;
+        height: 10px !important;
+        top: 4px !important;
+        right: 4px !important;
+        background: var(--primary);
+        border: 2px solid white;
+    }
 }
