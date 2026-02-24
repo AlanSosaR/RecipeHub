@@ -59,9 +59,9 @@ class ShareModalManager {
         this.renderChips();
         this.updateShareButton();
 
-        const recipe = window.dashboard ? window.dashboard.currentRecipes.find(r => r.id === recipeId) : null;
-        if (recipe) {
-            document.getElementById('share-modal-title').textContent = `Compartir "${recipe.name_es}"`;
+        this.currentRecipe = window.dashboard ? window.dashboard.currentRecipes.find(r => r.id === recipeId) : null;
+        if (this.currentRecipe) {
+            document.getElementById('share-modal-title').textContent = `Compartir "${this.currentRecipe.name_es}"`;
             document.getElementById('share-modal-size').textContent = "1.56 KB";
         }
 
@@ -255,11 +255,9 @@ class ShareModalManager {
                 window.dashboard.fetchCompartidas();
             }
 
-            if (recipe && window.notificationManager) {
-                window.notificationManager.simulateNotificationReceived(recipe, permissionValue);
+            if (this.currentRecipe && window.notificationManager) {
+                window.notificationManager.simulateNotificationReceived(this.currentRecipe, permissionValue);
             }
-
-            window.showSnackbar(`✅ Compartido con ${names}`, 4000);
 
             // Pequeño retraso antes de cerrar para que el usuario lea el mensaje o vea el estado
             setTimeout(() => {
