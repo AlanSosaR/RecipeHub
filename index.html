@@ -40,65 +40,56 @@
     </script>
 
     <style>
-        /* ─── Material 3 Expressive Landing Design ─── */
+        /* ─── RecipeHub Glassmorphism Landing ─── */
         :root {
             --m3-easing: cubic-bezier(0.2, 0.0, 0, 1.0);
             --m3-duration-long: 500ms;
+            --primary-green: #00A676;
+            --primary-green-light: #e8f7f2;
+            --text-black: #1B1B1F;
+            --text-grey: #888;
+            --font-display: 'Epilogue', sans-serif;
+            --font-body: 'Inter', sans-serif;
         }
 
         body {
             margin: 0;
             padding: 0;
-            background-color: #F0FDF4;
-            /* Emerald 50 */
-            background-image:
-                radial-gradient(circle at top right, rgba(16, 185, 129, 0.12), transparent 60%),
-                radial-gradient(circle at bottom left, rgba(5, 150, 105, 0.08), transparent 60%);
+            background-color: #f8f9fa;
             min-height: 100dvh;
             font-family: var(--font-body);
         }
 
         .mode-landing-wrapper {
             width: 100%;
-            max-width: 100%;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
             overflow-x: hidden;
-            padding: clamp(20px, 4vh, 48px) 0;
+            background: #f8f9fa;
         }
 
-
-        .landing-card-expressive {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px) saturate(180%);
-            border-radius: 32px;
-            box-shadow:
-                0 24px 48px -12px rgba(0, 0, 0, 0.12),
-                0 0 0 1px rgba(255, 255, 255, 0.6) inset;
-            width: min(460px, 92vw);
-            max-width: 460px;
-            min-height: 720px;
-            border: 1px solid var(--outline-variant);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+        /* 1. HERO */
+        .landing-hero {
+            background: var(--primary-green);
+            height: 260px;
+            width: 100%;
+            border-bottom-left-radius: 40% 15%;
+            border-bottom-right-radius: 40% 15%;
             position: relative;
-            transition: all var(--m3-duration-long) var(--m3-easing);
-            margin: auto;
-            transform: scale(calc(0.67 + (100vw - 480px) / 3000));
-            transform-origin: top center;
+            display: flex;
+            justify-content: center;
+            z-index: 1;
         }
 
-        /* Language Toggle - Absolute within the card's green header */
+        /* Language Toggle - Absolute within hero */
         .language-toggle {
             position: absolute;
             top: 20px;
             right: 20px;
             z-index: 150;
-            /* Above the icon badge */
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(8px);
             padding: 6px 14px;
@@ -119,55 +110,25 @@
             transform: scale(1.05);
         }
 
-        /* Curved Header Landing */
-
-
-
-        /* Curved Header Landing */
-        .curved-header-bg {
+        /* Círculo blanco centrado */
+        .hero-circle {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 165px;
-            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-            border-bottom-left-radius: 50% 35%;
-            border-bottom-right-radius: 50% 35%;
-            z-index: 1;
-            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2);
-        }
-
-        .view-content {
-            position: relative;
-            z-index: 10;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-            width: 100%;
-            box-sizing: border-box;
-            transition: all 0.4s var(--m3-easing);
-        }
-
-        .landing-icon-badge {
-            margin-top: 60px;
-            width: clamp(80px, 12vw, 130px);
-            height: clamp(80px, 12vw, 130px);
+            bottom: -90px;
+            width: 180px;
+            height: 180px;
             background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-            border: 4px solid #F0FDF4;
-            position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            z-index: 100;
         }
 
-        .landing-icon-inner {
-            width: 60%;
-            height: 60%;
-            background: var(--secondary);
+        .hero-circle-inner {
+            width: 110px;
+            height: 110px;
+            background: var(--primary-green);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -176,37 +137,73 @@
             box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
+        /* 2. TARJETA BLANCA */
+        .landing-white-card {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            margin: -40px 16px 0 16px;
+            width: min(420px, 92vw);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+            position: relative;
+            text-align: center;
+        }
+
+        .landing-title {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-black);
+            margin: 100px 0 4px 0;
+        }
+
+        .landing-title .dot {
+            color: var(--primary-green);
+        }
+
+        .landing-subtitle {
+            font-size: 16px;
+            color: var(--text-grey);
+            font-weight: 500;
+            margin: 0 0 24px 0;
+            line-height: 1.4;
+        }
+
+        /* 3. CARDS 2 columnas */
         .features-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 12px;
             width: 100%;
-            margin: 32px 0;
+            margin-bottom: 24px;
         }
 
-        .feature-item {
-            background: white;
-            padding: clamp(14px, 2vw, 24px);
-            border-radius: 20px;
-            border: 1px solid var(--outline-variant);
+        .feature-card {
+            padding: 16px;
+            border-radius: 16px;
+            border: 1px solid #eee;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            transition: all 0.2s;
-            font-size: clamp(12px, 1.2vw, 15px);
+            background: white;
+            transition: transform 0.2s;
         }
 
-        .feature-item:hover {
-            border-color: var(--secondary);
+        .feature-card:hover {
             transform: translateY(-2px);
         }
 
-        .feature-icon-box {
+        .feature-icon-circle {
             width: 44px;
             height: 44px;
-            background: var(--primary-light);
-            color: var(--secondary);
+            background: var(--primary-green-light);
+            color: var(--primary-green);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -214,61 +211,51 @@
             margin-bottom: 12px;
         }
 
-        .feature-item h3 {
-            font-size: 14px;
+        .feature-card h3 {
+            font-size: 13px;
             font-weight: 700;
             margin: 0 0 4px 0;
-            color: var(--on-surface);
+            color: var(--text-black);
         }
 
-        .feature-item p {
+        .feature-card p {
             font-size: 11px;
-            color: var(--on-surface-variant);
+            color: var(--text-grey);
             margin: 0;
         }
 
-        .btn-m3-full {
+        /* 4. BOTÓN COMENZAR */
+        .btn-comenzar {
             width: 100%;
-            height: auto;
-            min-height: 48px;
-            padding: clamp(8px, 1vw, 12px) clamp(14px, 2vw, 24px);
-            border-radius: 28px;
-            border: none;
+            background: var(--primary-green);
+            color: white;
             font-weight: 700;
-            font-size: clamp(14px, 1.2vw, 17px);
+            border-radius: 16px;
+            padding: 14px;
+            border: none;
             cursor: pointer;
-            transition: all 0.3s var(--m3-easing);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
-            color: white;
-            box-shadow: 0 12px 24px -6px rgba(16, 185, 129, 0.3);
-            margin-top: auto;
+            gap: 8px;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: all 0.3s var(--m3-easing);
+            box-shadow: 0 8px 24px rgba(0, 166, 118, 0.25);
         }
 
-        .btn-m3-full:hover {
+        .btn-comenzar:hover {
+            filter: brightness(0.9);
             transform: translateY(-2px);
-            box-shadow: 0 16px 32px -6px rgba(5, 150, 105, 0.4);
-            filter: brightness(1.1);
+            box-shadow: 0 12px 32px rgba(0, 166, 118, 0.35);
         }
 
-        .btn-m3-text {
-            background: transparent;
-            color: var(--secondary);
-            font-size: 14px;
-            font-weight: 600;
-            margin-top: 16px;
-            width: 100%;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            text-align: center;
+        .btn-comenzar:active {
+            transform: scale(0.98);
         }
 
-        .btn-m3-text:hover {
-            text-decoration: underline;
+        .fade-m3 {
+            animation: m3-fade-up 0.6s var(--m3-easing) forwards;
         }
 
         @keyframes m3-fade-up {
@@ -283,15 +270,11 @@
             }
         }
 
-        .fade-m3 {
-            animation: m3-fade-up 0.6s var(--m3-easing) forwards;
-        }
-
         .hidden {
             display: none !important;
         }
 
-        /* Initial state to prevent flicker */
+        /* Prevent flicker */
         #landing-section:not(.hidden)~#dashboard-app {
             display: none;
         }
@@ -300,55 +283,49 @@
 
 <body class="body-drive">
     <div id="landing-section" class="mode-landing-wrapper">
-        <div class="landing-card-expressive">
-            <!-- Language Switcher INSIDE the card -->
+        <!-- 1. HERO -->
+        <div class="landing-hero">
             <div class="language-toggle" onclick="toggleLanguage()">
                 <span class="material-symbols-outlined" style="font-size: 16px">language</span>
-                <span id="lang-label">EN</span>
+                <span id="lang-label">ES</span>
             </div>
+            <div class="hero-circle">
+                <div class="hero-circle-inner">
+                    <span class="material-symbols-outlined" style="font-size: 60px">menu_book</span>
+                </div>
+            </div>
+        </div>
 
-            <div class="curved-header-bg"></div>
+        <!-- 2. WHITE CARD -->
+        <div id="view-landing" class="landing-white-card fade-m3">
+            <h1 class="landing-title">RecipeHub<span class="dot">.</span></h1>
+            <p id="landing-subtitle" class="landing-subtitle">Tu recetario digital personal.</p>
 
-            <!-- VIEW: LANDING -->
-            <div id="view-landing" class="view-content fade-m3">
-                <div class="landing-icon-badge">
-                    <div class="landing-icon-inner">
-                        <span class="material-symbols-outlined" style="font-size: 64px">menu_book</span>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon-circle">
+                        <span class="material-symbols-outlined">document_scanner</span>
+                    </div>
+                    <div class="feature-text">
+                        <h3 id="feat-ocr-title">Escaneo OCR</h3>
+                        <p id="feat-ocr-desc">Digitaliza recetas en papel</p>
                     </div>
                 </div>
-
-                <h1
-                    style="font-family: var(--font-display); font-size: clamp(28px, 5vw, 42px); font-weight: 800; margin: 32px 0 8px 0; color: var(--on-surface);">
-                    <span style="color: var(--logo-orange);">RecipeHub</span><span
-                        style="color: var(--primary);">.</span>
-                </h1>
-                <p id="landing-subtitle"
-                    style="color: var(--on-surface-variant); font-size: clamp(13px, 1.5vw, 16px); font-weight: 500; text-align: center;">
-                    Your personal digital cookbook.
-                </p>
-
-                <div class="features-grid">
-                    <div class="feature-item">
-                        <div class="feature-icon-box">
-                            <span class="material-symbols-outlined">document_scanner</span>
-                        </div>
-                        <h3 id="feat-ocr-title">OCR Scan</h3>
-                        <p id="feat-ocr-desc">Digitize paper recipes</p>
+                <div class="feature-card">
+                    <div class="feature-icon-circle">
+                        <span class="material-symbols-outlined">restaurant_menu</span>
                     </div>
-                    <div class="feature-item">
-                        <div class="feature-icon-box">
-                            <span class="material-symbols-outlined">restaurant_menu</span>
-                        </div>
-                        <h3 id="feat-plan-title">Meal Plan</h3>
-                        <p id="feat-plan-desc">Organize your week</p>
+                    <div class="feature-text">
+                        <h3 id="feat-plan-title">Plan de Comidas</h3>
+                        <p id="feat-plan-desc">Organiza tu semana</p>
                     </div>
                 </div>
-
-                <button class="btn-m3-full" onclick="window.location.href='login.html'">
-                    <span id="btn-get-started">Get Started</span>
-                    <span class="material-symbols-outlined">arrow_forward</span>
-                </button>
             </div>
+
+            <button class="btn-comenzar" onclick="window.location.href='login.html'">
+                <span id="btn-get-started">Comenzar</span>
+                <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
         </div>
     </div>
 
