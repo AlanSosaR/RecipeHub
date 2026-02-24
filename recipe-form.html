@@ -788,30 +788,30 @@
                 <span id="sidebar-user-initials">CH</span>
             </div>
             <div class="user-info-m3">
-                <span id="sidebar-user-greeting" class="user-greeting">Chef</span>
+                <span id="sidebar-user-greeting" class="user-greeting" data-i18n="chefGreeting">Chef</span>
             </div>
         </div>
 
         <nav class="sidebar-nav">
             <a href="index.html" class="nav-item">
                 <span class="material-symbols-outlined">home</span>
-                <span>Recetas</span>
+                <span data-i18n="navRecipes">Recetas</span>
             </a>
             <a href="index.html?view=favorites" class="nav-item">
                 <span class="material-symbols-outlined">star</span>
-                <span>Favoritos</span>
+                <span data-i18n="navFavorites">Favoritos</span>
             </a>
             <a href="ocr.html" class="nav-item">
                 <span class="material-symbols-outlined">document_scanner</span>
-                <span>Escanear Receta</span>
+                <span data-i18n="navScan">Escanear Receta</span>
             </a>
             <a href="index.html?view=shared" class="nav-item">
                 <span class="material-symbols-outlined">share</span>
-                <span>Compartidas</span>
+                <span data-i18n="navShared">Compartidas</span>
             </a>
             <a href="#" class="nav-item nav-logout-m3" onclick="window.authManager.signOut()">
                 <span class="material-symbols-outlined">logout</span>
-                <span>Cerrar Sesión</span>
+                <span data-i18n="navLogout">Cerrar Sesión</span>
             </a>
         </nav>
 
@@ -830,15 +830,19 @@
         <!-- Top App Bar -->
         <header class="m3-top-bar">
             <div class="left">
-                <button class="m3-icon-btn" onclick="history.back()" title="Volver">
+                <button class="m3-icon-btn" onclick="history.back()" data-i18n-title="navBack" title="Volver">
                     <span class="material-symbols-outlined">arrow_back</span>
                 </button>
-                <h1 id="formTitle">Nueva Receta</h1>
+                <h1 id="formTitle" data-i18n="formNewRecipe">Nueva Receta</h1>
             </div>
-            <div class="right">
+            <div class="right" style="display:flex; gap:8px; align-items:center;">
+                <button class="m3-icon-btn" onclick="window.i18n && window.i18n.toggle()"
+                    data-i18n-title="navToggleLanguage" title="Cambiar idioma">
+                    <span class="material-symbols-outlined">language</span>
+                </button>
                 <button id="btnOCROpen" class="m3-tonal-btn">
                     <span class="material-symbols-outlined" style="font-size:18px">center_focus_strong</span>
-                    <span class="ocr-label">Escanear</span>
+                    <span class="ocr-label" data-i18n="navScan">Escanear</span>
                 </button>
                 <div class="m3-avatar">
                     <div id="userAvatar"
@@ -859,14 +863,14 @@
                     <div class="m3-card">
                         <p class="m3-card-title">
                             <span class="material-symbols-outlined">menu_book</span>
-                            Nueva Receta
+                            <span data-i18n="formNewRecipe">Nueva Receta</span>
                         </p>
 
                         <!-- Image upload -->
                         <div id="imageUploadArea" class="m3-image-upload">
                             <input type="file" id="imageInput" accept="image/*" hidden>
                             <span class="material-symbols-outlined">add_a_photo</span>
-                            <span class="label">Toca para agregar una foto</span>
+                            <span class="label" data-i18n="formImageUpload">Toca para agregar una foto</span>
                             <img id="imagePreview" src="" alt="">
                             <button type="button" id="btnRemoveImage">
                                 <span class="material-symbols-outlined" style="font-size:18px">close</span>
@@ -875,20 +879,23 @@
 
                         <!-- Recipe name -->
                         <div class="m3-field">
-                            <input id="name" name="name_es" type="text" placeholder=" " required autocomplete="off">
-                            <label for="name">Nombre de la receta *</label>
+                            <input id="name" name="name_es" type="text" placeholder=" " required autocomplete="off"
+                                data-i18n-placeholder="placeholderRecipeName">
+                            <label for="name" data-i18n="formNameLabel">Nombre de la receta *</label>
                         </div>
 
                         <!-- Description -->
                         <div class="m3-field textarea">
-                            <textarea id="description" name="description_es" placeholder=" " rows="3"></textarea>
-                            <label for="description">Descripción</label>
+                            <textarea id="description" name="description_es" placeholder=" " rows="3"
+                                data-i18n-placeholder="placeholderDescription"></textarea>
+                            <label for="description" data-i18n="formDescriptionLabel">Descripción</label>
                         </div>
 
                         <!-- Pantry Content -->
                         <div class="m3-field textarea">
-                            <textarea id="pantry" name="pantry_es" placeholder=" " rows="2"></textarea>
-                            <label for="pantry">Despensa (Notas sobre ingredientes)</label>
+                            <textarea id="pantry" name="pantry_es" placeholder=" " rows="2"
+                                data-i18n-placeholder="placeholderPantry"></textarea>
+                            <label for="pantry" data-i18n="formPantryLabel">Despensa (Notas sobre ingredientes)</label>
                         </div>
 
                         <div class="divider" style="height:1px; background:var(--md-outline-var); margin:32px 0;"></div>
@@ -897,11 +904,11 @@
                         <div class="m3-list-header">
                             <h3>
                                 <span class="material-symbols-outlined">grocery</span>
-                                Ingredientes
+                                <span data-i18n="formIngredientsLabel">Ingredientes</span>
                             </h3>
                             <button type="button" class="m3-add-btn" id="btnAddIngredient">
                                 <span class="material-symbols-outlined">add</span>
-                                Añadir
+                                <span data-i18n="formAddIngredient">Añadir</span>
                             </button>
                         </div>
                         <div id="ingredientsList" style="margin-bottom: 32px;"></div>
@@ -912,11 +919,11 @@
                         <div class="m3-list-header">
                             <h3>
                                 <span class="material-symbols-outlined">format_list_numbered</span>
-                                Pasos de preparación
+                                <span data-i18n="formStepsLabel">Pasos de preparación</span>
                             </h3>
                             <button type="button" class="m3-add-btn" id="btnAddStep">
                                 <span class="material-symbols-outlined">add</span>
-                                Añadir
+                                <span data-i18n="formAddStep">Añadir</span>
                             </button>
                         </div>
                         <div id="stepsList"></div>
@@ -926,7 +933,7 @@
                     <div style="display:flex;justify-content:flex-end;margin-top:24px;">
                         <button type="submit" id="btnSave" class="m3-fab-save">
                             <span class="material-symbols-outlined">save</span>
-                            Guardar Receta
+                            <span data-i18n="formSave">Guardar Receta</span>
                         </button>
                     </div>
 
@@ -939,10 +946,11 @@
     <div id="ocrModal">
         <div class="ocr-sheet">
             <div class="ocr-sheet-header">
-                <button type="button" id="btnCloseOCR" class="m3-icon-btn" style="color:#1C1B1B">
+                <button type="button" id="btnCloseOCR" class="m3-icon-btn" style="color:#1C1B1B"
+                    data-i18n-title="ocrClose" title="Cerrar">
                     <span class="material-symbols-outlined">close</span>
                 </button>
-                <h2>Escanear Receta</h2>
+                <h2 data-i18n="ocrTitle">Escanear Receta</h2>
                 <div style="width:40px"></div>
             </div>
 
@@ -971,8 +979,8 @@
                     </div>
                 </div>
                 <!-- Hint -->
-                <p
-                    style="position:absolute;top:16px;left:0;right:0;text-align:center;color:rgba(255,255,255,.85);font-size:13px;font-weight:500;pointer-events:none;text-shadow:0 1px 4px rgba(0,0,0,.5);">
+                <p style="position:absolute;top:16px;left:0;right:0;text-align:center;color:rgba(255,255,255,.85);font-size:13px;font-weight:500;pointer-events:none;text-shadow:0 1px 4px rgba(0,0,0,.5);"
+                    data-i18n="ocrCameraHint">
                     Apunta la cámara a la receta y presiona el botón
                 </p>
                 <!-- Controls bar -->
@@ -981,14 +989,14 @@
                     <!-- Gallery fallback -->
                     <button id="btnGallery"
                         style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px);"
-                        title="Subir imagen desde galería">
+                        data-i18n-title="ocrGalleryTooltip" title="Subir imagen desde galería">
                         <input type="file" id="ocrGalleryInput" accept="image/*" style="display:none">
                         <span class="material-symbols-outlined">photo_library</span>
                     </button>
                     <!-- Main capture button: takes photo and auto-processes -->
                     <button id="btnCapture"
                         style="width:72px;height:72px;border-radius:50%;background:white;border:4px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4);"
-                        title="Capturar y analizar receta">
+                        data-i18n-title="ocrCaptureTooltip" title="Capturar y analizar receta">
                         <div
                             style="width:58px;height:58px;border-radius:50%;background:white;border:2px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;">
                             <span class="material-symbols-outlined"
@@ -998,7 +1006,7 @@
                     <!-- Switch camera -->
                     <button id="btnSwitchCamera"
                         style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px);"
-                        title="Cambiar cámara">
+                        data-i18n-title="ocrSwitchCameraTooltip" title="Cambiar cámara">
                         <span class="material-symbols-outlined">cameraswitch</span>
                     </button>
                 </div>
@@ -1010,27 +1018,29 @@
 
                 <!-- Recipe Name Input (New) -->
                 <div class="m3-field" style="margin-bottom:16px;">
-                    <input id="ocrRecipeName" type="text" placeholder=" ">
-                    <label>Nombre de la receta</label>
+                    <input id="ocrRecipeName" type="text" placeholder=" " data-i18n-placeholder="placeholderRecipeName">
+                    <label data-i18n="formNameLabel">Nombre de la receta</label>
                 </div>
 
-                <h3 style="font-weight:700;margin-bottom:12px;font-size:15px;">Texto Detectado</h3>
+                <h3 style="font-weight:700;margin-bottom:12px;font-size:15px;" data-i18n="ocrTabRaw">Texto Detectado
+                </h3>
                 <div
                     style="background:white;border-radius:16px;padding:16px;border:1px solid #eee;flex:1;display:flex;flex-direction:column;min-height:160px;margin-bottom:16px;">
                     <textarea id="extractedText"
                         style="width:100%;flex:1;border:none;outline:none;font-size:14px;color:#333;background:transparent;resize:none;min-height:140px;"
-                        placeholder="El texto aparecerá aquí..."></textarea>
+                        placeholder="El texto aparecerá aquí..." data-i18n-placeholder="ocrTextPlaceholder"></textarea>
                 </div>
 
                 <div style="display:flex; justify-content:center;">
                     <button id="btnRetryOCR"
-                        style="width:100%;padding:14px;background:white;border:1px solid #ddd;border-radius:14px;font-weight:600;font-size:14px;cursor:pointer;">Reintentar</button>
+                        style="width:100%;padding:14px;background:white;border:1px solid #ddd;border-radius:14px;font-weight:600;font-size:14px;cursor:pointer;"
+                        data-i18n="ocrRetry">Reintentar</button>
                 </div>
 
                 <button id="btnSaveDirectOCR"
                     style="margin-top:12px;width:100%;padding:14px;background:#EA580C;color:white;border:none;border-radius:14px;font-weight:600;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
                     <span class="material-symbols-outlined" style="font-size:18px">cloud_upload</span>
-                    Crear Receta Ahora
+                    <span data-i18n="ocrSave">Crear Receta Ahora</span>
                 </button>
             </div>
 
@@ -1040,7 +1050,7 @@
                 <div
                     style="width:40px;height:40px;border:3px solid #EA580C;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite;">
                 </div>
-                <p style="font-size:14px;font-weight:500;color:#555;">Procesando receta...</p>
+                <p style="font-size:14px;font-weight:500;color:#555;" data-i18n="ocrReading">Procesando receta...</p>
             </div>
         </div>
     </div>
@@ -1064,6 +1074,7 @@
     <script src="js/utils.js?v=2"></script>
     <script src="js/ocr.js?v=2"></script>
     <script src="js/ui.js?v=2"></script>
+    <script src="js/i18n.js?v=2"></script>
     <script src="js/recipe-form.js?v=2"></script>
 
     <script>

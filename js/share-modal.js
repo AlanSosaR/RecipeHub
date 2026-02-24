@@ -61,7 +61,9 @@ class ShareModalManager {
 
         this.currentRecipe = window.dashboard ? window.dashboard.currentRecipes.find(r => r.id === recipeId) : null;
         if (this.currentRecipe) {
-            document.getElementById('share-modal-title').textContent = `Compartir "${this.currentRecipe.name_es}"`;
+            const isEn = window.i18n && window.i18n.getLang() === 'en';
+            const recipeName = isEn ? (this.currentRecipe.name_en || this.currentRecipe.name_es) : this.currentRecipe.name_es;
+            document.getElementById('share-modal-title').textContent = window.i18n ? window.i18n.t('shareRecipeTitle', { recipe: recipeName }) : `Compartir "${recipeName}"`;
             document.getElementById('share-modal-size').textContent = "1.56 KB";
         }
 
@@ -82,9 +84,10 @@ class ShareModalManager {
 
     async handleSearch(query) {
         // Mostrar spinner mientras busca
+        const searchingTxt = window.i18n ? window.i18n.t('searching') : 'Buscando...';
         this.suggestionsContainer.innerHTML = `
             <div style="padding: 16px; text-align: center; color: #aaa; font-size: 13px;">
-                Buscando...
+                ${searchingTxt}
             </div>
         `;
         this.suggestionsContainer.classList.remove('hidden');
@@ -109,9 +112,10 @@ class ShareModalManager {
 
         } catch (err) {
             console.error('Error buscando usuarios:', err);
+            const errorTxt = window.i18n ? window.i18n.t('userSearchError') : 'Error al buscar usuarios';
             this.suggestionsContainer.innerHTML = `
                 <div style="padding: 16px; text-align: center; color: #aaa; font-size: 13px;">
-                    Error al buscar usuarios
+                    ${errorTxt}
                 </div>
             `;
         }
@@ -130,9 +134,10 @@ class ShareModalManager {
 
     renderSuggestions(users) {
         if (users.length === 0) {
+            const noFoundTxt = window.i18n ? window.i18n.t('noUsersFound') : 'No se encontraron usuarios';
             this.suggestionsContainer.innerHTML = `
                 <div style="padding: 16px; text-align: center; color: #aaa; font-size: 13px;">
-                    No se encontraron usuarios
+                    ${noFoundTxt}
                 </div>
             `;
             this.suggestionsContainer.classList.remove('hidden');
@@ -203,7 +208,8 @@ class ShareModalManager {
         const names = this.selectedUsers.map(u => u.name).join(', ');
 
         try {
-            window.setButtonLoading(btnShare, true, 'Compartiendo...');
+            const sharingTxt = window.i18n ? window.i18n.t('sharing') : 'Compartiendo...';
+            window.setButtonLoading(btnShare, true, sharingTxt);
 
             // Intentar recuperar el perfil si no está disponible (puede ser una sesión expirada o no cargada)
             if (!window.authManager.currentUser) {
@@ -248,7 +254,8 @@ class ShareModalManager {
                 .from('notifications')
                 .insert(notifications);
 
-            window.showSnackbar(`✅ Compartido con ${names}`, 4000);
+            const sharedMsg = window.i18n ? window.i18n.t('sharedWith', { names }) : `✅ Compartido con ${names}`;
+            window.showSnackbar(sharedMsg, 4000);
 
             // Si estamos en la vista de compartidos, recargar
             if (window.dashboard && window.dashboard.currentView === 'shared') {
@@ -265,7 +272,8 @@ class ShareModalManager {
 
         } catch (error) {
             console.error('Error compartiendo:', error);
-            window.showSnackbar('Error al compartir la receta', 4000);
+            const errorMsg = window.i18n ? window.i18n.t('shareError') : 'Error al compartir la receta';
+            window.showSnackbar(errorMsg, 4000);
             window.setButtonLoading(btnShare, false);
         }
     }
@@ -275,11 +283,11 @@ class ShareModalManager {
 
         const url = `${window.location.origin}/recipe-detail.html?id=${this.recipeId}`;
         const btnText = this.btnCopy.querySelector('.btn-text');
-        const originalText = "Copiar enlace";
+        const originalText = window.i18n ? window.i18n.t('copyLinkLabel') : "Copiar enlace";
 
         navigator.clipboard.writeText(url).then(() => {
             this.btnCopy.classList.add('copied');
-            if (btnText) btnText.textContent = "✅ Enlace copiado";
+            if (btnText) btnText.textContent = window.i18n ? window.i18n.t('linkCopiedShort') : "✅ Enlace copiado";
 
             setTimeout(() => {
                 this.btnCopy.classList.remove('copied');

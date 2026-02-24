@@ -29,7 +29,8 @@ export async function initProfile() {
 }
 
 function updateProfileUI(profile, email) {
-    document.getElementById('profile-full-name').textContent = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Usuario sin nombre';
+    const unnamedTxt = window.i18n ? window.i18n.t('profileUnnamed') : 'Usuario sin nombre';
+    document.getElementById('profile-full-name').textContent = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || unnamedTxt;
     document.getElementById('profile-email').textContent = email;
     if (profile.collection_name) {
         document.getElementById('profile-collection').textContent = `🍽️ ${profile.collection_name}`;
@@ -77,7 +78,8 @@ function setupProfileListeners(user, profile) {
                     document.getElementById('profile-avatar-img').src = url;
                     document.getElementById('profile-avatar-img').style.display = 'block';
                     document.getElementById('profile-avatar-img').nextElementSibling.style.display = 'none';
-                    showToast('¡Foto actualizada!');
+                    const photoMsg = window.i18n ? window.i18n.t('profilePhotoUpdated') : '¡Foto actualizada!';
+                    showToast(photoMsg);
                 }
             }
         };
@@ -87,9 +89,13 @@ function setupProfileListeners(user, profile) {
     const editNameBtn = document.getElementById('btn-edit-name');
     const editProfileBtn = document.getElementById('btn-profile-edit');
     const handleEdit = async () => {
-        const newFirst = prompt('Nombre:', profile.first_name || '');
-        const newLast = prompt('Apellido:', profile.last_name || '');
-        const newColl = prompt('Nombre de tu colección:', profile.collection_name || 'Mi colección personal');
+        const firstLabel = window.i18n ? window.i18n.t('profileEditFirstName') : 'Nombre:';
+        const lastLabel = window.i18n ? window.i18n.t('profileEditLastName') : 'Apellido:';
+        const collLabel = window.i18n ? window.i18n.t('profileEditCollection') : 'Nombre de tu colección:';
+
+        const newFirst = prompt(firstLabel, profile.first_name || '');
+        const newLast = prompt(lastLabel, profile.last_name || '');
+        const newColl = prompt(collLabel, profile.collection_name || 'Mi colección personal');
 
         if (newFirst !== null && newLast !== null) {
             const { error } = await supabase.from('users')
@@ -106,7 +112,8 @@ function setupProfileListeners(user, profile) {
                 profile.last_name = newLast;
                 profile.collection_name = newColl;
                 updateProfileUI(profile, user.email);
-                showToast('Perfil actualizado');
+                const updateMsg = window.i18n ? window.i18n.t('profileUpdated') : 'Perfil actualizado';
+                showToast(updateMsg);
             }
         }
     };
@@ -124,7 +131,8 @@ function setupProfileListeners(user, profile) {
             a.href = url;
             a.download = `recipes_hub_export_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
-            showToast('Recetas exportadas');
+            const exportMsg = window.i18n ? window.i18n.t('profileExported') : 'Recetas exportadas';
+            showToast(exportMsg);
         };
     }
 
@@ -157,7 +165,8 @@ async function uploadAvatar(file, userId) {
 
     if (uploadError) {
         console.error('Error uploading avatar:', uploadError);
-        showToast('Error al subir imagen', 'error');
+        const uploadErr = window.i18n ? window.i18n.t('profileUploadError') : 'Error al subir imagen';
+        showToast(uploadErr, 'error');
         return null;
     }
 

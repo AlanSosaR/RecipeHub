@@ -49,8 +49,10 @@ window.setButtonLoading = (btn, isLoading, text) => {
  * Formatea una fecha
  */
 window.formatDate = (dateString) => {
+    const lang = (window.i18n && window.i18n.getLang()) || 'es';
+    const locale = lang === 'en' ? 'en-US' : 'es-ES';
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('es-ES', options);
+    return new Date(dateString).toLocaleDateString(locale, options);
 };
 
 // Exportar como objeto utils para retrocompatibilidad

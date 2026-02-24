@@ -293,9 +293,10 @@
 
 <body class="body-drive">
     <div id="landing-section" class="mode-landing-wrapper">
-        <div class="language-toggle" onclick="toggleLanguage()">
+        <div class="language-toggle" onclick="window.i18n && window.i18n.toggle(); updateTranslations()"
+            data-i18n-title="navToggleLanguage" title="Cambiar idioma">
             <span class="material-symbols-outlined" style="font-size: 18px">language</span>
-            <span id="lang-label">ES</span>
+            <span class="lang-label">ES</span>
         </div>
 
         <div class="landing-unified-card">
@@ -311,27 +312,28 @@
             <!-- 2. CONTENT PART -->
             <div id="view-landing" class="content-part">
                 <h1 class="landing-title">RecipeHub<span class="dot">.</span></h1>
-                <p id="landing-subtitle" class="landing-subtitle">Tu recetario digital personal.</p>
+                <p id="landing-subtitle" class="landing-subtitle" data-i18n="landingSubtitle">Tu recetario digital
+                    personal.</p>
 
                 <div class="features-grid">
                     <div class="feature-card">
                         <div class="feature-icon-circle">
                             <span class="material-symbols-outlined">document_scanner</span>
                         </div>
-                        <h3 id="feat-ocr-title">Escaneo OCR</h3>
-                        <p id="feat-ocr-desc">Digitaliza tus recetas</p>
+                        <h3 id="feat-ocr-title" data-i18n="featOcrTitle">Escaneo OCR</h3>
+                        <p id="feat-ocr-desc" data-i18n="featOcrDesc">Digitaliza tus recetas</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon-circle">
                             <span class="material-symbols-outlined">restaurant_menu</span>
                         </div>
-                        <h3 id="feat-plan-title">Plan semanal</h3>
-                        <p id="feat-plan-desc">Organiza tus comidas</p>
+                        <h3 id="feat-plan-title" data-i18n="featPlanTitle">Plan semanal</h3>
+                        <p id="feat-plan-desc" data-i18n="featPlanDesc">Organiza tus comidas</p>
                     </div>
                 </div>
 
                 <button class="btn-comenzar" onclick="window.location.href='login.html'">
-                    <span id="btn-get-started">Comenzar</span>
+                    <span id="btn-get-started" data-i18n="btnGetStarted">Comenzar</span>
                     <span class="material-symbols-outlined">arrow_forward</span>
                 </button>
             </div>
@@ -358,30 +360,30 @@
                     <span id="sidebar-user-initials">CH</span>
                 </div>
                 <div class="user-info-m3">
-                    <span id="sidebar-user-greeting" class="user-greeting">Chef</span>
+                    <span id="sidebar-user-greeting" class="user-greeting" data-i18n="chefGreeting">Chef</span>
                 </div>
             </div>
 
             <nav class="sidebar-nav">
                 <a href="#" class="nav-item active" data-view="recipes">
                     <span class="material-symbols-outlined">home</span>
-                    <span>Recetas</span>
+                    <span data-i18n="navRecipes">Recetas</span>
                 </a>
                 <a href="#" class="nav-item" data-view="favorites">
                     <span class="material-symbols-outlined">star</span>
-                    <span>Favoritos</span>
+                    <span data-i18n="navFavorites">Favoritos</span>
                 </a>
                 <a href="#" class="nav-item" onclick="window.location.href='ocr.html'">
                     <span class="material-symbols-outlined">document_scanner</span>
-                    <span>Escanear Receta</span>
+                    <span data-i18n="navScan">Escanear Receta</span>
                 </a>
                 <a href="#" class="nav-item" data-view="shared">
                     <span class="material-symbols-outlined">share</span>
-                    <span>Compartidas</span>
+                    <span data-i18n="navShared">Compartidas</span>
                 </a>
                 <a href="#" class="nav-item nav-logout-m3" onclick="window.authManager.signOut()">
                     <span class="material-symbols-outlined">logout</span>
-                    <span>Cerrar Sesión</span>
+                    <span data-i18n="navLogout">Cerrar Sesión</span>
                 </a>
             </nav>
 
@@ -406,27 +408,33 @@
                 <div class="search-container-m3">
                     <div class="search-wrapper-m3">
                         <span class="material-symbols-outlined">search</span>
-                        <input type="text" id="searchInput" placeholder="Buscar en mi recetario...">
+                        <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder"
+                            placeholder="Buscar en mi recetario...">
                     </div>
                 </div>
 
                 <div class="top-bar-actions-m3">
-                    <button id="theme-toggle" class="btn-icon-m3" title="Cambiar tema">
+                    <button class="btn-icon-m3" onclick="window.i18n && window.i18n.toggle(); updateTranslations()"
+                        data-i18n-title="navToggleLanguage" title="Cambiar idioma">
+                        <span class="material-symbols-outlined">language</span>
+                    </button>
+                    <button id="theme-toggle" class="btn-icon-m3" data-i18n-title="toggleTheme" title="Cambiar tema">
                         <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
                     </button>
                     <div class="notifications-wrapper">
                         <button id="btn-notifications" class="btn-icon-m3"
-                            onclick="window.notificationManager.toggleMenu(event)">
+                            onclick="window.notificationManager.toggleMenu(event)"
+                            data-i18n-title="navNotificationsTitle" title="Notificaciones">
                             <span class="material-symbols-outlined">notifications</span>
                             <span id="notifications-badge" class="badge-dot hidden"></span>
                         </button>
                         <div id="notifications-menu" class="notifications-menu hidden">
                             <div class="notifications-header">
-                                <h4>Notificaciones</h4>
+                                <h4 data-i18n="notifications">Notificaciones</h4>
                             </div>
                             <div id="notifications-list" class="notifications-list">
                                 <div class="notifications-empty">
-                                    <p>No tienes notificaciones nuevas</p>
+                                    <p data-i18n="noNotifications">No tienes notificaciones nuevas</p>
                                 </div>
                             </div>
                         </div>
@@ -437,7 +445,7 @@
 
 
                 <div class="dashboard-header">
-                    <h3 id="view-title">Mis Recetas</h3>
+                    <h3 id="view-title" data-i18n="myRecipes">Mis Recetas</h3>
 
                     <!-- View Switcher (Dropbox Style Dropdown) -->
                     <div class="view-switcher-m3">
@@ -446,22 +454,22 @@
                             <span id="current-view-icon" class="material-symbols-outlined">view_list</span>
                         </button>
                         <div id="view-mode-menu" class="view-menu-m3 hidden">
-                            <div class="menu-header">Diseño</div>
+                            <div class="menu-header" data-i18n="viewMenuHeader">Diseño</div>
                             <button onclick="window.dashboard.switchDisplayMode('grid', this)" class="menu-item-m3">
                                 <span class="material-symbols-outlined">grid_view</span>
-                                <span>Cuadrícula</span>
+                                <span data-i18n="viewGrid">Cuadrícula</span>
                                 <span class="check material-symbols-outlined">check</span>
                             </button>
                             <button onclick="window.dashboard.switchDisplayMode('grid-large', this)"
                                 class="menu-item-m3">
                                 <span class="material-symbols-outlined">view_module</span>
-                                <span>Cuadrícula grande</span>
+                                <span data-i18n="viewGridLarge">Cuadrícula grande</span>
                                 <span class="check material-symbols-outlined">check</span>
                             </button>
                             <button onclick="window.dashboard.switchDisplayMode('list', this)"
                                 class="menu-item-m3 active">
                                 <span class="material-symbols-outlined">view_list</span>
-                                <span>Lista</span>
+                                <span data-i18n="viewList">Lista</span>
                                 <span class="check material-symbols-outlined">check</span>
                             </button>
                         </div>
@@ -472,7 +480,8 @@
                 <div id="recipesGrid" class="recipes-grid">
                     <div class="loading-inline">
                         <div class="spinner-sm"></div>
-                        <p style="margin-left: 12px; color: var(--text-secondary);">Cargando recetas...</p>
+                        <p style="margin-left: 12px; color: var(--text-secondary);" data-i18n="loadingRecipes">Cargando
+                            recetas...</p>
                     </div>
                 </div>
 
@@ -481,18 +490,21 @@
                     <div style="font-size: 64px; color: #E5E7EB; margin-bottom: 24px;">
                         <span class="material-symbols-outlined" style="font-size: 80px;">folder_open</span>
                     </div>
-                    <h4 style="font-size: 18px; font-weight: 700; color: var(--on-surface);">Aún no tienes recetas</h4>
-                    <p style="color: var(--on-surface-variant); margin-top: 8px;">Comienza digitalizando tus recetas en
+                    <h4 style="font-size: 18px; font-weight: 700; color: var(--on-surface);" data-i18n="noRecipesTitle">
+                        Aún no tienes recetas</h4>
+                    <p style="color: var(--on-surface-variant); margin-top: 8px;" data-i18n="noRecipesDesc">Comienza
+                        digitalizando tus recetas en
                         papel o agrega una manualmente.</p>
                     <button class="btn-primary" style="margin-top: 24px;" onclick="window.location.href='ocr.html'">
                         <span class="material-symbols-outlined">document_scanner</span>
-                        Escanear Receta
+                        <span data-i18n="scanRecipeBtn">Escanear Receta</span>
                     </button>
                 </div>
             </div> <!-- .main-content-scroll close -->
 
             <!-- Floating Action Button (FAB) -->
-            <button class="fab-m3" onclick="window.location.href='recipe-form.html'" aria-label="Nueva Receta">
+            <button class="fab-m3" onclick="window.location.href='recipe-form.html'"
+                data-i18n-aria-label="formNewRecipe" aria-label="Nueva Receta">
                 <span class="material-symbols-outlined">add</span>
             </button>
         </main>
@@ -500,13 +512,13 @@
         <!-- Right Sidebar: Details Panel (Dropbox Style) -->
         <aside id="details-sidebar" class="details-sidebar">
             <div class="details-sidebar-header">
-                <h3>Información</h3>
+                <h3 data-i18n="infoTitle">Información</h3>
                 <!-- Close Button Removed per User Request -->
             </div>
             <div id="details-content" class="details-content">
                 <div class="details-empty">
                     <span class="material-symbols-outlined">info</span>
-                    <p>Selecciona una receta para ver los detalles</p>
+                    <p data-i18n="selectRecipeHint">Selecciona una receta para ver los detalles</p>
                 </div>
             </div>
         </aside>
@@ -514,7 +526,7 @@
             <div class="modal-container share-modal-container">
                 <div class="modal-header">
                     <div class="header-info">
-                        <h3 id="share-modal-title">Compartir archivo</h3>
+                        <h3 id="share-modal-title" data-i18n="shareFile">Compartir archivo</h3>
                         <span id="share-modal-size" class="text-secondary">0 KB</span>
                     </div>
                     <button class="btn-close-modal" onclick="window.shareModal.close()">
@@ -525,30 +537,33 @@
                     <div class="search-section">
                         <div class="chip-input-container">
                             <div id="selected-users-chips" class="chips-list"></div>
-                            <input type="text" id="user-search-input" placeholder="Buscar por nombre o correo…">
+                            <input type="text" id="user-search-input" data-i18n-placeholder="searchUserPlaceholder"
+                                placeholder="Buscar por nombre o correo…">
                         </div>
                         <div id="search-suggestions" class="search-suggestions hidden"></div>
                     </div>
 
                     <div class="permission-section">
                         <div class="select-wrapper">
-                            <label for="share-permission" class="select-label">Permiso:</label>
+                            <label for="share-permission" class="select-label"
+                                data-i18n="permissionLabel">Permiso:</label>
                             <select id="share-permission" class="custom-select">
-                                <option value="view">Solo ver</option>
-                                <option value="add">Agregar a sus recetas</option>
+                                <option value="view" data-i18n="permView">Solo ver</option>
+                                <option value="add" data-i18n="permAdd">Agregar a sus recetas</option>
                             </select>
                             <span class="material-symbols-outlined select-arrow">expand_more</span>
                         </div>
                     </div>
 
-                    <button id="btn-share-submit" class="btn-share-main" disabled onclick="window.shareModal.share()">
+                    <button id="btn-share-submit" class="btn-share-main" disabled onclick="window.shareModal.share()"
+                        data-i18n="shareBtn">
                         Compartir
                     </button>
                 </div>
                 <div class="modal-footer">
                     <button id="btn-copy-link" class="btn-copy-link" onclick="window.shareModal.copyLink()">
                         <span class="material-symbols-outlined">link</span>
-                        <span class="btn-text">Copiar enlace</span>
+                        <span class="btn-text" data-i18n="copyLinkLabel">Copiar enlace</span>
                     </button>
                 </div>
             </div>
@@ -561,77 +576,17 @@
         <script src="js/auth.js?v=2"></script>
         <script src="js/db.js?v=2"></script>
         <script src="js/utils.js?v=2"></script>
+        <script src="js/i18n.js?v=2"></script>
         <script src="js/ui.js?v=2"></script>
         <script src="js/share-modal.js?v=2"></script>
         <script src="js/notifications.js?v=2"></script>
         <script src="js/dashboard.js?v=2"></script>
 
         <script>
-            let currentLang = 'es';
-
-            const pageTranslations = {
-                es: {
-                    landingTitle: "RecipeHub",
-                    landingSubtitle: "Tu recetario digital personal.",
-                    featOcrTitle: "Escaneo OCR",
-                    featOcrDesc: "Digitaliza recetas en papel",
-                    featPlanTitle: "Plan de Comidas",
-                    featPlanDesc: "Organiza tu semana",
-                    btnGetStarted: "Comenzar"
-                },
-                en: {
-                    landingTitle: "RecipeHub",
-                    landingSubtitle: "Your personal digital cookbook.",
-                    featOcrTitle: "OCR Scan",
-                    featOcrDesc: "Digitize paper recipes",
-                    featPlanTitle: "Meal Plan",
-                    featPlanDesc: "Organize your week",
-                    btnGetStarted: "Get Started"
-                }
-            };
-
-            function toggleLanguage() {
-                currentLang = currentLang === 'es' ? 'en' : 'es';
-                localStorage.setItem('preferredLang', currentLang);
-                updateTranslations();
-            }
-
+            // Kept for backward compatibility – i18n.js handles the heavy lifting.
             function updateTranslations() {
-                const t = pageTranslations[currentLang];
-                // Update every piece of text
-                if (document.getElementById('landing-subtitle'))
-                    document.getElementById('landing-subtitle').textContent = t.landingSubtitle;
-
-                if (document.getElementById('feat-ocr-title'))
-                    document.getElementById('feat-ocr-title').textContent = t.featOcrTitle;
-
-                if (document.getElementById('feat-ocr-desc'))
-                    document.getElementById('feat-ocr-desc').textContent = t.featOcrDesc;
-
-                if (document.getElementById('feat-plan-title'))
-                    document.getElementById('feat-plan-title').textContent = t.featPlanTitle;
-
-                if (document.getElementById('feat-plan-desc'))
-                    document.getElementById('feat-plan-desc').textContent = t.featPlanDesc;
-
-                if (document.getElementById('btn-get-started'))
-                    document.getElementById('btn-get-started').textContent = t.btnGetStarted;
-
-
-
-                const label = document.getElementById('lang-label');
-                if (label) label.textContent = currentLang.toUpperCase();
+                if (window.i18n) window.i18n.applyLanguage(window.i18n.getLang());
             }
-
-            window.addEventListener('load', () => {
-                // Restore preference
-                const savedLang = localStorage.getItem('preferredLang');
-                if (savedLang) {
-                    currentLang = savedLang;
-                }
-                updateTranslations();
-                // dashboard.js init() will handle the auth check and view switching
-            });
         </script>
 </body>
 

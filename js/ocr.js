@@ -14,7 +14,8 @@ class OCRProcessor {
     async processImage(imageFile, onProgress) {
         if (typeof Tesseract === 'undefined' && typeof window.Tesseract === 'undefined') {
             console.error('Tesseract is not defined');
-            throw new Error('El sistema de reconocimiento (Tesseract) no se ha cargado correctamente. Por favor, recarga la página.');
+            const err = window.i18n ? window.i18n.t('ocrAnalysisError') : 'El sistema de reconocimiento no se ha cargado.';
+            throw new Error(err);
         }
 
         const tesseractInstance = typeof Tesseract !== 'undefined' ? Tesseract : window.Tesseract;
@@ -167,14 +168,16 @@ class OCRProcessor {
         const allSymbols = [...new Set([...emojis, ...symbols])];
 
         // 3. Document Type & Language
-        const isRecipe = text.toLowerCase().includes('ingrediente') || text.toLowerCase().includes('preparación');
-        const docType = isRecipe ? 'Receta de Cocina' : 'Documento / Texto General';
+        const isRecipe = text.toLowerCase().includes('ingrediente') || text.toLowerCase().includes('preparación') || text.toLowerCase().includes('ingredient') || text.toLowerCase().includes('preparation');
+        const docType = isRecipe
+            ? (window.i18n ? window.i18n.t('ocrDocTypeRecipe') : 'Receta de Cocina')
+            : (window.i18n ? window.i18n.t('ocrDocTypeGeneral') : 'Documento / Texto General');
         const language = this.detectLanguage(text);
 
         // 4. Alertas (Graphed from confidence or formatting issues)
         const alerts = [];
-        if (confidence < 70) alerts.push('Calidad de lectura media/baja: algunos caracteres pueden ser ambiguos.');
-        if (text.length < 50) alerts.push('Texto muy corto: verifique si la captura está completa.');
+        if (confidence < 70) alerts.push(window.i18n ? window.i18n.t('ocrAlertLowConfidence') : 'Calidad de lectura media/baja.');
+        if (text.length < 50) alerts.push(window.i18n ? window.i18n.t('ocrAlertShortText') : 'Texto muy corto.');
 
         return {
             raw: text,
@@ -193,24 +196,30 @@ class OCRProcessor {
         const commonSpanish = ['de', 'la', 'el', 'los', 'con', 'para', 'una', 'ingredientes', 'preparación'];
         const lower = text.toLowerCase();
         const matches = commonSpanish.filter(word => lower.includes(` ${word} `) || lower.startsWith(word)).length;
-        return matches > 2 ? 'Español' : 'Detectado (Auto)';
+        if (matches > 2) return window.i18n ? window.i18n.t('ocrLangEs') : 'Español';
+        return window.i18n ? window.i18n.t('ocrLangAuto') : 'Detectado (Auto)';
     }
 
     generateExhaustiveReport(analysis) {
-        let report = `---
-📄 CONTENIDO EXTRAÍDO:
+        if (!window.i18n) return analysis.raw; // Fallback
+
+        const report = `---
+${window.i18n.t('ocrReportExtracted')}
 ${analysis.raw}
 
 ---
-📊 ELEMENTOS DETECTADOS:
-- Texto: ${analysis.stats.hasText} | Idioma: ${analysis.stats.language}
-- Números: ${analysis.stats.numbersCount} encontrados
-- Emojis/Símbolos: ${analysis.stats.symbols.join(' ') || 'Ninguno'}
-- Tipo de documento: ${analysis.stats.docType}
+${window.i18n.t('ocrReportElements')}
+${window.i18n.t('ocrReportTpl', {
+            hasText: analysis.stats.hasText,
+            language: analysis.stats.language,
+            numCount: analysis.stats.numbersCount,
+            symbols: analysis.stats.symbols.join(' ') || 'None',
+            docType: analysis.stats.docType
+        })}
 
 ---
-⚠️ ALERTAS:
-${analysis.alerts.length > 0 ? analysis.alerts.map(a => '- ' + a).join('\n') : 'Ninguna: Lectura nominal.'}
+${window.i18n.t('ocrReportAlerts')}
+${analysis.alerts.length > 0 ? analysis.alerts.map(a => '- ' + a).join('\n') : window.i18n.t('ocrReportNominal')}
 `;
         return report;
     }
@@ -261,7 +270,7 @@ class OCRScanner {
             }
         } catch (err) {
             console.error('Error al acceder a la cámara:', err);
-            window.showToast('No se pudo acceder a la cámara. Revisa los permisos.', 'error');
+            window.showToast(window.i18n ? window.i18n.t('ocrCameraError') : 'No se pudo acceder a la cámara.', 'error');
         }
     }
 
@@ -312,7 +321,7 @@ class OCRScanner {
 
         } catch (error) {
             console.error('OCR Error:', error);
-            window.showToast('Error al procesar la imagen', 'error');
+            window.showToast(window.i18n ? window.i18n.t('ocrProcessError') : 'Error al procesar la imagen', 'error');
             // On error, restore camera view
             if (preview) { preview.style.display = 'none'; }
             if (video) { video.style.display = 'block'; }

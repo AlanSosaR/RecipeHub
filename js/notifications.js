@@ -63,10 +63,10 @@ class NotificationManager {
                 return {
                     id: n.id,
                     recipeId: n.recipe_id,
-                    recipeName: n.recipe?.name_es || 'Receta compartida',
+                    recipeName: n.recipe?.name_es || (window.i18n ? window.i18n.t('notifSharedRecipe') : 'Receta compartida'),
                     permission: shareInfo?.permission || 'view',
                     timestamp: n.created_at,
-                    sender: [n.from_user?.first_name, n.from_user?.last_name].filter(Boolean).join(' ') || n.from_user?.email || 'Alguien',
+                    sender: [n.from_user?.first_name, n.from_user?.last_name].filter(Boolean).join(' ') || n.from_user?.email || (window.i18n ? window.i18n.t('notifSomebody') : 'Alguien'),
                     leido: n.leido
                 };
             });
@@ -90,7 +90,8 @@ class NotificationManager {
                 filter: `user_id=eq.${user.id}`
             }, payload => {
                 this.fetchNotifications();
-                window.utils.showToast('¡Has recibido una nueva receta!', 'info');
+                const newRecipeMsg = window.i18n ? window.i18n.t('notifNewRecipe') : '¡Has recibido una nueva receta!';
+                window.utils.showToast(newRecipeMsg, 'info');
             })
             .subscribe();
     }
@@ -124,9 +125,10 @@ class NotificationManager {
         if (!this.list) return;
 
         if (this.notifications.length === 0) {
+            const emptyTxt = window.i18n ? window.i18n.t('notifEmpty') : 'Sin notificaciones';
             this.list.innerHTML = `
                 <div class="notifications-empty">
-                    <p>Sin notificaciones</p>
+                    <p>${emptyTxt}</p>
                 </div>
             `;
             return;
@@ -135,8 +137,10 @@ class NotificationManager {
         this.list.innerHTML = this.notifications.map(n => {
             const isCopyable = n.permission === 'view_and_copy';
             const permissionText = isCopyable
-                ? '📋 Puedes agregar a tus recetas'
-                : '👁️ Solo puedes ver · Expira en 7 días';
+                ? (window.i18n ? window.i18n.t('notifCanCopy') : '📋 Puedes agregar a tus recetas')
+                : (window.i18n ? window.i18n.t('notifCanViewOnly') : '👁️ Solo puedes ver · Expira en 7 días');
+
+            const userSharedTxt = window.i18n ? window.i18n.t('notifUserShared', { user: n.sender }) : `${n.sender} compartió una receta`;
 
             return `
                 <div class="notification-item ${n.leido ? '' : 'unread'}" onclick="window.notificationManager.handleNotificationClick('${n.id}')" style="background: transparent !important;">
@@ -144,7 +148,7 @@ class NotificationManager {
                         ${n.sender ? n.sender.charAt(0).toUpperCase() : '?'}
                     </div>
                     <div class="notification-content">
-                        <span class="notification-main-text" style="color: white; display: block;">${n.sender} compartió una receta</span>
+                        <span class="notification-main-text" style="color: white; display: block;">${userSharedTxt}</span>
                         <span class="notification-recipe-name" style="color: #00A676; font-weight: 700; display: block;">${n.recipeName}</span>
                         <span class="notification-permission" style="color: #888; font-size: 11px; display: block; margin-top: 2px;">${permissionText}</span>
                         <span class="notification-time" style="color: #666; font-size: 10px; display: block; margin-top: 4px;">${new Date(n.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>

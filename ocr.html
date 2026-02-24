@@ -424,30 +424,30 @@
                 <span id="sidebar-user-initials">CH</span>
             </div>
             <div class="user-info-m3">
-                <span id="sidebar-user-greeting" class="user-greeting">Chef</span>
+                <span id="sidebar-user-greeting" class="user-greeting" data-i18n="chefGreeting">Chef</span>
             </div>
         </div>
 
         <nav class="sidebar-nav">
             <a href="index.html" class="nav-item">
                 <span class="material-symbols-outlined">home</span>
-                <span>Recetas</span>
+                <span data-i18n="navRecipes">Recetas</span>
             </a>
             <a href="index.html?view=favorites" class="nav-item">
                 <span class="material-symbols-outlined">star</span>
-                <span>Favoritos</span>
+                <span data-i18n="navFavorites">Favoritos</span>
             </a>
             <a href="ocr.html" class="nav-item active">
                 <span class="material-symbols-outlined">document_scanner</span>
-                <span>Escanear Receta</span>
+                <span data-i18n="navScan">Escanear Receta</span>
             </a>
             <a href="index.html?view=shared" class="nav-item">
                 <span class="material-symbols-outlined">share</span>
-                <span>Compartidas</span>
+                <span data-i18n="navShared">Compartidas</span>
             </a>
             <a href="#" class="nav-item nav-logout-m3" onclick="window.authManager.signOut()">
                 <span class="material-symbols-outlined">logout</span>
-                <span>Cerrar Sesión</span>
+                <span data-i18n="navLogout">Cerrar Sesión</span>
             </a>
         </nav>
 
@@ -466,12 +466,16 @@
         <!-- Top App Bar -->
         <header class="m3-top-bar">
             <div class="left">
-                <button class="m3-icon-btn" onclick="goBack()" title="Volver">
+                <button class="m3-icon-btn" onclick="goBack()" data-i18n-title="navBack" title="Volver">
                     <span class="material-symbols-outlined">arrow_back</span>
                 </button>
-                <h1>Escanear Receta</h1>
+                <h1 data-i18n="ocrTitle">Escanear Receta</h1>
             </div>
-            <div class="right">
+            <div class="right" style="display:flex; gap:8px; align-items:center;">
+                <button class="m3-icon-btn" onclick="window.i18n && window.i18n.toggle()"
+                    data-i18n-title="navToggleLanguage" title="Cambiar idioma">
+                    <span class="material-symbols-outlined">language</span>
+                </button>
                 <div class="m3-avatar">
                     <div id="userAvatar"
                         style="width:100%;height:100%;background:var(--md-primary-container);display:flex;align-items:center;justify-content:center;">
@@ -496,10 +500,12 @@
                 <div id="step1" class="ocr-step active">
                     <div style="margin-bottom: 32px;">
                         <h2 class="brand-font"
-                            style="font-size: 32px; color: var(--md-on-surface); margin-bottom: 12px;">Prepara tu
+                            style="font-size: 32px; color: var(--md-on-surface); margin-bottom: 12px;"
+                            data-i18n="ocrStep1Title">Prepara tu
                             escáner
                         </h2>
-                        <p style="color: var(--on-surface-variant); font-size: 16px;">Sube una foto clara de tu receta
+                        <p style="color: var(--on-surface-variant); font-size: 16px;" data-i18n="ocrStep1Desc">Sube una
+                            foto clara de tu receta
                             para
                             digitalizarla al instante.</p>
                     </div>
@@ -509,10 +515,12 @@
                             style="background: var(--primary); color: white; width: 64px; height: 64px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 8px 16px rgba(234, 88, 12, 0.2);">
                             <span class="material-symbols-outlined" style="font-size: 32px;">add_a_photo</span>
                         </div>
-                        <p style="font-weight: 600; color: var(--md-on-surface); font-size: 18px;">Selecciona o arrastra
+                        <p style="font-weight: 600; color: var(--md-on-surface); font-size: 18px;"
+                            data-i18n="ocrSelectImage">Selecciona o arrastra
                             una imagen
                         </p>
-                        <p style="font-size: 14px; color: var(--on-surface-variant); margin-top: 8px;">Formatos JPG, PNG
+                        <p style="font-size: 14px; color: var(--on-surface-variant); margin-top: 8px;"
+                            data-i18n="ocrFormats">Formatos JPG, PNG
                             compatibles</p>
                     </div>
 
@@ -523,12 +531,12 @@
                         <button class="btn btn-secondary" style="flex: 1; border-radius: 16px; height: 56px;"
                             onclick="openCamera()">
                             <span class="material-symbols-outlined">camera</span>
-                            Cámara
+                            <span data-i18n="ocrCamera">Cámara</span>
                         </button>
                         <button class="btn btn-secondary" style="flex: 1; border-radius: 16px; height: 56px;"
                             onclick="openGallery()">
                             <span class="material-symbols-outlined">image</span>
-                            Galería
+                            <span data-i18n="ocrGallery">Galería</span>
                         </button>
                     </div>
 
@@ -538,13 +546,13 @@
                             style="font-size: 14px; color: #374151; font-weight: 600; display: flex; align-items: center; gap: 8px;">
                             <span class="material-symbols-outlined"
                                 style="font-size: 18px; color: #F59E0B;">lightbulb</span>
-                            Consejos Pro:
+                            <span data-i18n="ocrTipsTitle">Consejos Pro:</span>
                         </p>
                         <ul
                             style="margin-top: 12px; font-size: 14px; color: #6B7280; padding-left: 20px; line-height: 1.6;">
-                            <li>Asegúrate que el texto sea legible.</li>
-                            <li>Usa buena iluminación (evita sombras).</li>
-                            <li>Mantén la cámara paralela al papel.</li>
+                            <li data-i18n="ocrTip1">Asegúrate que el texto sea legible.</li>
+                            <li data-i18n="ocrTip2">Usa buena iluminación (evita sombras).</li>
+                            <li data-i18n="ocrTip3">Mantén la cámara paralela al papel.</li>
                         </ul>
                     </div>
                 </div>
@@ -553,9 +561,11 @@
                 <div id="step2" class="ocr-step">
                     <div style="margin-bottom: 32px;">
                         <h2 class="brand-font"
-                            style="font-size: 32px; color: var(--md-on-surface); margin-bottom: 12px;">
+                            style="font-size: 32px; color: var(--md-on-surface); margin-bottom: 12px;"
+                            data-i18n="ocrStep2Title">
                             Analizando...</h2>
-                        <p style="color: var(--on-surface-variant); font-size: 16px;">Estamos extrayendo los secretos de
+                        <p style="color: var(--on-surface-variant); font-size: 16px;" data-i18n="ocrStep2Desc">Estamos
+                            extrayendo los secretos de
                             tu
                             receta.</p>
                     </div>
@@ -568,7 +578,8 @@
 
                         <div style="display: flex; flex-direction: column; align-items: center; margin: 32px 0;">
                             <p id="processingStatus"
-                                style="margin-bottom: 16px; font-weight: 600; color: var(--primary); font-size: 18px;">
+                                style="margin-bottom: 16px; font-weight: 600; color: var(--primary); font-size: 18px;"
+                                data-i18n="ocrProcessing">
                                 Iniciando OCR...</p>
                             <div class="progress-container" style="max-width: 400px;">
                                 <div id="progressBar" class="progress-bar"></div>
@@ -581,27 +592,30 @@
                 <div id="step3" class="ocr-step">
                     <div
                         style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                        <h2 style="font-size: 24px; margin: 0;">Resultado</h2>
+                        <h2 style="font-size: 24px; margin: 0;" data-i18n="ocrStep3Title">Resultado</h2>
                         <span id="confidenceBadge" class="confidence-badge"></span>
                     </div>
 
                     <!-- Tabs Navigation -->
                     <div
                         style="display: flex; border-bottom: 1px solid #E5E7EB; margin-bottom: 20px; overflow-x: auto;">
-                        <button class="tab-button active" data-tab="raw" onclick="switchTab('raw')">Texto Crudo</button>
-                        <button class="tab-button" data-tab="parsed" onclick="switchTab('parsed')">Vista Previa</button>
+                        <button class="tab-button active" data-tab="raw" onclick="switchTab('raw')"
+                            data-i18n="ocrTabRaw">Texto Crudo</button>
+                        <button class="tab-button" data-tab="parsed" onclick="switchTab('parsed')"
+                            data-i18n="ocrTabParsed">Vista Previa</button>
                         <button class="tab-button" data-tab="ag" onclick="switchTab('ag')" style="color: #6366f1;">
                             <span class="material-symbols-outlined"
                                 style="font-size: 18px; vertical-align: middle;">psychology</span>
-                            Análisis AG
+                            <span data-i18n="ocrTabAg">Análisis AG</span>
                         </button>
                     </div>
 
                     <!-- Tab: Raw Text -->
                     <div id="tabRaw" class="tab-content">
-                        <textarea id="extractedText" class="extracted-text"
-                            placeholder="Edita el texto aquí..."></textarea>
-                        <p style="font-size: 12px; color: #6B7280; margin-top: 8px; font-style: italic;">
+                        <textarea id="extractedText" class="extracted-text" placeholder="Edita el texto aquí..."
+                            data-i18n-placeholder="ocrTextPlaceholder"></textarea>
+                        <p style="font-size: 12px; color: #6B7280; margin-top: 8px; font-style: italic;"
+                            data-i18n="ocrCorrectionHint">
                             Puedes corregir cualquier error de detección directamente arriba.
                         </p>
                     </div>
@@ -609,22 +623,23 @@
                     <!-- Tab: Parsed Preview -->
                     <div id="tabParsed" class="tab-content" style="display: none;">
                         <div class="parsed-section">
-                            <label
-                                style="font-size: 12px; font-weight: 700; color: #6B7280; text-transform: uppercase;">Nombre
+                            <label style="font-size: 12px; font-weight: 700; color: #6B7280; text-transform: uppercase;"
+                                data-i18n="formNameLabel">Nombre
                                 de la Receta</label>
                             <input type="text" id="parsedName" class="form-input"
-                                style="margin-top: 8px; font-weight: 600;">
+                                style="margin-top: 8px; font-weight: 600;"
+                                data-i18n-placeholder="placeholderRecipeName">
                         </div>
 
                         <div class="parsed-section">
-                            <label
-                                style="font-size: 12px; font-weight: 700; color: #6B7280; text-transform: uppercase;">Ingredientes</label>
+                            <label style="font-size: 12px; font-weight: 700; color: #6B7280; text-transform: uppercase;"
+                                data-i18n="formIngredientsLabel">Ingredientes</label>
                             <div id="parsedIngredients" style="margin-top: 8px;"></div>
                         </div>
 
                         <div class="parsed-section">
-                            <label
-                                style="font-size: 12px; font-weight: 700; color: #6B7280; text-transform: uppercase;">Pasos
+                            <label style="font-size: 12px; font-weight: 700; color: #6B7280; text-transform: uppercase;"
+                                data-i18n="formStepsLabel">Pasos
                                 de Preparación</label>
                             <div id="parsedSteps" style="margin-top: 8px;"></div>
                         </div>
@@ -637,14 +652,15 @@
                             <div
                                 style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid #C7D2FE; padding-bottom: 8px;">
                                 <span class="material-symbols-outlined">analytics</span>
-                                <strong
-                                    style="font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">ANÁLISIS
+                                <strong style="font-size: 14px; text-transform: uppercase; letter-spacing: 1px;"
+                                    data-i18n="ocrAgAnalysisTitle">ANÁLISIS
                                     EXHAUSTIVO TOTAL</strong>
                             </div>
                             <textarea id="agReportText" readonly
                                 style="width: 100%; min-height: 400px; background: transparent; border: none; font-family: inherit; font-size: 13px; line-height: 1.5; color: inherit; resize: none; outline: none;"></textarea>
                         </div>
-                        <p style="font-size: 12px; color: #6B7280; margin-top: 12px; text-align: center;">
+                        <p style="font-size: 12px; color: #6B7280; margin-top: 12px; text-align: center;"
+                            data-i18n="ocrAgVersion">
                             Modo Motor de Escaneo Ultra-Preciso v1.0 • Anti Gravity
                         </p>
                     </div>
@@ -653,13 +669,13 @@
                         <button class="btn btn-secondary" style="flex: 1; border-radius: 16px; height: 56px;"
                             onclick="goToStep(1)">
                             <span class="material-symbols-outlined">refresh</span>
-                            Reintentar
+                            <span data-i18n="ocrRetry">Reintentar</span>
                         </button>
                         <button id="btnSaveRecipe" class="btn btn-primary"
                             style="flex: 2; border-radius: 16px; height: 56px; background: var(--primary);"
                             onclick="saveRecipe()">
                             <span class="material-symbols-outlined">check_circle</span>
-                            Guardar Receta
+                            <span data-i18n="ocrSave">Guardar Receta</span>
                         </button>
                     </div>
                 </div>
@@ -671,6 +687,7 @@
     <script src="js/auth.js?v=2"></script>
     <script src="js/db.js?v=2"></script>
     <script src="js/utils.js?v=2"></script>
+    <script src="js/i18n.js?v=2"></script>
     <script src="js/ocr.js?v=2"></script>
 
     <script>
@@ -743,7 +760,7 @@
                 const results = await window.ocrProcessor.processImage(file, m => {
                     if (m.status === 'recognizing text') {
                         const p = Math.round(m.progress * 100);
-                        status.textContent = `Leyendo... ${p}%`;
+                        status.textContent = window.i18n ? window.i18n.t('ocrReading', { progress: p }) : `Leyendo... ${p}%`;
                         bar.style.width = p + '%';
                     }
                 });
@@ -771,7 +788,8 @@
             } catch (err) {
                 console.error(err);
                 if (scanLine) scanLine.classList.add('hidden');
-                alert('No pudimos leer la imagen. Intenta con más luz.');
+                const readErr = window.i18n ? window.i18n.t('ocrReadError') : 'No pudimos leer la imagen. Intenta con más luz.';
+                alert(readErr);
                 goToStep(1);
             }
         }
@@ -785,7 +803,7 @@
                     <input type="text" class="form-input" value="${ing.quantity || ''} ${ing.unit || ''} ${ing.name}" 
                            onchange="updateIng(${i}, this.value)">
                 </div>
-            `).join('') || '<p style="color:#9CA3AF; font-size:14px;">No se detectaron ingredientes</p>';
+            `).join('') || `<p style="color:#9CA3AF; font-size:14px;">${window.i18n ? window.i18n.t('ocrNoIngredients') : 'No se detectaron ingredientes'}</p>`;
 
             const stepContainer = document.getElementById('parsedSteps');
             stepContainer.innerHTML = parsedData.steps.map((s, i) => `
@@ -793,7 +811,7 @@
                     <span style="font-weight:700; color:var(--primary); margin-top:8px;">${i + 1}.</span>
                     <textarea class="form-input" style="min-height:60px;" onchange="updateStep(${i}, this.value)">${s.instruction}</textarea>
                 </div>
-            `).join('') || '<p style="color:#9CA3AF; font-size:14px;">No se detectaron pasos</p>';
+            `).join('') || `<p style="color:#9CA3AF; font-size:14px;">${window.i18n ? window.i18n.t('ocrNoSteps') : 'No se detectaron pasos'}</p>`;
         }
 
         function updateIng(i, val) {
@@ -808,14 +826,18 @@
         async function saveRecipe() {
             const btn = document.getElementById('btnSaveRecipe');
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner" style="width:20px; height:20px; border-width:2px; margin-right:8px;"></span>Guardando...';
+            const savingTxt = window.i18n ? window.i18n.t('saving') : 'Guardando...';
+            btn.innerHTML = `<span class="spinner" style="width:20px; height:20px; border-width:2px; margin-right:8px;"></span>${savingTxt}`;
 
             try {
                 // Sincronizar nombre y texto crudo
                 parsedData.name = document.getElementById('parsedName').value.trim();
                 const rawText = document.getElementById('extractedText').value;
 
-                if (!parsedData.name) throw new Error('La receta necesita un nombre');
+                if (!parsedData.name) {
+                    const nameReq = window.i18n ? window.i18n.t('ocrNameRequired') : 'La receta necesita un nombre';
+                    throw new Error(nameReq);
+                }
 
                 // 1. Crear Receta
                 const recipeRes = await window.db.createRecipe({
@@ -858,14 +880,17 @@
                     await window.db.uploadImage(currentImageFile, recipeId);
                 }
 
-                window.showToast('¡Receta guardada!', 'success');
+                const saveSuccessMsg = window.i18n ? window.i18n.t('saveSuccess') : '¡Receta guardada!';
+                window.showToast(saveSuccessMsg, 'success');
                 setTimeout(() => window.location.href = `recipe-detail.html?id=${recipeId}`, 1000);
 
             } catch (err) {
                 console.error(err);
-                window.showToast('Asigna un nombre a la receta', 'error');
+                const nameRequiredMsg = window.i18n ? window.i18n.t('ocrNameRequired') : 'Asigna un nombre a la receta';
+                window.showToast(nameRequiredMsg, 'error');
                 btn.disabled = false;
-                btn.innerHTML = '<span class="material-symbols-rounded">check_circle</span> Guardar Receta';
+                const saveBtnTxt = window.i18n ? window.i18n.t('ocrSave') : 'Guardar Receta';
+                btn.innerHTML = `<span class="material-symbols-rounded">check_circle</span> ${saveBtnTxt}`;
             }
         }
 

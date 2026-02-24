@@ -39,7 +39,7 @@ class RecipeDetailManager {
 
             if (!result.success) {
                 console.error('Error cargando receta:', result.error);
-                window.showToast('Receta no encontrada', 'error');
+                window.showToast(window.i18n ? window.i18n.t('noRecipesTitle') : 'Receta no encontrada', 'error');
                 return;
             }
 
@@ -78,22 +78,26 @@ class RecipeDetailManager {
         const titleMobile = document.getElementById('recipeTitleMobile');
         const titleDesktop = document.getElementById('recipeTitleDesktop');
 
-        if (titleMobile) titleMobile.textContent = recipe.name_es;
-        if (titleDesktop) titleDesktop.textContent = recipe.name_es;
-        document.getElementById('recipeDescription').textContent = recipe.description_es || 'Sin descripción';
+        const isEn = window.i18n && window.i18n.getLang() === 'en';
+        if (titleMobile) titleMobile.textContent = isEn ? (recipe.name_en || recipe.name_es) : recipe.name_es;
+        if (titleDesktop) titleDesktop.textContent = isEn ? (recipe.name_en || recipe.name_es) : recipe.name_es;
+
+        const desc = isEn ? (recipe.description_en || recipe.description_es) : recipe.description_es;
+        document.getElementById('recipeDescription').textContent = desc || (window.i18n ? window.i18n.t('noDescription') : 'Sin descripción');
 
         // Pantry Content
         const pantrySection = document.getElementById('pantrySection');
         const pantryEl = document.getElementById('recipePantry');
-        if (recipe.pantry_es) {
+        const pantry = isEn ? (recipe.pantry_en || recipe.pantry_es) : recipe.pantry_es;
+        if (pantry) {
             pantrySection.style.display = 'block';
-            pantryEl.textContent = recipe.pantry_es;
+            pantryEl.textContent = pantry;
         } else {
             pantrySection.style.display = 'none';
         }
 
         // Date
-        const date = new Date(recipe.created_at).toLocaleDateString();
+        const date = new Date(recipe.created_at).toLocaleDateString(window.i18n && window.i18n.getLang() === 'en' ? 'en-US' : 'es-ES');
         document.getElementById('recipeDate').textContent = date;
 
         // Favorite State
@@ -127,7 +131,7 @@ class RecipeDetailManager {
                     <div class="permission-banner">
                         <div class="permission-info-row">
                             <span class="material-symbols-outlined">visibility</span>
-                            <span class="text">👁️ Solo puedes ver · Expira en 7 días</span>
+                            <span class="text">${window.i18n ? window.i18n.t('canView') : 'Solo puedes ver'}</span>
                         </div>
                     </div>
                 `;
@@ -136,11 +140,11 @@ class RecipeDetailManager {
                     <div class="permission-banner">
                         <div class="permission-info-row">
                             <span class="material-symbols-outlined">content_copy</span>
-                            <span class="text">📋 Puedes agregar a tus recetas</span>
+                            <span class="text">${window.i18n ? window.i18n.t('canCopy') : 'Puedes agregar a tus recetas'}</span>
                         </div>
                         <button class="btn-copy-recipe" id="btnCopyRecipe">
                             <span class="material-symbols-outlined">add_circle</span>
-                            Añadir a mis recetas
+                            ${window.i18n ? window.i18n.t('permAdd') : 'Añadir a mis recetas'}
                         </button>
                     </div>
                 `;
@@ -161,7 +165,7 @@ class RecipeDetailManager {
         const btn = document.getElementById('btnCopyRecipe');
 
         try {
-            window.setButtonLoading(btn, true, 'Guardando...');
+            window.setButtonLoading(btn, true, window.i18n ? window.i18n.t('saving') : 'Guardando...');
 
             // 1. Crear copia de la receta base (Solo columnas que existen en la DB)
             const { name_es, description_es, pantry_es, category_id } = recipe;
@@ -187,7 +191,7 @@ class RecipeDetailManager {
                 await window.db.addSteps(newRecipeId, recipe.steps);
             }
 
-            window.showToast('✅ ¡Receta guardada en tu recetario!', 'success');
+            window.showToast(window.i18n ? window.i18n.t('saveSuccess') : '¡Receta guardada!', 'success');
 
             // 4. Redirigir a la copia propia
             setTimeout(() => {
@@ -196,7 +200,7 @@ class RecipeDetailManager {
 
         } catch (err) {
             console.error('Error al copiar receta:', err);
-            window.showToast('Error al guardar la receta', 'error');
+            window.showToast(window.i18n ? window.i18n.t('saveError') : 'Error al guardar la receta', 'error');
             window.setButtonLoading(btn, false);
         }
     }
@@ -204,14 +208,17 @@ class RecipeDetailManager {
     renderIngredients() {
         const listEl = document.getElementById('ingredientsList');
         const ingredients = this.currentRecipe.ingredients || [];
+        const isEn = window.i18n && window.i18n.getLang() === 'en';
 
         if (ingredients.length === 0) {
-            listEl.innerHTML = '<p class="empty-text">No hay ingredientes registrados.</p>';
+            listEl.innerHTML = `<p class="empty-text">${window.i18n ? window.i18n.t('ocrNoIngredients') : 'No hay ingredientes registrados.'}</p>`;
             return;
         }
 
         listEl.innerHTML = ingredients.map(ing => {
-            const text = `${ing.quantity || ''} ${ing.unit_es || ''} ${ing.name_es}`.trim();
+            const unit = isEn ? (ing.unit_en || ing.unit_es) : ing.unit_es;
+            const name = isEn ? (ing.name_en || ing.name_es) : ing.name_es;
+            const text = `${ing.quantity || ''} ${unit || ''} ${name}`.trim();
             return `
                 <li class="ingredient-item">
                     <input type="checkbox" id="ing-${ing.id}">
@@ -227,18 +234,22 @@ class RecipeDetailManager {
     renderSteps() {
         const stepsEl = document.getElementById('stepsList');
         const steps = this.currentRecipe.steps || [];
+        const isEn = window.i18n && window.i18n.getLang() === 'en';
 
         if (steps.length === 0) {
-            stepsEl.innerHTML = '<p class="empty-text">No hay pasos registrados.</p>';
+            stepsEl.innerHTML = `<p class="empty-text">${window.i18n ? window.i18n.t('ocrNoSteps') : 'No hay pasos registrados.'}</p>`;
             return;
         }
 
-        stepsEl.innerHTML = steps.map((step, index) => `
-            <div class="step-item">
-                <div class="step-number">${index + 1}</div>
-                <div class="step-text">${step.instruction_es}</div>
-            </div>
-        `).join('');
+        stepsEl.innerHTML = steps.map((step, index) => {
+            const instruction = isEn ? (step.instruction_en || step.instruction_es) : step.instruction_es;
+            return `
+                <div class="step-item">
+                    <div class="step-number">${index + 1}</div>
+                    <div class="step-text">${instruction}</div>
+                </div>
+            `;
+        }).join('');
     }
 
     setupEventListeners() {
@@ -266,15 +277,18 @@ class RecipeDetailManager {
     }
 
     async confirmDelete() {
-        window.showActionSnackbar('¿Seguro que desea eliminar la receta?', 'ELIMINAR', async () => {
+        const confirmMsg = window.i18n ? window.i18n.t('deleteConfirm') : '¿Seguro que desea eliminar la receta?';
+        const deleteBtnTxt = window.i18n ? window.i18n.t('deleteBtn') : 'ELIMINAR';
+
+        window.showActionSnackbar(confirmMsg, deleteBtnTxt, async () => {
             const result = await window.db.deleteRecipe(this.recipeId);
             if (result.success) {
-                window.showToast('Receta eliminada correctamente', 'success');
+                window.showToast(window.i18n ? window.i18n.t('deleteSuccess') : 'Receta eliminada correctamente', 'success');
                 setTimeout(() => {
                     window.location.replace('index.html');
                 }, 1000);
             } else {
-                window.showToast('Error al eliminar la receta', 'error');
+                window.showToast(window.i18n ? window.i18n.t('deleteError') : 'Error al eliminar la receta', 'error');
             }
         });
     }
@@ -288,14 +302,16 @@ class RecipeDetailManager {
         const result = await window.db.toggleFavorite(this.recipeId, isCurrentlyFavorite);
 
         if (result.success) {
+            const addedMsg = window.i18n ? window.i18n.t('favAdded') : 'Añadido a favoritos';
+            const removedMsg = window.i18n ? window.i18n.t('favRemoved') : 'Eliminado de favoritos';
             window.showToast(
-                result.isFavorite ? 'Añadido a favoritos' : 'Eliminado de favoritos',
+                result.isFavorite ? addedMsg : removedMsg,
                 'success'
             );
             this.currentRecipe.is_favorite = result.isFavorite;
             this.updateFavoriteButtonUI(result.isFavorite);
         } else {
-            window.showToast('Error al actualizar favoritos', 'error');
+            window.showToast(window.i18n ? window.i18n.t('favError') : 'Error al actualizar favoritos', 'error');
         }
     }
 

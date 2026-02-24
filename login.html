@@ -273,10 +273,10 @@
 <body>
     <div class="login-container">
         <div class="login-card-expressive fade-m3">
-            <!-- Language Switcher INSIDE the card -->
-            <div class="language-toggle" onclick="toggleLanguage()">
+            <div class="language-toggle" onclick="window.i18n && window.i18n.toggle(); updateTranslations()"
+                data-i18n-title="navToggleLanguage" title="Cambiar idioma">
                 <span class="material-symbols-outlined" style="font-size: 16px">language</span>
-                <span id="lang-label">EN</span>
+                <span class="lang-label">ES</span>
             </div>
 
             <div class="login-header">
@@ -286,26 +286,28 @@
                     <h1 style="color: var(--logo-orange); font-weight: 800; font-size: 32px; letter-spacing: -1px;">
                         RecipeHub</h1>
                 </div>
-                <h2 id="auth-title" class="login-title">Bienvenido</h2>
-                <p id="auth-subtitle" class="login-subtitle">Ingresa a tu colección privada de recetas.</p>
+                <h2 id="auth-title" class="login-title" data-i18n="authTitleLogin">Bienvenido</h2>
+                <p id="auth-subtitle" class="login-subtitle" data-i18n="authSubtitleLogin">Ingresa a tu colección
+                    privada de recetas.</p>
             </div>
 
             <form id="unified-form" novalidate>
                 <div id="name-group" class="m3-field-container hidden-m3">
                     <input class="m3-field-input" id="name" type="text" placeholder=" " autocomplete="name" />
-                    <label class="m3-field-label" id="lbl-name" for="name">Nombre Completo</label>
+                    <label class="m3-field-label" id="lbl-name" for="name" data-i18n="lblName">Nombre Completo</label>
                 </div>
 
                 <div class="m3-field-container">
                     <input class="m3-field-input" id="email" type="email" placeholder=" " required
                         autocomplete="email" />
-                    <label class="m3-field-label" id="lbl-email" for="email">Email</label>
+                    <label class="m3-field-label" id="lbl-email" for="email" data-i18n="lblEmail">Email</label>
                 </div>
 
                 <div class="m3-field-container">
                     <input class="m3-field-input has-trailing" id="password" type="password" placeholder=" " required
                         autocomplete="current-password" />
-                    <label class="m3-field-label" id="lbl-password" for="password">Contraseña</label>
+                    <label class="m3-field-label" id="lbl-password" for="password"
+                        data-i18n="lblPassword">Contraseña</label>
                     <div class="m3-field-trailing" onclick="togglePass('password', this)">
                         <span class="material-symbols-outlined">visibility</span>
                     </div>
@@ -313,25 +315,26 @@
 
                 <div id="confirm-password-group" class="m3-field-container hidden-m3">
                     <input class="m3-field-input has-trailing" id="confirm-password" type="password" placeholder=" " />
-                    <label class="m3-field-label" id="lbl-confirm" for="confirm-password">Confirmar Contraseña</label>
+                    <label class="m3-field-label" id="lbl-confirm" for="confirm-password"
+                        data-i18n="lblConfirm">Confirmar Contraseña</label>
                     <div class="m3-field-trailing" onclick="togglePass('confirm-password', this)">
                         <span class="material-symbols-outlined">visibility</span>
                     </div>
                 </div>
 
                 <button type="submit" id="btn-submit" class="btn-m3-full">
-                    <span id="btn-submit-text">Ingresar</span>
+                    <span id="btn-submit-text" data-i18n="btnSubmitLogin">Ingresar</span>
                     <span class="material-symbols-outlined">arrow_forward</span>
                 </button>
             </form>
 
             <div class="btn-m3-text">
-                <span id="switch-text">¿No tienes cuenta? Regístrate</span>
+                <span id="switch-text" data-i18n="switchTextLogin">¿No tienes cuenta? Regístrate</span>
             </div>
 
             <button type="button" onclick="window.location.href='index.html'" class="btn-m3-text"
                 style="color: var(--on-surface-variant); font-size: 13px;">
-                <span id="btn-back">Volver al inicio</span>
+                <span id="btn-back" data-i18n="btnBack">Volver al inicio</span>
             </button>
         </div>
     </div>
@@ -340,6 +343,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/config.js?v=2"></script>
     <script src="js/supabase-client.js?v=2"></script>
+    <script src="js/i18n.js?v=2"></script>
     <script src="js/auth.js?v=2"></script>
     <script src="js/utils.js?v=2"></script>
 
@@ -360,77 +364,22 @@
             }
         })();
 
-        const pageTranslations = {
-            ES: {
-                authTitleLogin: "Bienvenido",
-                authSubtitleLogin: "Ingresa a tu colección privada de recetas.",
-                authTitleRegister: "Crear Cuenta",
-                authSubtitleRegister: "Únete para guardar tus recetas familiares.",
-                lblName: "Nombre Completo",
-                lblEmail: "Email",
-                lblPassword: "Contraseña",
-                lblConfirm: "Confirmar Contraseña",
-                btnSubmitLogin: "Ingresar",
-                btnSubmitRegister: "Registrarse",
-                switchTextLogin: "¿No tienes cuenta? Regístrate",
-                switchTextRegister: "¿Ya tienes cuenta? Ingresa",
-                btnBack: "Volver al inicio",
-                msgNameReq: "El nombre es obligatorio",
-                msgPassLen: "Mínimo 6 caracteres",
-                msgPassMismatch: "Las contraseñas no coinciden",
-                msgEntering: "Ingresando...",
-                msgCreating: "Creando...",
-                msgCreatedSuccess: "¡Cuenta creada! Revisa tu email."
-            },
-            EN: {
-                authTitleLogin: "Welcome Back",
-                authSubtitleLogin: "Log in to your private recipe collection.",
-                authTitleRegister: "Create Account",
-                authSubtitleRegister: "Join to save your family recipes.",
-                lblName: "Full Name",
-                lblEmail: "Email",
-                lblPassword: "Password",
-                lblConfirm: "Confirm Password",
-                btnSubmitLogin: "Log In",
-                btnSubmitRegister: "Sign Up",
-                switchTextLogin: "Don't have an account? Sign Up",
-                switchTextRegister: "Already have an account? Log In",
-                btnBack: "Back to Home",
-                msgNameReq: "Name is required",
-                msgPassLen: "Min 6 characters",
-                msgPassMismatch: "Passwords do not match",
-                msgEntering: "Logging in...",
-                msgCreating: "Creating...",
-                msgCreatedSuccess: "Account created! Please check your email."
-            }
-        };
-
-        function toggleLanguage() {
-            currentLang = currentLang === 'ES' ? 'EN' : 'ES';
-            localStorage.setItem('preferredLang', currentLang);
-            document.getElementById('lang-label').textContent = currentLang;
-            updateTranslations();
-        }
-
         function updateTranslations() {
-            const t = pageTranslations[currentLang];
-            document.getElementById('lbl-name').textContent = t.lblName;
-            document.getElementById('lbl-email').textContent = t.lblEmail;
-            document.getElementById('lbl-password').textContent = t.lblPassword;
-            document.getElementById('lbl-confirm').textContent = t.lblConfirm;
-            document.getElementById('btn-back').textContent = t.btnBack;
-            document.getElementById('lang-label').textContent = currentLang;
+            if (window.i18n) {
+                window.i18n.applyLanguage(window.i18n.getLang());
+            }
 
+            // Handle toggleable texts
             if (isLogin) {
-                document.getElementById('auth-title').textContent = t.authTitleLogin;
-                document.getElementById('auth-subtitle').textContent = t.authSubtitleLogin;
-                document.getElementById('btn-submit-text').textContent = t.btnSubmitLogin;
-                document.getElementById('switch-text').textContent = t.switchTextLogin;
+                document.getElementById('auth-title').textContent = window.i18n ? window.i18n.t('authTitleLogin') : "Bienvenido";
+                document.getElementById('auth-subtitle').textContent = window.i18n ? window.i18n.t('authSubtitleLogin') : "Ingresa a tu colección privada de recetas.";
+                document.getElementById('btn-submit-text').textContent = window.i18n ? window.i18n.t('btnSubmitLogin') : "Ingresar";
+                document.getElementById('switch-text').textContent = window.i18n ? window.i18n.t('switchTextLogin') : "¿No tienes cuenta? Regístrate";
             } else {
-                document.getElementById('auth-title').textContent = t.authTitleRegister;
-                document.getElementById('auth-subtitle').textContent = t.authSubtitleRegister;
-                document.getElementById('btn-submit-text').textContent = t.btnSubmitRegister;
-                document.getElementById('switch-text').textContent = t.switchTextRegister;
+                document.getElementById('auth-title').textContent = window.i18n ? window.i18n.t('authTitleRegister') : "Crear Cuenta";
+                document.getElementById('auth-subtitle').textContent = window.i18n ? window.i18n.t('authSubtitleRegister') : "Únete para guardar tus recetas familiares.";
+                document.getElementById('btn-submit-text').textContent = window.i18n ? window.i18n.t('btnSubmitRegister') : "Registrarse";
+                document.getElementById('switch-text').textContent = window.i18n ? window.i18n.t('switchTextRegister') : "¿Ya tienes cuenta? Ingresa";
             }
         }
 
@@ -470,7 +419,6 @@
 
         document.getElementById('unified-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const t = pageTranslations[currentLang];
             const btn = document.getElementById('btn-submit');
             const span = document.getElementById('btn-submit-text');
             const email = document.getElementById('email').value.trim();
@@ -479,20 +427,20 @@
             const confirmPass = document.getElementById('confirm-password').value;
 
             if (!isLogin) {
-                if (!name) return showMsg(t.msgNameReq, 'error');
-                if (password.length < 6) return showMsg(t.msgPassLen, 'error');
-                if (password !== confirmPass) return showMsg(t.msgPassMismatch, 'error');
+                if (!name) return showMsg(window.i18n ? window.i18n.t('msgNameReq') : "Nombre obligatorio", 'error');
+                if (password.length < 6) return showMsg(window.i18n ? window.i18n.t('msgPassLen') : "Mínimo 6 caracteres", 'error');
+                if (password !== confirmPass) return showMsg(window.i18n ? window.i18n.t('msgPassMismatch') : "Contraseñas no coinciden", 'error');
             }
 
             btn.disabled = true;
             const originalTxt = span.textContent;
-            span.textContent = isLogin ? t.msgEntering : t.msgCreating;
+            span.textContent = isLogin ? (window.i18n ? window.i18n.t('msgEntering') : "Ingresando...") : (window.i18n ? window.i18n.t('msgCreating') : "Creando...");
 
             try {
                 if (isLogin) {
                     const res = await window.authManager.signIn(email, password);
                     if (res.success) {
-                        window.showToast("Ha iniciado sesión en RecipeHub", "success");
+                        window.showToast(window.i18n ? window.i18n.t('toastLoginSuccess') : "Ha iniciado sesión", "success");
 
                         setTimeout(() => {
                             const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || 'index.html';
@@ -509,7 +457,7 @@
 
                     const res = await window.authManager.signUp(email, password, firstName, lastName);
                     if (res.success) {
-                        showMsg(t.msgCreatedSuccess, 'success');
+                        showMsg(window.i18n ? window.i18n.t('msgCreatedSuccess') : "¡Cuenta creada!", 'success');
                         setTimeout(() => { isLogin = true; updateTranslations(); }, 2000);
                     } else {
                         throw new Error(res.error);
@@ -530,20 +478,15 @@
         }
 
         window.addEventListener('load', () => {
-            // Restore preference
-            const savedLang = localStorage.getItem('preferredLang');
-            if (savedLang) {
-                currentLang = savedLang;
-                document.getElementById('lang-label').textContent = currentLang;
-            }
+            updateTranslations();
 
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('mode') === 'register') {
                 isLogin = false;
                 document.getElementById('name-group').classList.remove('hidden-m3');
                 document.getElementById('confirm-password-group').classList.remove('hidden-m3');
+                updateTranslations();
             }
-            updateTranslations();
         });
     </script>
 </body>

@@ -65,7 +65,8 @@ window.updateGlobalUserUI = function () {
     // Update greeting
     const sidebarGreeting = document.getElementById('sidebar-user-greeting');
     if (sidebarGreeting) {
-        sidebarGreeting.textContent = `Chef ${user.first_name || ''}`;
+        const chefText = window.i18n ? window.i18n.t('chefGreeting') : 'Chef';
+        sidebarGreeting.textContent = `${chefText} ${user.first_name || ''}`;
     }
 
     // Update initials
