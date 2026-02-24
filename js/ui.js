@@ -110,13 +110,33 @@ window.setupSidebarMenus = function () {
         document.querySelectorAll('#theme-submenu, #lang-submenu')
             .forEach(s => s.style.display = 'none');
 
-        const rect = btn.getBoundingClientRect();
-        submenu.style.position = 'fixed';
-        submenu.style.left = (rect.right + 8) + 'px';
-        submenu.style.bottom = (window.innerHeight - rect.bottom) + 'px';
-        submenu.style.top = 'auto';
-        submenu.style.zIndex = '9999';
-        submenu.style.display = 'block';
+        if (window.innerWidth >= 1024) {
+            // Desktop: Open to the right
+            document.body.appendChild(submenu);
+            const rect = btn.getBoundingClientRect();
+            submenu.style.cssText = `
+                display: block;
+                position: fixed;
+                left: ${rect.right + 8}px;
+                top: ${rect.top}px;
+                bottom: auto;
+                z-index: 99999;
+                background: #1e1e1e;
+                border-radius: 12px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+                min-width: 200px;
+                pointer-events: all;
+            `;
+        } else {
+            // Mobile: Keep upward positioning
+            const rect = btn.getBoundingClientRect();
+            submenu.style.position = 'fixed';
+            submenu.style.left = (rect.right + 8) + 'px';
+            submenu.style.bottom = (window.innerHeight - rect.bottom) + 'px';
+            submenu.style.top = 'auto';
+            submenu.style.zIndex = '9999';
+            submenu.style.display = 'block';
+        }
     }
 
     document.getElementById('btn-theme-toggle')

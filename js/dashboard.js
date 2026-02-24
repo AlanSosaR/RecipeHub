@@ -480,7 +480,7 @@ class DashboardManager {
                 <span class="material-symbols-outlined">share</span>
                 ${window.i18n ? window.i18n.t('shareBtn') : 'Compartir'}
             </button>
-            <button class="context-menu-item">
+            <button class="context-menu-item" onclick="window.dashboard.shareRecipe('${recipe.id}')">
                 <span class="material-symbols-outlined">manage_accounts</span>
                 ${window.i18n ? window.i18n.t('managePerms') : 'Administrar permisos'}
             </button>
@@ -641,6 +641,24 @@ class DashboardManager {
         });
 
         input.addEventListener('blur', save);
+    }
+
+    async checkDeepLink() {
+        const hash = window.location.hash;
+        if (hash.startsWith('#/recipe/')) {
+            const recipeId = hash.split('/').pop();
+            if (recipeId) {
+                // Si no está logueado, guardar el redirect y mandar a login
+                const isAuthenticated = await window.authManager.checkAuth();
+                if (!isAuthenticated) {
+                    localStorage.setItem('redirect_after_login', hash);
+                    window.location.href = 'login.html';
+                } else {
+                    // Si está logueado, ir al detalle
+                    window.location.href = `recipe-detail.html?id=${recipeId}`;
+                }
+            }
+        }
     }
 }
 
