@@ -5202,11 +5202,11 @@ html[data-auth-likely="true"] #dashboard-app {
 }
 
 .m3-icon-btn:hover {
-    background: rgba(var(--primary-rgb, 234, 88, 12), 0.08);
+    background: rgba(16, 185, 129, 0.08);
 }
 
 .m3-icon-btn:active {
-    background: rgba(var(--primary-rgb, 234, 88, 12), 0.12);
+    background: rgba(16, 185, 129, 0.12);
     transform: scale(0.92);
 }
 
@@ -5228,23 +5228,23 @@ html[data-auth-likely="true"] #dashboard-app {
 }
 
 .m3-ingredient-item:hover {
-    background: rgba(234, 88, 12, 0.05);
+    background: rgba(16, 185, 129, 0.05);
 }
 
 .m3-ingredient-item:active {
-    background: rgba(234, 88, 12, 0.1);
+    background: rgba(16, 185, 129, 0.1);
     transform: scale(0.98);
 }
 
 .m3-ingredient-item.checked {
-    background: rgba(234, 88, 12, 0.03);
+    background: rgba(16, 185, 129, 0.03);
 }
 
 .m3-checkbox-premium {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    border: 3px solid rgba(234, 88, 12, 0.3);
+    border: 3px solid rgba(16, 185, 129, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -5257,7 +5257,7 @@ html[data-auth-likely="true"] #dashboard-app {
 input:checked+.m3-checkbox-premium {
     background: var(--primary);
     border-color: var(--primary);
-    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .m3-checkbox-premium .material-symbols-outlined {
@@ -5309,7 +5309,7 @@ input:checked~.m3-ingredient-text {
     flex-shrink: 0;
     font-weight: 800;
     font-size: 16px;
-    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
     border: 4px solid var(--bg);
 }
 
@@ -5327,5 +5327,5 @@ input:checked~.m3-ingredient-text {
     top: 40px;
     bottom: 40px;
     width: 2px;
-    background: rgba(234, 88, 12, 0.15);
+    background: rgba(16, 185, 129, 0.15);
 }
