@@ -251,13 +251,29 @@ class ShareModalManager {
                 recipe_id: this.recipeId,
                 owner_user_id: window.authManager.currentUser.id,
                 recipient_user_id: user.id,
-                permission: dbPerm
+                permission: dbPerm,
+                status: 'pending'
             }));
 
-            const { error } = await window.supabaseClient.from('shared_recipes').insert(insertions);
-            if (error) throw error;
+            const { error: shareError } = await window.supabaseClient.from('shared_recipes').insert(insertions);
+            if (shareError) throw shareError;
 
-            window.utils.showToast(`✅ Receta compartida con ${this.selectedUsers.length} personas`, 'success');
+            // 2. Crear notificaciones para que aparezcan en tiempo real al destinatario
+            const notifications = this.selectedUsers.map(user => ({
+                user_id: user.id,
+                from_user_id: window.authManager.currentUser.id,
+                recipe_id: this.recipeId,
+                leido: false
+            }));
+
+            const { error: notifError } = await window.supabaseClient.from('notifications').insert(notifications);
+            if (notifError) {
+                console.warn('⚠️ Error al crear notificaciones (pero la receta se compartió):', notifError);
+            }
+
+            const namesList = this.selectedUsers.map(u => u.name).join(', ');
+            const successMsg = window.i18n ? window.i18n.t('sharedWith', { names: namesList }) : `✅ Compartido con ${namesList}`;
+            window.utils.showToast(successMsg, 'success');
             this.selectedUsers = [];
             this.renderChips();
             this.updateShareButton();
@@ -270,11 +286,6 @@ class ShareModalManager {
         }
     }
 }
-
-// Inicializar
-window.addEventListener('DOMContentLoaded', () => {
-    window.shareModal = new ShareModalManager();
-});
 
 // Inicializar
 window.addEventListener('DOMContentLoaded', () => {
