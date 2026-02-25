@@ -134,12 +134,12 @@ class RecipeDetailManager {
             const text = `${ing.quantity || ''} ${unit || ''} ${name}`.trim();
 
             return `
-                <label class="flex items-start gap-6 py-5 px-4 rounded-m3-xl hover:bg-black/[0.03] dark:hover:bg-white/[0.05] cursor-pointer transition-colors group active:bg-black/[0.05] min-h-[72px]">
-                    <input class="hidden peer" type="checkbox" onchange="this.nextElementSibling.nextElementSibling.classList.toggle('opacity-50'); this.nextElementSibling.nextElementSibling.classList.toggle('line-through')"/>
-                    <div class="mt-0.5 w-10 h-10 rounded-full border-[3px] border-primary/40 group-hover:border-primary transition-all flex items-center justify-center shrink-0 bg-white dark:bg-zinc-900 shadow-sm peer-checked:bg-primary peer-checked:border-primary peer-checked:shadow-md">
-                        <span class="material-symbols-outlined text-white text-[26px] font-bold opacity-0 peer-checked:opacity-100 transition-opacity scale-75 peer-checked:scale-100 duration-200">check</span>
+                <label class="m3-ingredient-item">
+                    <input class="hidden" type="checkbox" onchange="this.parentElement.classList.toggle('checked')"/>
+                    <div class="m3-checkbox-premium">
+                        <span class="material-symbols-outlined">check</span>
                     </div>
-                    <span class="flex-1 text-on-surface dark:text-zinc-200 text-[19px] leading-[1.6] font-medium transition-all pt-1">
+                    <span class="m3-ingredient-text">
                         ${text}
                     </span>
                 </label>
@@ -164,16 +164,14 @@ class RecipeDetailManager {
         const stepsHtml = steps.map((step, idx) => {
             const instruction = isEn ? (step.instruction_en || step.instruction_es) : step.instruction_es;
             return `
-                <div class="flex gap-6 relative">
-                    <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shrink-0 font-bold text-sm z-10 ring-4 ring-surface dark:ring-[#0c1210] shadow-md">${idx + 1}</div>
-                    <div>
-                        <p class="text-on-surface-variant dark:text-zinc-400 text-lg leading-relaxed">${instruction}</p>
-                    </div>
+                <div class="m3-step-item">
+                    <div class="m3-step-badge">${idx + 1}</div>
+                    <p class="m3-step-text">${instruction}</p>
                 </div>
             `;
         }).join('');
 
-        const timelineLine = `<div class="absolute left-[20px] top-10 bottom-10 w-[2px] bg-primary/10 dark:bg-primary/20"></div>`;
+        const timelineLine = `<div class="m3-steps-timeline"></div>`;
         stepsEl.innerHTML = timelineLine + stepsHtml;
     }
 

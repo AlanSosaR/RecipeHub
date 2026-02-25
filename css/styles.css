@@ -8,17 +8,17 @@
 
 /* ─── Tokens — Light Mode ────────────────────────────────────────── */
 :root {
-    /* Colores RecipeHub Drive - Esmeralda */
-    --primary: #10B981;
-    --primary-light: #F0FDF4;
-    /* Very light green for subtle states */
-    --primary-dark: #059669;
+    /* Colores RecipeHub Drive - Naranja Premium */
+    --primary: #EA580C;
+    --primary-light: #FFF7ED;
+    /* Very light orange */
+    --primary-dark: #C2410C;
     --on-primary: #FFFFFF;
     --logo-orange: #EA580C;
 
-    --secondary: #34D399;
-    --secondary-light: #F0FDF4;
-    --on-secondary: #064E3B;
+    --secondary: #F59E0B;
+    --secondary-light: #FEF3C7;
+    --on-secondary: #451a03;
 
     /* Tema dinámico */
     --bg: #ffffff;

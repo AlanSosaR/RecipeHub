@@ -44,7 +44,6 @@
     <link rel="stylesheet" href="css/components.css">
 
     <!-- Fonts -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&display=swap"
@@ -52,139 +51,165 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet" />
 
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#00A676",
-                        "on-primary": "#ffffff",
-                        "primary-container": "#D1FAE5",
-                        "on-primary-container": "#064E3B",
-                        "surface": "#F8F9FA",
-                        "on-surface": "#191C1B",
-                        "on-surface-variant": "#404945",
-                        "outline": "#707974",
-                        "surface-container": "#F0F1F2"
-                    },
-                    fontFamily: {
-                        "display": ["Plus Jakarta Sans", "sans-serif"],
-                        "serif-expressive": ["Fraunces", "serif"]
-                    },
-                    boxShadow: {
-                        'm3-l2': '0 3px 1px -2px rgba(0,0,0,0.2), 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12)',
-                        'm3-l3': '0 5px 5px -3px rgba(0,0,0,0.2), 0 8px 10px 1px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12)',
-                    },
-                    borderRadius: {
-                        "m3-xs": "4px",
-                        "m3-sm": "8px",
-                        "m3-md": "12px",
-                        "m3-lg": "16px",
-                        "m3-xl": "28px",
-                        "m3-full": "9999px"
-                    }
-                },
-            },
+    <style>
+        .strikethrough {
+            text-decoration: line-through;
+            opacity: 0.5;
         }
-    </script>
 
-    <style type="text/tailwindcss">
-        @layer base {
-            body {
-                @apply bg-surface text-on-surface antialiased font-display;
-            }
-        }
-        .strikethrough { text-decoration: line-through; opacity: 0.5; }
-        .elevation-2 {
-            box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.08), 0px 2px 2px 0px rgba(0, 0, 0, 0.06), 0px 1px 5px 0px rgba(0, 0, 0, 0.04);
-        }
-        .elevation-3 {
-            box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.1), 0px 8px 10px 1px rgba(0, 0, 0, 0.06), 0px 3px 14px 2px rgba(0, 0, 0, 0.05);
-        }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
-        .dark .elevation-2 {
-            box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.4), 0px 2px 2px 0px rgba(0, 0, 0, 0.28), 0px 1px 5px 0px rgba(0, 0, 0, 0.24);
+
+        /* ─── Detail Premium Styles (No Tailwind) ─── */
+        .detail-body {
+            background-color: var(--bg);
+            color: var(--on-surface);
+            min-height: 100vh;
         }
+
+        .premium-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(var(--bg-rgb), 0.75);
+            backdrop-filter: blur(20px);
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-main {
+            padding-top: 120px;
+            padding-bottom: 60px;
+            max-width: 680px;
+            margin: 0 auto;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .recipe-hero-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .recipe-hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(32px, 8vw, 56px);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            color: var(--on-surface);
+        }
+
+        .section-group {
+            margin-bottom: 64px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 12px;
+        }
+
+        .section-icon {
+            color: var(--on-surface-variant);
+            font-size: 24px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--on-surface-variant);
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .recipe-story {
+            font-size: 18px;
+            line-height: 1.6;
+            color: var(--on-surface-variant);
+            font-weight: 500;
+        }
+
+        /* Ingredients Styles are now in components.css as .m3-ingredient-item */
     </style>
 </head>
 
-<body class="bg-white dark:bg-[#0c1210] dark:text-zinc-100 min-h-screen selection:bg-primary/20">
+<body class="detail-body">
     <!-- Top Bar -->
-    <nav
-        class="fixed top-0 left-0 right-0 z-50 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl h-24 flex items-center justify-between px-8 shadow-[0_8px_32px_rgba(0,0,0,0.04)] border-b border-white/20 dark:border-zinc-800/50">
-        <button onclick="window.location.href='index.html'"
-            class="flex items-center justify-center w-11 h-11 rounded-full bg-white dark:bg-zinc-800 elevation-2 hover:elevation-3 transition-all active:scale-95 ring-1 ring-black/[0.04]">
-            <span class="material-symbols-outlined text-primary">arrow_back</span>
+    <nav class="premium-nav">
+        <button id="btn-back" class="m3-icon-btn" onclick="window.location.href='index.html'">
+            <span class="material-symbols-outlined">arrow_back</span>
         </button>
-        <div class="flex gap-3">
-            <button id="btnFavorite"
-                class="flex items-center justify-center w-11 h-11 rounded-full bg-white dark:bg-zinc-800 elevation-2 hover:elevation-3 transition-all active:scale-95 ring-1 ring-black/[0.04]">
-                <span class="material-symbols-outlined text-primary">favorite</span>
+        <div style="display: flex; gap: 12px;">
+            <button id="btnFavorite" class="m3-icon-btn">
+                <span class="material-symbols-outlined">favorite</span>
             </button>
-            <button id="btnEdit"
-                class="flex items-center justify-center w-11 h-11 rounded-full bg-white dark:bg-zinc-900 elevation-2 hover:elevation-3 transition-all active:scale-95 ring-1 ring-black/[0.04]">
-                <span class="material-symbols-outlined text-primary">edit</span>
+            <button id="btnEdit" class="m3-icon-btn">
+                <span class="material-symbols-outlined">edit</span>
             </button>
-            <button id="btnDelete"
-                class="flex items-center justify-center w-11 h-11 rounded-full bg-white dark:bg-zinc-900 elevation-2 hover:elevation-3 transition-all active:scale-95 ring-1 ring-black/[0.04] text-red-500">
+            <button id="btnDelete" class="m3-icon-btn" style="color: var(--error);">
                 <span class="material-symbols-outlined">delete</span>
             </button>
         </div>
     </nav>
 
-    <main class="relative pt-40 px-6 pb-24 max-w-xl mx-auto">
+    <main class="detail-main">
         <!-- Center Header -->
-        <header class="mb-20 text-center px-4">
-            <h1 id="recipeTitle"
-                class="font-serif-expressive text-[44px] sm:text-[52px] font-black leading-[1.1] text-zinc-900 dark:text-white tracking-tightest">
+        <header class="recipe-hero-header">
+            <h1 id="recipeTitle" class="recipe-hero-title">
                 Cargando...
             </h1>
         </header>
 
-        <div class="space-y-24">
+        <div class="content-sections">
             <!-- Story Section -->
-            <section class="group">
-                <div class="flex items-center mb-8">
-                    <span class="material-symbols-outlined mr-3 text-zinc-400 dark:text-zinc-500">history_edu</span>
-                    <h2 class="text-2xl font-bold text-zinc-900 dark:text-white tracking-tight"
-                        data-i18n="detailDescription">The Story</h2>
+            <section class="section-group">
+                <div class="section-header">
+                    <span class="material-symbols-outlined section-icon">history_edu</span>
+                    <h2 class="section-title" data-i18n="detailDescription">Historia</h2>
                 </div>
-                <p id="recipeDescription"
-                    class="text-zinc-600 dark:text-zinc-400 leading-relaxed text-[17px] px-2 font-medium">
+                <p id="recipeDescription" class="recipe-story">
                     Aguardando...
                 </p>
             </section>
 
             <!-- Ingredients Section -->
-            <section class="group">
-                <div class="flex items-center mb-10">
-                    <span class="material-symbols-outlined mr-4 text-zinc-400 dark:text-zinc-500">restaurant_menu</span>
-                    <div class="flex flex-col">
-                        <h2 class="text-2xl font-bold text-zinc-900 dark:text-white tracking-tight"
-                            data-i18n="detailIngredients">Ingredients</h2>
-                        <span id="ingredientsCount"
-                            class="text-sm text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-widest mt-0.5">0
-                            items</span>
+            <section class="section-group">
+                <div class="section-header">
+                    <span class="material-symbols-outlined section-icon">restaurant_menu</span>
+                    <div style="display: flex; flex-direction: column;">
+                        <h2 class="section-title" data-i18n="detailIngredients">Ingredientes</h2>
+                        <span id="ingredientsCount" class="section-subtitle">0 items</span>
                     </div>
                 </div>
-                <div id="ingredientsList" class="space-y-6 px-2">
-                    <!-- Loaded via JS -->
+                <div id="ingredientsList" style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Cargado via JS con .m3-ingredient-item -->
                 </div>
             </section>
 
             <!-- Preparation Section -->
-            <section class="group">
-                <div class="flex items-center mb-12">
-                    <span
-                        class="material-symbols-outlined mr-4 text-zinc-400 dark:text-zinc-500">format_list_numbered</span>
-                    <h2 class="text-2xl font-bold text-zinc-900 dark:text-white tracking-tight" data-i18n="detailSteps">
-                        Preparation Steps</h2>
+            <section class="section-group">
+                <div class="section-header">
+                    <span class="material-symbols-outlined section-icon">format_list_numbered</span>
+                    <h2 class="section-title" data-i18n="detailSteps">Preparación</h2>
                 </div>
-                <div id="stepsList" class="space-y-16 relative px-2">
-                    <!-- Loaded via JS -->
+                <div id="stepsList" style="position: relative; display: flex; flex-direction: column; gap: 48px;">
+                    <!-- Cargado via JS -->
                 </div>
             </section>
         </div>
@@ -200,9 +225,7 @@
     <script src="js/i18n.js?v=2"></script>
     <script src="js/recipe-detail.js?v=2"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            window.recipeDetail = new RecipeDetailManager();
-        });
+        // RecipeDetailManager initializes itself via window.recipeDetailManager
     </script>
 
     <!-- Register Service Worker (PWA) -->
