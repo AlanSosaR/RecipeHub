@@ -23,7 +23,7 @@ Para utilizar los componentes, es necesario incluir el siguiente `importmap` en 
       "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
       "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
       "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
-      "material/": "https://cdn.jsdelivr.net/gh/material-esm/material@1/"
+      "material/": "https://cdn.jsdelivr.net/gh/material-esm/material@main/"
     }
   }
 </script>
