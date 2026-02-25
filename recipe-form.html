@@ -4,11 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Material 3 Expressive Infrastructure -->
+    <script type="importmap">
+        {
+          "imports": {
+            "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
+            "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
+            "@lit/localize": "https://cdn.jsdelivr.net/npm/@lit/localize/lit-localize.js",
+            "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1/reactive-element.js",
+            "@lit/reactive-element/": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1/",
+            "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
+            "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
+            "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
+            "tslib": "https://cdn.jsdelivr.net/npm/tslib@2.6.2/tslib.es6.js",
+            "@material/web/": "https://cdn.jsdelivr.net/npm/@material/web@1.0.1/"
+          }
+        }
+    </script>
     <title>Nueva Receta - RecipeHub</title>
 
     <!-- PWA -->
     <link rel="manifest" href="manifest.webmanifest">
-    <meta name="theme-color" content="#10B981">
+    <meta name="theme-color" content="#00A676">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -32,9 +50,9 @@
             --md-surface-1: #F9FAFB;
             --md-on-surface: #1B1B1F;
             --md-on-surface-var: #444746;
-            --md-primary: #10B981;
-            --md-primary-container: #F0FDF4;
-            --md-on-primary-container: #059669;
+            --md-primary: #00A676;
+            --md-primary-container: #E6F6F1;
+            --md-on-primary-container: #006C4C;
             --md-surface-variant: #F9FAFB;
             --md-outline-var: #E5E7EB;
             --md-outline: #C4C7C5;
@@ -847,8 +865,7 @@
                 <div class="m3-avatar">
                     <div id="userAvatar"
                         style="width:100%;height:100%;background:var(--md-primary-container);display:flex;align-items:center;justify-content:center;">
-                        <span class="material-symbols-outlined"
-                            style="font-size:20px;color:var(--md-on-primary-container)">person</span>
+                        <!-- Persona Icon removed -->
                     </div>
                 </div>
             </div>
@@ -862,7 +879,6 @@
                     <!-- ── Unified Recipe Card ── -->
                     <div class="m3-card">
                         <p class="m3-card-title">
-                            <span class="material-symbols-outlined">menu_book</span>
                             <span data-i18n="formNewRecipe">Nueva Receta</span>
                         </p>
 
@@ -903,7 +919,6 @@
                         <!-- Ingredients -->
                         <div class="m3-list-header">
                             <h3>
-                                <span class="material-symbols-outlined">grocery</span>
                                 <span data-i18n="formIngredientsLabel">Ingredientes</span>
                             </h3>
                             <button type="button" class="m3-add-btn" id="btnAddIngredient">
@@ -918,7 +933,6 @@
                         <!-- Steps -->
                         <div class="m3-list-header">
                             <h3>
-                                <span class="material-symbols-outlined">format_list_numbered</span>
                                 <span data-i18n="formStepsLabel">Pasos de preparación</span>
                             </h3>
                             <button type="button" class="m3-add-btn" id="btnAddStep">
