@@ -268,7 +268,7 @@ class ShareModalManager {
 
             const { error: notifError } = await window.supabaseClient.from('notifications').insert(notifications);
             if (notifError) {
-                console.warn('⚠️ Error al crear notificaciones (pero la receta se compartió):', notifError);
+                console.warn('⚠️ Error al crear notificaciones (detalles):', notifError.message, notifError.details, notifError);
             }
 
             const namesList = this.selectedUsers.map(u => u.name).join(', ');
