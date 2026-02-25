@@ -209,6 +209,84 @@ class OCRProcessor {
     }
 
     /**
+     * Sistema de Post-Procesamiento Inteligente v3.0
+     * Aplica reglas culinarias para limpiar y estructurar el texto.
+     */
+    smartCorrectText(rawText) {
+        let texto = rawText;
+
+        // 1. Extraer nombre de receta (primeras 5 líneas)
+        const lineas = texto.split(/\r?\n/);
+        let nombreReceta = '';
+
+        for (let i = 0; i < Math.min(5, lineas.length); i++) {
+            const linea = lineas[i]
+                .replace(/[═─━]+/g, '')
+                .trim();
+
+            // Criterios para nombre: MAYÚSCULAS o contiene 'RECETA'
+            if (linea.length > 2 &&
+                linea.length < 60 &&
+                (linea.includes('RECETA') || linea === linea.toUpperCase())) {
+                nombreReceta = linea
+                    .replace(/RECETA DE /gi, '')
+                    .trim();
+                // Capitalizar
+                if (nombreReceta.length > 0) {
+                    nombreReceta = nombreReceta.charAt(0).toUpperCase() + nombreReceta.slice(1).toLowerCase();
+                }
+                break;
+            }
+        }
+
+        // 2. Correcciones tipográficas comunes
+        const correcciones = {
+            'Tiemos': 'Tiempo',
+            'orenaración': 'preparación',
+            'ones': 'minutos',
+            'anios': 'minutos',
+            'allados': 'rallados',
+            'itros': 'litros',
+            'tornates': 'tomates',
+            'aio': 'ajo',
+            'sebolla': 'cebolla',
+            'nicar': 'picar',
+            'trosear': 'picar'
+        };
+
+        for (const [mal, bien] of Object.entries(correcciones)) {
+            texto = texto.replace(new RegExp(mal, 'gi'), bien);
+        }
+
+        // 3. Números y Unidades
+        texto = texto.replace(/(\d+)mi\b/g, '$1ml'); // 200mi -> 200ml
+        texto = texto.replace(/(\d+)\s?(tomates|ajo|cebolla|aceite|sal)/gi, '$1 $2'); // 2tomates -> 2 tomates
+        texto = texto.replace(/\((\d+\.\d+)8\)/g, '($1g)'); // (0.58) -> (0.5g)
+        texto = texto.replace(/(\d+)-(\d+)8\b/g, '$1-$2g'); // 15-208 -> 15-20g
+        texto = texto.replace(/«\s*(\d*)\s*litros/gi, '1½ litros'); // « 1itros -> 1½ litros
+
+        // 4. Símbolos especiales
+        texto = texto.replace(/^[+*]\s/gm, '• ');
+        texto = texto.replace(/^Y\s/gm, '✓ ');
+        texto = texto.replace(/^>\s/gm, '→ ');
+        texto = texto.replace(/^- \s/gm, '• ');
+
+        // 5. Dificultad (XX -> Estrellas)
+        texto = texto.replace(/XX \(Media\)/gi, '★★★☆☆ (Media)');
+        texto = texto.replace(/XX \(Fácil\)/gi, '★★☆☆☆ (Fácil)');
+        texto = texto.replace(/XX \(Difícil\)/gi, '★★★★☆ (Difícil)');
+        texto = texto.replace(/XX \(Muy Difícil\)/gi, '★★★★★ (Muy Difícil)');
+
+        // 6. Limpiar decoraciones (líneas de símbolos)
+        texto = texto.replace(/^[═─━]+$/gm, '');
+
+        return {
+            name: nombreReceta,
+            text: texto.trim()
+        };
+    }
+
+    /**
      * Realiza un análisis exhaustivo del texto (Modo Anti Gravity)
      */
     performExhaustiveAnalysis(text, confidence) {
@@ -393,13 +471,14 @@ class OCRScanner {
         document.getElementById('ocrCameraState').style.display = 'none';
         document.getElementById('ocrResultState').style.display = 'flex';
 
-        const textOutput = document.getElementById('extractedText');
-        if (textOutput) textOutput.value = results.text;
+        // Aplicar corrección inteligente v3.0
+        const corrected = window.ocrProcessor.smartCorrectText(results.text);
 
-        // Auto-parse for preview if possible
-        const parsed = window.ocrProcessor.parseRecipeText(results.text);
+        const textOutput = document.getElementById('extractedText');
+        if (textOutput) textOutput.value = corrected.text;
+
         const nameInput = document.getElementById('ocrRecipeName');
-        if (nameInput) nameInput.value = parsed.name || '';
+        if (nameInput) nameInput.value = corrected.name || '';
     }
 
     async handleGallery(file) {
