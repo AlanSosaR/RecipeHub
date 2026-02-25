@@ -777,15 +777,22 @@ ol {
 }
 
 /* --- Content Cell Styles (Restored) --- */
-.title-cell {
-    font-size: 14px;
-    font-weight: 500;
+.recipe-name {
+    font-weight: 700;
     color: var(--on-surface);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: block;
+    max-width: 100%;
+}
+
+.col-name {
     display: flex;
     align-items: center;
+    overflow: hidden;
+    flex: 1;
+    min-width: 0;
 }
 
 .meta-cell {
