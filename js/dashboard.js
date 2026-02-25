@@ -278,9 +278,7 @@ class DashboardManager {
         return `
             <div class="file-row-m3 ${isSelected ? 'selected' : ''}" 
                  onclick="window.dashboard.handleRecipeClick('${recipe.id}')">
-                <div class="col-icon">
-                    <span class="material-symbols-outlined" style="font-size: 24px; color: var(--secondary);">description</span>
-                </div>
+
                 <div class="col-name text-ellipsis">
                     <span class="recipe-name">${isEn ? (recipe.name_en || recipe.name_es) : recipe.name_es}</span>
                 </div>
