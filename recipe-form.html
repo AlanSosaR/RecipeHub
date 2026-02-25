@@ -1214,14 +1214,7 @@
         const btnRetryOCR = document.getElementById('btnRetryOCR');
         if (btnRetryOCR) {
             btnRetryOCR.addEventListener('click', () => {
-                // Restore camera view, clear captured frame preview
-                const capturePreview = document.getElementById('capturePreview');
-                const videoFeed = document.getElementById('videoFeed');
-                if (capturePreview) { capturePreview.style.display = 'none'; capturePreview.src = ''; }
-                if (videoFeed) { videoFeed.style.display = 'block'; }
-                if (window.ocr) window.ocr.startCamera();
-                document.getElementById('ocrCameraState').style.display = 'flex';
-                document.getElementById('ocrResultState').style.display = 'none';
+                if (window.ocr) window.ocr.reset();
             });
         }
     </script>

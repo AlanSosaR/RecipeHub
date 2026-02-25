@@ -472,6 +472,31 @@ class OCRScanner {
         const modal = document.getElementById('ocrModal');
         if (modal) modal.classList.remove('open');
         this.stopCamera();
+        this.reset();
+    }
+
+    /**
+     * Reinicia el estado del escáner para un nuevo escaneo.
+     */
+    reset() {
+        const preview = document.getElementById('capturePreview');
+        const video = document.getElementById('videoFeed');
+        const loading = document.getElementById('ocrLoading');
+        const cameraState = document.getElementById('ocrCameraState');
+        const resultState = document.getElementById('ocrResultState');
+        const galleryInput = document.getElementById('ocrGalleryInput');
+
+        if (preview) {
+            preview.style.display = 'none';
+            preview.src = '';
+        }
+        if (video) video.style.display = 'block';
+        if (loading) loading.style.display = 'none';
+        if (cameraState) cameraState.style.display = 'flex';
+        if (resultState) resultState.style.display = 'none';
+        if (galleryInput) galleryInput.value = '';
+
+        this.startCamera();
     }
 
     async startCamera() {
@@ -594,6 +619,9 @@ class OCRScanner {
             if (video) video.style.display = 'block';
         } finally {
             loading.style.display = 'none';
+            // Limpiar input para permitir seleccionar el mismo archivo de nuevo
+            const galleryInput = document.getElementById('ocrGalleryInput');
+            if (galleryInput) galleryInput.value = '';
         }
     }
 }

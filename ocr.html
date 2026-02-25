@@ -921,6 +921,25 @@
 
         function goToStep(s) {
             document.querySelectorAll('.ocr-step').forEach((el, i) => el.classList.toggle('active', i === (s - 1)));
+
+            // Si volvemos al paso 1, resetear estado e inputs
+            if (s === 1) {
+                const fileInput = document.getElementById('fileInput');
+                if (fileInput) fileInput.value = '';
+                currentImageFile = null;
+                ocrResults = { text: '', confidence: 0 };
+                parsedData = { name: '', ingredients: [], steps: [] };
+
+                const preview = document.getElementById('previewImage');
+                if (preview) preview.src = '';
+
+                const status = document.getElementById('processingStatus');
+                if (status) status.textContent = window.i18n ? window.i18n.t('ocrProcessing') : 'Iniciando OCR...';
+
+                const bar = document.getElementById('progressBar');
+                if (bar) bar.style.width = '0%';
+            }
+
             // Update dots
             document.querySelectorAll('.step-dot').forEach((dot, i) => {
                 dot.classList.toggle('active', i === (s - 1));
