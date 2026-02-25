@@ -263,7 +263,8 @@ class ShareModalManager {
                 user_id: user.id, // El destinatario (quien recibe la campana)
                 from_user_id: window.authManager.currentUser.id, // El dueño (tú)
                 recipe_id: this.recipeId,
-                leido: false
+                leido: false,
+                type: 'recipe_shared'
             }));
 
             console.log('✉️ Intentando crear registros en "notifications":', notifications);
