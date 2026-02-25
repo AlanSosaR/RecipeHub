@@ -105,7 +105,7 @@ class RecipeDetailManager {
         if (countEl) countEl.textContent = `${ingredients.length} items`;
 
         if (ingredients.length === 0) {
-            listEl.innerHTML = `<p class="text-on-surface-variant text-sm pl-11 italic">${window.i18n ? window.i18n.t('ocrNoIngredients') : 'No hay ingredientes'}</p>`;
+            listEl.innerHTML = `<p class="text-on-surface-variant dark:text-zinc-500 text-sm italic pl-2">${window.i18n ? window.i18n.t('ocrNoIngredients') : 'No hay ingredientes'}</p>`;
             return;
         }
 
@@ -113,11 +113,13 @@ class RecipeDetailManager {
             const unit = isEn ? (ing.unit_en || ing.unit_es) : ing.unit_es;
             const name = isEn ? (ing.name_en || ing.name_es) : ing.name_es;
             const text = `${ing.quantity || ''} ${unit || ''} ${name}`.trim();
+
             return `
-                <label class="flex items-start gap-4 cursor-pointer group">
-                    <input class="custom-checkbox mt-0.5 shrink-0" type="checkbox" onchange="this.nextElementSibling.classList.toggle('strikethrough', this.checked); this.nextElementSibling.classList.toggle('text-on-surface-variant', this.checked); this.nextElementSibling.classList.toggle('text-on-surface', !this.checked);">
-                    <span class="text-on-surface text-[15px] font-medium group-hover:text-primary transition-colors">${text}</span>
-                </label>
+                <div class="flex items-center gap-4 group cursor-pointer" onclick="const cb = this.querySelector('.cb-visual'); const inp = this.querySelector('input'); inp.checked = !inp.checked; this.querySelector('.ing-text').classList.toggle('strikethrough', inp.checked); this.querySelector('.ing-text').classList.toggle('text-on-surface-variant', inp.checked); cb.classList.toggle('bg-primary', inp.checked); cb.classList.toggle('border-primary/30', !inp.checked); cb.innerHTML = inp.checked ? '<span class=&quot;material-symbols-outlined text-white text-[16px] font-bold&quot;>check</span>' : '';">
+                    <input type="checkbox" class="hidden">
+                    <div class="cb-visual w-6 h-6 rounded-m3-sm border-2 border-primary/30 group-hover:border-primary transition-all flex items-center justify-center shrink-0 bg-white dark:bg-zinc-900 shadow-sm"></div>
+                    <span class="ing-text text-on-surface dark:text-zinc-200 text-base transition-colors">${text}</span>
+                </div>
             `;
         }).join('');
     }
@@ -128,25 +130,38 @@ class RecipeDetailManager {
         const isEn = window.i18n && window.i18n.getLang() === 'en';
 
         if (steps.length === 0) {
-            stepsEl.innerHTML = `<p class="text-on-surface-variant text-sm pl-11 italic">${window.i18n ? window.i18n.t('ocrNoSteps') : 'No hay pasos'}</p>`;
+            stepsEl.innerHTML = `<p class="text-on-surface-variant dark:text-zinc-500 text-sm italic pl-2">${window.i18n ? window.i18n.t('ocrNoSteps') : 'No hay pasos'}</p>`;
             return;
         }
 
-        stepsEl.innerHTML = steps.map((step, index) => {
+        // Add the vertical connector line
+        const timelineLine = `<div class="absolute left-[19px] top-10 bottom-10 w-[2px] bg-primary/10 dark:bg-primary/20"></div>`;
+
+        const stepsHtml = steps.map((step, index) => {
             const instruction = isEn ? (step.instruction_en || step.instruction_es) : step.instruction_es;
-            const isLast = index === steps.length - 1;
+            // Extract a possible title (first sentence or first few words)
+            const parts = instruction.split(/[.:\n]/);
+            const title = parts.length > 1 ? parts[0] : `Paso ${index + 1}`;
+            const body = parts.length > 1 ? instruction.substring(parts[0].length + 1).trim() : instruction;
+
             return `
-                <div class="flex gap-4 group">
-                    <div class="flex flex-col items-center">
-                        <div class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center shrink-0 font-bold text-sm shadow-md group-hover:scale-110 transition-transform">${index + 1}</div>
-                        ${!isLast ? '<div class="w-0.5 h-full bg-surface-variant/50 my-2 rounded-full min-h-[30px]"></div>' : ''}
+                <div class="flex gap-6 relative group">
+                    <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shrink-0 font-bold text-sm z-10 ring-4 ring-surface dark:ring-[#0c1210] shadow-md group-hover:scale-110 transition-transform">
+                        ${index + 1}
                     </div>
-                    <div class="${!isLast ? 'pb-2' : ''}">
-                        <p class="text-on-surface-variant text-sm leading-relaxed">${instruction}</p>
+                    <div class="pt-1">
+                        <h3 class="font-bold text-lg mb-2 text-on-surface dark:text-white transition-colors group-hover:text-primary leading-tight">
+                            ${title}
+                        </h3>
+                        <p class="text-on-surface-variant dark:text-zinc-400 text-base leading-relaxed">
+                            ${body}
+                        </p>
                     </div>
                 </div>
             `;
         }).join('');
+
+        stepsEl.innerHTML = timelineLine + stepsHtml;
     }
 
     setupEventListeners() {

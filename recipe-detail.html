@@ -26,28 +26,35 @@
     <!-- Fonts -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&display=swap"
+        rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet" />
 
     <script id="tailwind-config">
         tailwind.config = {
+            darkMode: "class",
             theme: {
                 extend: {
                     colors: {
                         "primary": "#00A676",
                         "on-primary": "#ffffff",
-                        "primary-container": "#d0f1e4",
-                        "on-primary-container": "#002115",
-                        "surface": "#fcfdfc",
-                        "surface-variant": "#e0e9e4",
-                        "on-surface": "#191c1b",
+                        "primary-container": "#D1FAE5",
+                        "on-primary-container": "#064E3B",
+                        "surface": "#F8F9FA",
+                        "on-surface": "#191C1B",
                         "on-surface-variant": "#404945",
                         "outline": "#707974",
-                        "background-tint": "#ffffff"
+                        "surface-container": "#F0F1F2"
                     },
                     fontFamily: {
                         "display": ["Plus Jakarta Sans", "sans-serif"],
+                        "serif-expressive": ["Fraunces", "serif"]
+                    },
+                    boxShadow: {
+                        'm3-l2': '0 3px 1px -2px rgba(0,0,0,0.2), 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12)',
+                        'm3-l3': '0 5px 5px -3px rgba(0,0,0,0.2), 0 8px 10px 1px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12)',
                     },
                     borderRadius: {
                         "m3-xs": "4px",
@@ -56,12 +63,6 @@
                         "m3-lg": "16px",
                         "m3-xl": "28px",
                         "m3-full": "9999px"
-                    },
-                    boxShadow: {
-                        'm3-1': '0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30)',
-                        'm3-2': '0px 2px 6px 2px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30)',
-                        'm3-3': '0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.30)',
-                        'fab-emerald': '0 12px 32px -4px rgba(0, 166, 118, 0.45)'
                     }
                 },
             },
@@ -71,164 +72,116 @@
     <style type="text/tailwindcss">
         @layer base {
             body {
-                @apply bg-[#f2f6f4] text-on-surface antialiased font-display;
+                @apply bg-surface text-on-surface antialiased font-display;
             }
         }
-        .watermark-icon {
-            position: fixed;
-            top: 10%;
-            right: -15%;
-            font-size: 400px !important;
-            opacity: 0.02;
-            transform: rotate(-15deg);
-            pointer-events: none;
-            color: #00A676;
-            z-index: 0;
+        .strikethrough { text-decoration: line-through; opacity: 0.5; }
+        .elevation-2 {
+            box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
         }
-        .strikethrough { text-decoration: line-through; opacity: 0.4; }
-        .custom-checkbox {
-            appearance: none;
-            background-color: transparent;
-            margin: 0;
-            font: inherit;
-            color: currentColor;
-            width: 1.25em;
-            height: 1.25em;
-            border: 2px solid #00A676;
-            border-radius: 4px;
-            display: grid;
-            place-content: center;
-            cursor: pointer;
+        .elevation-3 {
+            box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
         }
-        .custom-checkbox::before {
-            content: "";
-            width: 0.65em;
-            height: 0.65em;
-            transform: scale(0);
-            transition: 120ms transform ease-in-out;
-            box-shadow: inset 1em 1em white;
-            transform-origin: center;
-            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-            background-color: white;
-        }
-        .custom-checkbox:checked {
-            background-color: #00A676;
-            border-color: #00A676;
-        }
-        .custom-checkbox:checked::before {
-            transform: scale(1);
-            background-color: white;
-            box-shadow: none;
+        .dark .elevation-2 {
+            box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.4), 0px 2px 2px 0px rgba(0, 0, 0, 0.28), 0px 1px 5px 0px rgba(0, 0, 0, 0.24);
         }
     </style>
 </head>
 
-<body class="bg-[#f2f6f4] min-h-screen relative pb-32">
+<body class="dark:bg-[#0c1210] dark:text-white min-h-screen">
     <nav
-        class="fixed top-6 left-6 right-6 z-50 bg-white/95 backdrop-blur-md h-16 rounded-full flex items-center justify-between shadow-m3-3 px-3 border border-black/5">
+        class="fixed top-0 left-0 right-0 z-50 bg-surface/40 backdrop-blur-lg dark:bg-zinc-950/40 px-4 h-20 flex items-center justify-between border-b border-transparent">
         <button onclick="window.location.href='index.html'"
-            class="flex items-center justify-center w-12 h-12 rounded-full hover:bg-black/5 transition-colors">
-            <span class="material-symbols-outlined text-on-surface text-[24px]">arrow_back</span>
+            class="flex items-center justify-center w-11 h-11 rounded-full bg-white dark:bg-zinc-900 elevation-2 hover:elevation-3 transition-all active:scale-95">
+            <span class="material-symbols-outlined text-primary">arrow_back</span>
         </button>
-        <div class="flex gap-1">
+        <div class="flex gap-3">
             <button id="btnFavorite"
-                class="flex items-center justify-center w-12 h-12 rounded-full hover:bg-black/5 transition-colors">
-                <span class="material-symbols-outlined text-on-surface text-[24px]">favorite</span>
+                class="flex items-center justify-center w-11 h-11 rounded-full bg-white dark:bg-zinc-900 elevation-2 hover:elevation-3 transition-all active:scale-95">
+                <span class="material-symbols-outlined text-primary">favorite</span>
             </button>
             <button id="btnEdit"
-                class="flex items-center justify-center w-12 h-12 rounded-full hover:bg-black/5 transition-colors">
-                <span class="material-symbols-outlined text-on-surface text-[24px]">edit</span>
+                class="flex items-center justify-center w-11 h-11 rounded-full bg-white dark:bg-zinc-900 elevation-2 hover:elevation-3 transition-all active:scale-95">
+                <span class="material-symbols-outlined text-primary">edit</span>
             </button>
             <button id="btnDelete"
-                class="flex items-center justify-center w-12 h-12 rounded-full hover:bg-black/5 transition-colors">
-                <span class="material-symbols-outlined text-on-surface text-[24px] text-red-500">delete</span>
+                class="flex items-center justify-center w-11 h-11 rounded-full bg-white dark:bg-zinc-900 elevation-2 hover:elevation-3 transition-all active:scale-95 text-red-500">
+                <span class="material-symbols-outlined">delete</span>
             </button>
         </div>
     </nav>
 
-    <span class="material-symbols-outlined watermark-icon">restaurant</span>
-
-    <main class="relative pt-28 px-4 max-w-2xl mx-auto z-10 flex flex-col gap-6">
-        <header class="px-2">
-            <h1 id="recipeTitle" class="text-[36px] font-extrabold leading-tight text-on-surface tracking-tight mb-3">
+    <main class="relative pt-28 px-6 pb-20 max-w-lg mx-auto">
+        <header class="mb-12">
+            <h1 id="recipeTitle"
+                class="font-serif-expressive text-[34px] font-bold leading-tight text-on-surface dark:text-white tracking-tight">
                 Cargando receta...
             </h1>
         </header>
 
-        <div class="bg-white rounded-m3-xl shadow-m3-1 border border-black/5 p-6 relative overflow-hidden">
-            <div class="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none">
-            </div>
-            <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none">
-            </div>
-
+        <div class="space-y-16">
             <!-- Story Section -->
-            <section class="mb-10 relative z-10">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                        <span class="material-symbols-outlined text-[20px]">auto_stories</span>
+            <section>
+                <div class="flex items-center gap-5 mb-6">
+                    <div
+                        class="w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-zinc-800 elevation-3 ring-1 ring-black/[0.02] shrink-0">
+                        <span class="material-symbols-outlined text-[24px] text-primary">auto_stories</span>
                     </div>
-                    <h2 class="text-sm font-bold text-on-surface uppercase tracking-wider"
-                        data-i18n="detailDescription">Historia de la Receta</h2>
+                    <h2 class="text-xl font-bold text-on-surface dark:text-white tracking-tight"
+                        data-i18n="detailDescription">The Story</h2>
                 </div>
-                <p id="recipeDescription" class="text-on-surface-variant leading-relaxed text-[15px] pl-11">
-                    Cargando descripción...
+                <p id="recipeDescription"
+                    class="text-on-surface-variant dark:text-zinc-400 leading-relaxed text-base px-2">
+                    Aguardando...
                 </p>
             </section>
 
-            <hr class="border-surface-variant/50 mb-10 mx-2" />
-
             <!-- Ingredients Section -->
-            <section class="mb-10 relative z-10">
-                <div class="flex items-center justify-between mb-5">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                            <span class="material-symbols-outlined text-[20px]">shopping_basket</span>
-                        </div>
-                        <h2 class="text-sm font-bold text-on-surface uppercase tracking-wider"
-                            data-i18n="detailIngredients">Ingredientes</h2>
+            <section>
+                <div class="flex items-center gap-5 mb-8">
+                    <div
+                        class="w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-zinc-800 elevation-3 ring-1 ring-black/[0.02] shrink-0">
+                        <span class="material-symbols-outlined text-[24px] text-primary">shopping_basket</span>
                     </div>
-                    <span id="ingredientsCount"
-                        class="text-xs text-on-surface-variant font-medium bg-surface-variant/50 px-2 py-1 rounded-md">0
-                        items</span>
+                    <div class="flex flex-col">
+                        <h2 class="text-xl font-bold text-on-surface dark:text-white tracking-tight"
+                            data-i18n="detailIngredients">Ingredients</h2>
+                        <span id="ingredientsCount"
+                            class="text-xs text-on-surface-variant dark:text-zinc-500 font-medium">0 items</span>
+                    </div>
                 </div>
-                <div id="ingredientsList" class="flex flex-col gap-5 pl-2">
+                <div id="ingredientsList" class="space-y-5 px-2">
                     <!-- Loaded via JS -->
                 </div>
             </section>
 
-            <hr class="border-surface-variant/50 mb-10 mx-2" />
-
             <!-- Preparation Section -->
-            <section class="relative z-10 mb-8">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                        <span class="material-symbols-outlined text-[20px] fill-1">build</span>
+            <section>
+                <div class="flex items-center gap-5 mb-10">
+                    <div
+                        class="w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-zinc-800 elevation-3 ring-1 ring-black/[0.02] shrink-0">
+                        <span class="material-symbols-outlined text-[24px] text-primary">restaurant_menu</span>
                     </div>
-                    <h2 class="text-sm font-bold text-on-surface uppercase tracking-wider" data-i18n="detailSteps">
-                        Preparación</h2>
+                    <h2 class="text-xl font-bold text-on-surface dark:text-white tracking-tight"
+                        data-i18n="detailSteps">Preparation Steps</h2>
                 </div>
-                <div id="stepsList" class="space-y-8 pl-1">
+                <div id="stepsList" class="space-y-12 relative px-2">
                     <!-- Loaded via JS -->
                 </div>
             </section>
 
             <!-- Footer Dates -->
-            <div class="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-surface-variant/50">
-                <div class="flex flex-col">
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="material-symbols-outlined text-[16px] text-primary">calendar_today</span>
-                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold"
-                            data-i18n="detailCreated">Creada</p>
-                    </div>
-                    <p id="createdDate" class="text-xs font-semibold text-on-surface pl-6">--</p>
+            <div class="grid grid-cols-2 gap-4 mt-8 pt-10 border-t border-primary/10">
+                <div class="flex flex-col gap-1">
+                    <span
+                        class="text-[10px] uppercase tracking-widest text-on-surface-variant dark:text-zinc-500 font-bold"
+                        data-i18n="detailCreated">Creada</span>
+                    <p id="createdDate" class="text-sm font-semibold text-on-surface dark:text-zinc-300">--</p>
                 </div>
-                <div class="flex flex-col">
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="material-symbols-outlined text-[16px] text-primary">update</span>
-                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Modificada
-                        </p>
-                    </div>
-                    <p id="updatedDate" class="text-xs font-semibold text-on-surface pl-6">--</p>
+                <div class="flex flex-col gap-1">
+                    <span
+                        class="text-[10px] uppercase tracking-widest text-on-surface-variant dark:text-zinc-500 font-bold">Modificada</span>
+                    <p id="updatedDate" class="text-sm font-semibold text-on-surface dark:text-zinc-300">--</p>
                 </div>
             </div>
         </div>
@@ -236,7 +189,7 @@
 
     <div class="fixed bottom-8 left-0 right-0 z-50 flex justify-center px-6 pointer-events-none">
         <button id="btnCookNow"
-            class="pointer-events-auto bg-[#00A676] text-white h-14 pl-6 pr-8 rounded-full font-bold flex items-center gap-3 shadow-fab-emerald active:scale-95 transition-all hover:brightness-105 hover:-translate-y-0.5">
+            class="pointer-events-auto bg-[#00A676] text-white h-14 pl-6 pr-8 rounded-full font-bold flex items-center gap-3 shadow-m3-l3 active:scale-95 transition-all hover:brightness-105 hover:-translate-y-0.5">
             <span class="material-symbols-outlined text-[24px]">play_arrow</span>
             <span class="text-[15px] tracking-wide uppercase font-bold" data-i18n="cookNow">Iniciar receta</span>
         </button>
