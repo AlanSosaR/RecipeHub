@@ -558,15 +558,18 @@
                         <div id="search-suggestions" class="search-suggestions hidden"></div>
                     </div>
 
-                    <div class="permission-section">
-                        <div class="select-wrapper">
-                            <label for="share-permission" class="select-label"
-                                data-i18n="permissionLabel">Permiso:</label>
-                            <select id="share-permission" class="custom-select">
-                                <option value="view" data-i18n="permView">Solo ver</option>
-                                <option value="add" data-i18n="permAdd">Puede copiar</option>
-                            </select>
-                            <span class="material-symbols-outlined select-arrow">expand_more</span>
+                    <div class="permission-section" style="margin-bottom: 24px;">
+                        <p class="select-label" data-i18n="permissionLabel"
+                            style="margin-bottom: 12px; font-weight: 600;">Permiso:</p>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                                <input type="radio" name="share-permission" value="view" class="m3-radio" checked>
+                                <span data-i18n="permView">Solo ver</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                                <input type="radio" name="share-permission" value="add" class="m3-radio">
+                                <span data-i18n="permAdd">Puede copiar</span>
+                            </label>
                         </div>
                     </div>
 

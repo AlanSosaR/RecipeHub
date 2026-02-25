@@ -243,7 +243,7 @@ class ShareModalManager {
 
     async share() {
         if (this.selectedUsers.length === 0) return;
-        const permission = document.getElementById('share-permission').value;
+        const permission = document.querySelector('input[name="share-permission"]:checked')?.value || 'view';
         const dbPerm = permission === 'add' ? 'view_and_copy' : 'view';
 
         try {
