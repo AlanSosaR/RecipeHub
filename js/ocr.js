@@ -341,6 +341,9 @@ class OCRScanner {
         const preview = document.getElementById('capturePreview');
 
         try {
+            // Show loading spinner
+            loading.style.display = 'flex';
+
             // Draw current frame to canvas
             const canvas = document.createElement('canvas');
             canvas.width = video.videoWidth;
@@ -355,8 +358,8 @@ class OCRScanner {
                 video.style.display = 'none';
             }
 
-            // Show loading spinner
-            loading.style.display = 'flex';
+            // Convert canvas to blob for processing
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
 
             // Convert back to File for processing
             const processedBlob = await window.ocrProcessor.cleanStatusBar(blob);
