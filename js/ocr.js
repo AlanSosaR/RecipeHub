@@ -40,6 +40,10 @@ class OCRProcessor {
                 throw error;
             }
 
+            if (!data || !data.text) {
+                throw new Error('La IA no pudo extraer texto de esta imagen.');
+            }
+
             return {
                 text: data.text,
                 confidence: data.confidence || 100
@@ -565,16 +569,29 @@ class OCRScanner {
     async handleGallery(file) {
         if (!file) return;
         const loading = document.getElementById('ocrLoading');
+        const video = document.getElementById('videoFeed');
+        const preview = document.getElementById('capturePreview');
+
         loading.style.display = 'flex';
 
         try {
+            // Mostrar previsualización inmediata para que el usuario sepa que se está procesando
+            if (preview && video) {
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+                video.style.display = 'none';
+            }
+
             const processedBlob = await window.ocrProcessor.cleanStatusBar(file);
             const processedFile = new File([processedBlob], file.name, { type: file.type });
             const results = await window.ocrProcessor.processImage(processedFile);
             this.showResults(results);
         } catch (error) {
             console.error('OCR Error:', error);
-            window.showToast('Error al procesar archivo', 'error');
+            window.showToast(error.message || 'Error al procesar archivo', 'error');
+            // Restaurar vista en caso de error
+            if (preview) preview.style.display = 'none';
+            if (video) video.style.display = 'block';
         } finally {
             loading.style.display = 'none';
         }
