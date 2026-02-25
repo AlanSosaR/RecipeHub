@@ -25,12 +25,8 @@
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
     <script>
-        // Apply theme before first paint
-        (function () {
-            const saved = localStorage.getItem('theme') ||
-                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            document.documentElement.setAttribute('data-theme', saved);
-        })();
+        // Force light mode
+        document.documentElement.setAttribute('data-theme', 'light');
     </script>
 
     <style>
@@ -447,25 +443,6 @@
                 <span class="material-symbols-outlined">share</span>
                 <span data-i18n="navShared">Compartidas</span>
             </a>
-
-            <li class="nav-item" id="theme-menu-item">
-                <button class="nav-link" id="btn-theme-toggle">
-                    <span class="material-symbols-outlined">contrast</span>
-                    <span>Tema</span>
-                    <span class="material-symbols-outlined" style="margin-left:auto;font-size:16px">chevron_right</span>
-                </button>
-                <div id="theme-submenu" style="display:none">
-                    <button class="theme-option" data-theme="light">
-                        <span class="material-symbols-outlined">light_mode</span>Modo claro
-                    </button>
-                    <button class="theme-option" data-theme="dark">
-                        <span class="material-symbols-outlined">dark_mode</span>Modo oscuro
-                    </button>
-                    <button class="theme-option" data-theme="system">
-                        <span class="material-symbols-outlined">monitor</span>Sistema operativo
-                    </button>
-                </div>
-            </li>
 
             <li class="nav-item" id="lang-menu-item">
                 <button class="nav-link" id="btn-lang-toggle">

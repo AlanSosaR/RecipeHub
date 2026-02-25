@@ -1,24 +1,3 @@
-// UI Helper functions
-
-window.applyTheme = function (theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    const icon = document.getElementById('theme-icon');
-    if (icon) {
-        icon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
-    }
-    localStorage.setItem('theme', theme);
-}
-
-window.initTheme = function () {
-    const saved = localStorage.getItem('theme') ||
-        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    window.applyTheme(saved);
-}
-
-window.toggleDarkMode = function () {
-    const current = document.documentElement.getAttribute('data-theme') || 'light';
-    window.applyTheme(current === 'dark' ? 'light' : 'dark');
-}
 
 window.setupMobileMenu = function () {
     const btnMenuMobile = document.getElementById('btnMenuMobile');
@@ -107,7 +86,7 @@ window.setupSidebarMenus = function () {
     const openSubmenu = (btn, submenu) => {
         if (!btn || !submenu) return;
         // Close all submenus first
-        document.querySelectorAll('#theme-submenu, #lang-submenu')
+        document.querySelectorAll('#lang-submenu')
             .forEach(s => s.style.display = 'none');
 
         if (window.innerWidth >= 1024) {
@@ -139,11 +118,6 @@ window.setupSidebarMenus = function () {
         }
     }
 
-    document.getElementById('btn-theme-toggle')
-        ?.addEventListener('click', e => {
-            e.stopPropagation();
-            openSubmenu(e.currentTarget, document.getElementById('theme-submenu'));
-        });
 
     document.getElementById('btn-lang-toggle')
         ?.addEventListener('click', e => {
@@ -152,22 +126,9 @@ window.setupSidebarMenus = function () {
         });
 
     document.addEventListener('click', () => {
-        if (themeSub) themeSub.style.display = 'none';
         if (langSub) langSub.style.display = 'none';
     });
 
-    // Theme options logic
-    document.querySelectorAll('.theme-option').forEach(b => b.addEventListener('click', () => {
-        const theme = b.dataset.theme;
-        if (theme) {
-            localStorage.setItem('theme', theme);
-            window.applyTheme(theme);
-            // Mark active
-            document.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('active'));
-            b.classList.add('active');
-            if (themeSub) themeSub.style.display = 'none';
-        }
-    }));
 
     // Language options logic
     document.querySelectorAll('.lang-option').forEach(b => b.addEventListener('click', () => {
@@ -183,10 +144,7 @@ window.setupSidebarMenus = function () {
     }));
 
     // Initial active state for options
-    const currentTheme = localStorage.getItem('theme') || 'light';
     const currentLang = localStorage.getItem('lang') || 'es';
-
-    document.querySelector(`.theme-option[data-theme="${currentTheme}"]`)?.classList.add('active');
     document.querySelector(`.lang-option[data-lang="${currentLang}"]`)?.classList.add('active');
 }
 

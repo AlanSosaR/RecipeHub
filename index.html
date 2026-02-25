@@ -31,26 +31,16 @@
     <link rel="stylesheet" href="css/responsive.css">
 
     <script>
-        // ── Tema: aplicar antes del primer paint ───────────────────────
-        (function () {
-            // Solo aplicar tema si hay indicios de sesión para evitar fondo negro en landing
-            const hasSession = Object.keys(localStorage).some(key => key.includes('auth-token'));
-            if (!hasSession && !window.location.pathname.includes('dashboard')) {
-                return;
-            }
-
-            const saved = localStorage.getItem('theme') ||
-                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            document.documentElement.setAttribute('data-theme', saved);
-        })();
-
         // Anti-flicker: Improved logic to prevent landing page flicker
         const hasSession = Object.keys(localStorage).some(key => key.includes('auth-token'));
         if (hasSession) {
             document.documentElement.setAttribute('data-auth-likely', 'true');
-            // We use a CSS rule to hide the landing if this attribute is present
         }
+        // Force light mode
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.removeItem('theme');
     </script>
+
 
     <style>
         /* ─── RecipeHub Glassmorphism Landing ─── */
@@ -388,25 +378,6 @@
                     <span data-i18n="navShared">Compartidas</span>
                 </a>
 
-                <li class="nav-item" id="theme-menu-item">
-                    <button class="nav-link" id="btn-theme-toggle">
-                        <span class="material-symbols-outlined">contrast</span>
-                        <span>Tema</span>
-                        <span class="material-symbols-outlined"
-                            style="margin-left:auto;font-size:16px">chevron_right</span>
-                    </button>
-                    <div id="theme-submenu" style="display:none">
-                        <button class="theme-option" data-theme="light">
-                            <span class="material-symbols-outlined">light_mode</span>Modo claro
-                        </button>
-                        <button class="theme-option" data-theme="dark">
-                            <span class="material-symbols-outlined">dark_mode</span>Modo oscuro
-                        </button>
-                        <button class="theme-option" data-theme="system">
-                            <span class="material-symbols-outlined">monitor</span>Sistema operativo
-                        </button>
-                    </div>
-                </li>
 
                 <li class="nav-item" id="lang-menu-item">
                     <button class="nav-link" id="btn-lang-toggle">

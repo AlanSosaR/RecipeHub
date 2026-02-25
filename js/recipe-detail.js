@@ -105,7 +105,7 @@ class RecipeDetailManager {
         if (countEl) countEl.textContent = `${ingredients.length} items`;
 
         if (ingredients.length === 0) {
-            listEl.innerHTML = `<p class="text-on-surface-variant dark:text-zinc-500 text-sm pl-11 italic">${window.i18n ? window.i18n.t('ocrNoIngredients') : 'No hay ingredientes'}</p>`;
+            listEl.innerHTML = `<p class="text-on-surface-variant text-sm pl-11 italic">${window.i18n ? window.i18n.t('ocrNoIngredients') : 'No hay ingredientes'}</p>`;
             return;
         }
 
@@ -116,7 +116,7 @@ class RecipeDetailManager {
             return `
                 <label class="flex items-start gap-4 cursor-pointer group">
                     <input class="custom-checkbox mt-0.5 shrink-0" type="checkbox" onchange="this.nextElementSibling.classList.toggle('strikethrough', this.checked); this.nextElementSibling.classList.toggle('text-on-surface-variant', this.checked); this.nextElementSibling.classList.toggle('text-on-surface', !this.checked);">
-                    <span class="text-on-surface dark:text-zinc-200 text-[15px] font-medium group-hover:text-primary transition-colors">${text}</span>
+                    <span class="text-on-surface text-[15px] font-medium group-hover:text-primary transition-colors">${text}</span>
                 </label>
             `;
         }).join('');
@@ -128,7 +128,7 @@ class RecipeDetailManager {
         const isEn = window.i18n && window.i18n.getLang() === 'en';
 
         if (steps.length === 0) {
-            stepsEl.innerHTML = `<p class="text-on-surface-variant dark:text-zinc-500 text-sm pl-11 italic">${window.i18n ? window.i18n.t('ocrNoSteps') : 'No hay pasos'}</p>`;
+            stepsEl.innerHTML = `<p class="text-on-surface-variant text-sm pl-11 italic">${window.i18n ? window.i18n.t('ocrNoSteps') : 'No hay pasos'}</p>`;
             return;
         }
 
@@ -139,10 +139,10 @@ class RecipeDetailManager {
                 <div class="flex gap-4 group">
                     <div class="flex flex-col items-center">
                         <div class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center shrink-0 font-bold text-sm shadow-md group-hover:scale-110 transition-transform">${index + 1}</div>
-                        ${!isLast ? '<div class="w-0.5 h-full bg-surface-variant/50 dark:bg-zinc-700 my-2 rounded-full min-h-[30px]"></div>' : ''}
+                        ${!isLast ? '<div class="w-0.5 h-full bg-surface-variant/50 my-2 rounded-full min-h-[30px]"></div>' : ''}
                     </div>
                     <div class="${!isLast ? 'pb-2' : ''}">
-                        <p class="text-on-surface-variant dark:text-zinc-400 text-sm leading-relaxed">${instruction}</p>
+                        <p class="text-on-surface-variant text-sm leading-relaxed">${instruction}</p>
                     </div>
                 </div>
             `;
