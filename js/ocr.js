@@ -103,20 +103,28 @@ class OCRProcessor {
         };
     }
 
-    // MEJORAS POST-OCR (NIVEL 2)
+    // MEJORAS POST-OCR — Modo Forense (sin auto-corrección de texto)
     async enhanceResult(result) {
-        // 1. Aplicar correcciones inteligentes
-        const corrected = this.smartCorrectText(result.text);
+        const rawText = (result.text || '').trim();
 
-        // 2. Aplicar parser de estructura
-        const parsed = this.parseRecipeText(corrected.texto_corregido);
+        // Extraer nombre de la primera línea (solo para el campo UI, NO modifica el texto)
+        const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+        let recipeName = '';
+        for (let i = 0; i < Math.min(3, lines.length); i++) {
+            const line = lines[i].replace(/[═─━]+/g, '').trim();
+            if (line.length > 2 && line.length < 80) {
+                recipeName = line;
+                break;
+            }
+        }
 
-        // 3. Validación inteligente
+        // Parsear estructura (para Vista Previa en ocr.html)
+        const parsed = this.parseRecipeText(rawText);
         const validated = this.intelligentValidation(parsed);
 
         return {
-            name: validated.name, // Changed from nombre to name
-            text: corrected.texto_corregido, // Changed from texto to text
+            name: recipeName || validated.name,
+            text: rawText, // Texto SIN modificar — transcripción forense
             ingredients: validated.ingredients,
             steps: validated.steps,
             confidence: result.confidence,
