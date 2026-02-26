@@ -936,15 +936,20 @@
 
         <!-- Top App Bar -->
         <header class="m3-top-bar">
-            <!-- Left: Avatar (Initials) + Utilities -->
+            <!-- Left: Avatar (Initials) -->
             <div class="left">
-                <div id="btnOpenMenu" class="header-avatar-m3" onclick="window.toggleSidebar(true)">
+                <div id="btnOpenMenu" class="header-avatar-m3">
                     <span class="user-initials-m3">CH</span>
                 </div>
             </div>
 
-            <!-- Right: Title + Logo (Desktop only) -->
+            <!-- Right: OCR Button + Title + Logo -->
             <div class="right">
+                <button type="button" id="btnOCROpen" class="m3-tonal-btn">
+                    <span class="material-symbols-outlined">document_scanner</span>
+                    <span class="ocr-label" data-i18n="ocrTitle">Escanear</span>
+                </button>
+
                 <h1 id="formTitle" data-i18n="formNewRecipe" style="margin:0; font-size: 18px;">Nueva Receta</h1>
 
                 <div class="sidebar-logo desktop-only-logo"
