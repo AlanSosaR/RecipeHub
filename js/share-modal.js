@@ -315,7 +315,7 @@ class ShareModalManager {
                 recipe_id: this.recipeId,
                 owner_user_id: currentUserId,
                 recipient_user_id: user.id,
-                permission: 'permanent',
+                permission: 'view',
                 status: 'pending'
             }));
 
