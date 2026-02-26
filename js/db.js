@@ -411,7 +411,80 @@ class DatabaseManager {
             if (cached) return { success: true, categories: cached, fromCache: true };
 
             console.error('❌ Error obteniendo categorías:', error);
-            return { success: false, categories: [] };
+        }
+    }
+
+    async duplicateRecipe(recipeId, targetUserId) {
+        try {
+            // 1. Obtener receta original completa
+            const { success, recipe, error } = await this.getRecipeById(recipeId);
+            if (!success) throw new Error(error);
+
+            // 2. Insertar nueva receta base
+            const { data: newRecipe, error: recipeError } = await window.supabaseClient
+                .from('recipes')
+                .insert([{
+                    user_id: targetUserId,
+                    name_es: `${recipe.name_es} (Copia)`,
+                    name_en: recipe.name_en ? `${recipe.name_en} (Copy)` : null,
+                    description_es: recipe.description_es,
+                    description_en: recipe.description_en,
+                    category_id: recipe.category_id,
+                    difficulty: recipe.difficulty,
+                    prep_time: recipe.prep_time,
+                    cook_time: recipe.cook_time,
+                    servings: recipe.servings,
+                    is_active: true,
+                    is_favorite: false
+                }])
+                .select()
+                .single();
+
+            if (recipeError) throw recipeError;
+
+            // 3. Duplicar Ingredientes
+            const { data: ingredientsData } = await window.supabaseClient.from('ingredients').select('*').eq('recipe_id', recipeId);
+            if (ingredientsData && ingredientsData.length > 0) {
+                const ingredients = ingredientsData.map(i => ({
+                    recipe_id: newRecipe.id,
+                    name_es: i.name_es,
+                    name_en: i.name_en,
+                    quantity: i.quantity,
+                    unit_es: i.unit_es,
+                    unit_en: i.unit_en
+                }));
+                await window.supabaseClient.from('ingredients').insert(ingredients);
+            }
+
+            // 4. Duplicar Pasos
+            const { data: stepsData } = await window.supabaseClient.from('preparation_steps').select('*').eq('recipe_id', recipeId);
+            if (stepsData && stepsData.length > 0) {
+                const steps = stepsData.map(s => ({
+                    recipe_id: newRecipe.id,
+                    instruction_es: s.instruction_es,
+                    instruction_en: s.instruction_en,
+                    step_number: s.step_number
+                }));
+                await window.supabaseClient.from('preparation_steps').insert(steps);
+            }
+
+            // 5. Duplicar referencias de imágenes
+            const { data: imagesData } = await window.supabaseClient.from('recipe_images').select('*').eq('recipe_id', recipeId);
+            if (imagesData && imagesData.length > 0) {
+                const images = imagesData.map(img => ({
+                    recipe_id: newRecipe.id,
+                    image_url: img.image_url,
+                    is_primary: img.is_primary,
+                    file_size: img.file_size
+                }));
+                await window.supabaseClient.from('recipe_images').insert(images);
+            }
+
+            return { success: true, recipe: newRecipe };
+
+        } catch (error) {
+            console.error('❌ Error duplicando receta:', error);
+            return { success: false, error: error.message };
         }
     }
 }

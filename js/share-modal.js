@@ -44,8 +44,6 @@ class ShareModalManager {
     async open(recipeId) {
         this.recipeId = recipeId;
         this.selectedUsers = [];
-        this.renderChips();
-        this.updateShareButton();
         this.modal.classList.remove('hidden');
 
         // Reset UI
@@ -117,11 +115,6 @@ class ShareModalManager {
                         <span class="share-name">${fullName}</span>
                         <span class="share-email">${user.email}</span>
                     </div>
-                    <select class="share-perm-select" onchange="window.shareModal.changePermission('${share.id}', this.value)">
-                        <option value="view" ${share.permission === 'view' ? 'selected' : ''}>👁️ Solo ver</option>
-                        <option value="view_and_copy" ${share.permission === 'view_and_copy' ? 'selected' : ''}>📋 Puede copiar</option>
-                        <option value="remove">🚫 Eliminar acceso</option>
-                    </select>
                 </div>
             `;
         }).join('');
@@ -213,84 +206,51 @@ class ShareModalManager {
         }).join('');
     }
 
-    addUser(userId, name, email) {
-        this.selectedUsers.push({ id: userId, name, email });
-        this.renderChips();
-        this.updateShareButton();
-        this.searchInput.value = '';
-        this.suggestionsContainer.classList.add('hidden');
-    }
-
-    removeUser(userId) {
-        this.selectedUsers = this.selectedUsers.filter(u => u.id !== userId);
-        this.renderChips();
-        this.updateShareButton();
-    }
-
-    renderChips() {
-        if (!this.chipsContainer) return;
-        this.chipsContainer.innerHTML = this.selectedUsers.map(u => `
-            <div class="user-chip">
-                <span>${u.name}</span>
-                <span class="material-symbols-outlined remove-chip" onclick="window.shareModal.removeUser('${u.id}')">close</span>
-            </div>
-        `).join('');
-    }
-
-    updateShareButton() {
-        if (this.btnShare) this.btnShare.disabled = this.selectedUsers.length === 0;
-    }
-
-    async share() {
-        if (this.selectedUsers.length === 0) return;
-        const permission = document.querySelector('input[name="share-permission"]:checked')?.value || 'view';
-        const dbPerm = permission === 'add' ? 'view_and_copy' : 'view';
+    async addUser(userId, name, email) {
+        if (this.searchInput) this.searchInput.value = '';
+        if (this.suggestionsContainer) this.suggestionsContainer.classList.add('hidden');
 
         try {
-            const insertions = this.selectedUsers.map(user => ({
+            // Permission default is 'view' on direct share (user can then change it in the list below)
+            const dbPerm = 'view';
+
+            const { error: shareError } = await window.supabaseClient.from('shared_recipes').insert([{
                 recipe_id: this.recipeId,
                 owner_user_id: window.authManager.currentUser.id,
-                recipient_user_id: user.id,
+                recipient_user_id: userId,
                 permission: dbPerm,
-                status: 'pending'
-            }));
+                status: 'pending' // Compatible con sistema de invitaciones
+            }]);
 
-            const { error: shareError } = await window.supabaseClient.from('shared_recipes').insert(insertions);
-            if (shareError) throw shareError;
+            if (shareError) {
+                if (shareError.code === '23505') { // Puntaje de duplicado (ya se compartió)
+                    window.utils.showToast('Esta receta ya ha sido compartida con este usuario.', 'info');
+                    return;
+                }
+                throw shareError;
+            }
 
-            // 2. Crear notificaciones para que aparezcan en tiempo real al destinatario
-            const notifications = this.selectedUsers.map(user => ({
-                user_id: user.id, // El destinatario (quien recibe la campana)
-                from_user_id: window.authManager.currentUser.id, // El dueño (tú)
+            // Create real-time notification
+            await window.supabaseClient.from('notifications').insert([{
+                user_id: userId,
+                from_user_id: window.authManager.currentUser.id,
                 recipe_id: this.recipeId,
                 leido: false,
                 type: 'recipe_shared'
-            }));
+            }]);
 
-            console.log('✉️ Intentando crear registros en "notifications":', notifications);
-
-            const { error: notifError } = await window.supabaseClient.from('notifications').insert(notifications);
-            if (notifError) {
-                console.warn('⚠️ Error al crear notificaciones (detalles):', notifError.message, notifError.details, notifError);
-                console.log('💡 Sugerencia: Asegúrate de habilitar la política RLS de INSERT en la tabla notifications.');
-            } else {
-                console.log('🚀 Notificaciones creadas exitosamente');
-            }
-
-            const namesList = this.selectedUsers.map(u => u.name).join(', ');
-            const successMsg = window.i18n ? window.i18n.t('sharedWith', { names: namesList }) : `✅ Compartido con ${namesList}`;
+            const successMsg = window.i18n ? window.i18n.t('sharedWith', { names: name }) : `✅ Compartido con ${name}`;
             window.utils.showToast(successMsg, 'success');
-            this.selectedUsers = [];
-            this.renderChips();
-            this.updateShareButton();
 
-            // Reload list
+            // Refresh access list immediately
             await this.loadExistingShares();
         } catch (err) {
-            console.error('Share error:', err);
-            window.utils.showToast('Error al compartir', 'error');
+            console.error('Direct Share Error:', err);
+            window.utils.showToast('Error al compartir la receta', 'error');
         }
     }
+
+    // Methods for multi-select chips are now deprecated.
 }
 
 // Inicializar

@@ -60,21 +60,8 @@ class DashboardManager {
     }
 
     updateUserUI() {
-        if (!window.authManager.currentUser) return;
-        const user = window.authManager.currentUser;
-
-        // Actualizar saludo en sidebar
-        const sidebarGreeting = document.getElementById('sidebar-user-greeting');
-        if (sidebarGreeting) {
-            const chefText = window.i18n ? window.i18n.t('chefGreeting') : 'Chef';
-            sidebarGreeting.textContent = `${chefText} ${user.first_name || ''}`;
-        }
-
-        // Actualizar iniciales
-        const sidebarInitials = document.getElementById('sidebar-user-initials');
-        if (sidebarInitials) {
-            const initials = (user.first_name?.[0] || 'C') + (user.last_name?.[0] || 'H');
-            sidebarInitials.textContent = initials.toUpperCase();
+        if (window.updateGlobalUserUI) {
+            window.updateGlobalUserUI();
         }
     }
 
@@ -390,6 +377,11 @@ class DashboardManager {
             hour: '2-digit', minute: '2-digit'
         }) + ' ' + new Date(recipe.updated_at).toLocaleDateString(isEn ? 'en-US' : 'es-ES');
 
+        const isShared = recipe.sharingContext === 'received';
+        const accessLabel = isShared
+            ? (window.i18n ? window.i18n.t('navShared') : 'Compartida')
+            : (window.i18n ? window.i18n.t('accessPrivate') : 'Solo tú');
+
         detailsContent.innerHTML = `
             <div class="details-preview">
                 <div class="no-image-placeholder"><span class="material-symbols-outlined" style="font-size: 48px;">restaurant</span></div>
@@ -398,15 +390,25 @@ class DashboardManager {
                 <h3 style="margin-bottom: 8px;">${isEn ? (recipe.name_en || recipe.name_es) : recipe.name_es}</h3>
                 <div class="details-meta-m3">
                     <span class="badge-tag">General</span>
-                    <span class="badge-tag">${window.i18n ? window.i18n.t('accessPrivate') : 'Solo tú'}</span>
+                    <span class="badge-tag">${accessLabel}</span>
                 </div>
+                
+                ${isShared ? `
+                <div style="margin-top: 24px;">
+                    <md-filled-button onclick="window.dashboard.saveSharedRecipe('${recipe.id}')" style="width: 100%;">
+                        <span slot="icon" class="material-symbols-outlined">library_add</span>
+                        ${window.i18n ? window.i18n.t('addToMyRecipes') : 'Agregar a mis recetas'}
+                    </md-filled-button>
+                </div>
+                ` : ''}
+
                 <div class="details-section" style="margin-top: 24px;">
                     <label style="font-size: 12px; color: var(--on-surface-variant); font-weight: 600;">${window.i18n ? window.i18n.t('detailLastModified') : 'Última modificación'}</label>
                     <p style="font-size: 14px; margin-top: 4px;">${date}</p>
                 </div>
                 <div class="details-section" style="margin-top: 16px;">
                     <label style="font-size: 12px; color: var(--on-surface-variant); font-weight: 600;">${window.i18n ? window.i18n.t('recipeType') : 'Tipo'}</label>
-                    <p style="font-size: 14px; margin-top: 4px;">${window.i18n ? window.i18n.t('recipePersonal') : 'Receta personal'}</p>
+                    <p style="font-size: 14px; margin-top: 4px;">${isShared ? (window.i18n ? window.i18n.t('recipeShared') : 'Receta compartida') : (window.i18n ? window.i18n.t('recipePersonal') : 'Receta personal')}</p>
                 </div>
             </div>
         `;
@@ -452,53 +454,66 @@ class DashboardManager {
         const recipe = this.currentRecipes.find(r => r.id === recipeId);
         if (!recipe) return;
 
-        // Limpiar cualquier menú existente
         const existingMenu = document.querySelector('.dropbox-menu-m3');
         if (existingMenu) existingMenu.remove();
 
         const menu = document.createElement('div');
         menu.className = 'dropbox-menu-m3';
 
+        const isShared = recipe.sharingContext === 'received';
         const isEn = window.i18n && window.i18n.getLang() === 'en';
-        menu.innerHTML = `
-            <div class="dropbox-menu-header">
-                <h4>${isEn ? (recipe.name_en || recipe.name_es) : recipe.name_es}</h4>
-            </div>
-            <button class="context-menu-item" onclick="window.dashboard.copyLink('${recipe.id}')">
-                <span class="material-symbols-outlined">link</span>
-                ${window.i18n ? window.i18n.t('copyLinkLabel') : 'Copiar enlace'}
-            </button>
-            <button class="context-menu-item" onclick="window.dashboard.shareRecipe('${recipe.id}')">
-                <span class="material-symbols-outlined">share</span>
-                ${window.i18n ? window.i18n.t('shareBtn') : 'Compartir'}
-            </button>
-            <button class="context-menu-item" onclick="window.dashboard.shareRecipe('${recipe.id}')">
-                <span class="material-symbols-outlined">manage_accounts</span>
-                ${window.i18n ? window.i18n.t('managePerms') : 'Administrar permisos'}
-            </button>
-            <div class="context-menu-divider"></div>
-            <button class="context-menu-item" onclick="window.location.href='recipe-form.html?id=${recipe.id}'">
-                <span class="material-symbols-outlined">edit</span>
-                ${window.i18n ? window.i18n.t('formEditRecipe') : 'Editar receta'}
-            </button>
-            <button class="context-menu-item" onclick="window.dashboard.startRename('${recipe.id}', event)">
-                <span class="material-symbols-outlined">edit_square</span>
-                ${window.i18n ? window.i18n.t('rename') : 'Renombrar'}
-            </button>
-            <button class="context-menu-item" onclick="window.dashboard.toggleFavorite('${recipe.id}', ${recipe.is_favorite})">
-                <span class="material-symbols-outlined">${recipe.is_favorite ? 'star' : 'star_border'}</span>
-                ${recipe.is_favorite ? (window.i18n ? window.i18n.t('removeFav') : 'Quitar de favoritos') : (window.i18n ? window.i18n.t('addFav') : 'Añadir a favoritos')}
-            </button>
-            <div class="context-menu-divider"></div>
-            <button class="context-menu-item" style="color: var(--md-error);" onclick="window.dashboard.confirmDelete('${recipe.id}')">
-                <span class="material-symbols-outlined">delete</span>
-                ${window.i18n ? window.i18n.t('deleteBtn') : 'Eliminar receta'}
-            </button>
-        `;
+
+        if (isShared) {
+            menu.innerHTML = `
+                <div class="dropbox-menu-header">
+                    <h4>${isEn ? (recipe.name_en || recipe.name_es) : recipe.name_es}</h4>
+                </div>
+                <button class="context-menu-item" onclick="window.dashboard.saveSharedRecipe('${recipe.id}')">
+                    <span class="material-symbols-outlined">library_add</span>
+                    ${window.i18n ? window.i18n.t('addToMyRecipes') : 'Agregar a mis recetas'}
+                </button>
+                <div class="context-menu-divider"></div>
+                <button class="context-menu-item" onclick="window.dashboard.copyLink('${recipe.id}')">
+                    <span class="material-symbols-outlined">link</span>
+                    ${window.i18n ? window.i18n.t('copyLinkLabel') : 'Copiar enlace'}
+                </button>
+            `;
+        } else {
+            menu.innerHTML = `
+                <div class="dropbox-menu-header">
+                    <h4>${isEn ? (recipe.name_en || recipe.name_es) : recipe.name_es}</h4>
+                </div>
+                <button class="context-menu-item" onclick="window.dashboard.copyLink('${recipe.id}')">
+                    <span class="material-symbols-outlined">link</span>
+                    ${window.i18n ? window.i18n.t('copyLinkLabel') : 'Copiar enlace'}
+                </button>
+                <button class="context-menu-item" onclick="window.dashboard.shareRecipe('${recipe.id}')">
+                    <span class="material-symbols-outlined">share</span>
+                    ${window.i18n ? window.i18n.t('shareBtn') : 'Compartir'}
+                </button>
+                <div class="context-menu-divider"></div>
+                <button class="context-menu-item" onclick="window.location.href='recipe-form.html?id=${recipe.id}'">
+                    <span class="material-symbols-outlined">edit</span>
+                    ${window.i18n ? window.i18n.t('formEditRecipe') : 'Editar receta'}
+                </button>
+                <button class="context-menu-item" onclick="window.dashboard.startRename('${recipe.id}', event)">
+                    <span class="material-symbols-outlined">edit_square</span>
+                    ${window.i18n ? window.i18n.t('rename') : 'Renombrar'}
+                </button>
+                <button class="context-menu-item" onclick="window.dashboard.toggleFavorite('${recipe.id}', ${recipe.is_favorite})">
+                    <span class="material-symbols-outlined">${recipe.is_favorite ? 'star' : 'star_border'}</span>
+                    ${recipe.is_favorite ? (window.i18n ? window.i18n.t('removeFav') : 'Quitar de favoritos') : (window.i18n ? window.i18n.t('addFav') : 'Añadir a favoritos')}
+                </button>
+                <div class="context-menu-divider"></div>
+                <button class="context-menu-item" style="color: var(--md-error);" onclick="window.dashboard.confirmDelete('${recipe.id}')">
+                    <span class="material-symbols-outlined">delete</span>
+                    ${window.i18n ? window.i18n.t('deleteBtn') : 'Eliminar receta'}
+                </button>
+            `;
+        }
 
         document.body.appendChild(menu);
 
-        // Posicionamiento dinámico
         const rect = event.target.getBoundingClientRect();
         const menuWidth = 220;
         const menuHeight = menu.offsetHeight;
@@ -506,7 +521,6 @@ class DashboardManager {
         let top = rect.bottom + 8;
         let left = rect.right - menuWidth;
 
-        // Ajustar si se sale de la pantalla
         if (top + menuHeight > window.innerHeight) {
             top = rect.top - menuHeight - 8;
         }
@@ -515,7 +529,6 @@ class DashboardManager {
         menu.style.top = `${top}px`;
         menu.style.left = `${left}px`;
 
-        // Cerrar al hacer clic fuera
         const closeMenu = (e) => {
             if (!menu.contains(e.target)) {
                 menu.remove();
@@ -527,7 +540,6 @@ class DashboardManager {
 
     downloadRecipe(recipeId) {
         window.utils.showToast(window.i18n ? window.i18n.t('downloading') : 'Descarga iniciada...', 'success');
-        // Lógica de descarga real aquí
     }
 
     async confirmDelete(recipeId) {
@@ -538,11 +550,8 @@ class DashboardManager {
             const result = await window.db.deleteRecipe(recipeId);
             if (result.success) {
                 window.utils.showToast(window.i18n ? window.i18n.t('deleteSuccess') : 'Receta eliminada correctamente', 'success');
-                // Quitar de la lista local y re-renderizar
                 this.currentRecipes = this.currentRecipes.filter(r => r.id !== recipeId);
                 this.renderRecipesGrid(this.currentRecipes);
-
-                // Si el sidebar de detalles estaba abierto con esta receta, cerrarlo
                 if (this.selectedRecipeId === recipeId) {
                     this.toggleDetailsSidebar(false);
                 }
@@ -555,14 +564,12 @@ class DashboardManager {
     startRename(recipeId, event) {
         if (event) event.stopPropagation();
 
-        // Cerrar menú si está abierto
         const menu = document.querySelector('.dropbox-menu-m3');
         if (menu) menu.remove();
 
         const recipe = this.currentRecipes.find(r => r.id === recipeId);
         if (!recipe) return;
 
-        // Buscar el elemento contenedor (fila o card)
         const selector = `[onclick*="${recipeId}"]`;
         const container = document.querySelector(selector);
         if (!container) return;
@@ -587,11 +594,8 @@ class DashboardManager {
         `;
 
         const save = async () => {
-            if (input.parentNode === null) return; // Ya se guardó o canceló
-
+            if (input.parentNode === null) return;
             const newName = input.value.trim() || original;
-
-            // Restaurar el elemento original inmediatamente para feedback visual
             const spanOrH4 = document.createElement(nameEl.tagName);
             spanOrH4.className = nameEl.className;
             spanOrH4.textContent = newName;
@@ -622,16 +626,9 @@ class DashboardManager {
         input.select();
 
         input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                save();
-            }
-            if (e.key === 'Escape') {
-                e.preventDefault();
-                cancel();
-            }
+            if (e.key === 'Enter') { e.preventDefault(); save(); }
+            if (e.key === 'Escape') { e.preventDefault(); cancel(); }
         });
-
         input.addEventListener('blur', save);
     }
 
@@ -640,16 +637,29 @@ class DashboardManager {
         if (hash.startsWith('#/recipe/')) {
             const recipeId = hash.split('/').pop();
             if (recipeId) {
-                // Si no está logueado, guardar el redirect y mandar a login
                 const isAuthenticated = await window.authManager.checkAuth();
                 if (!isAuthenticated) {
                     localStorage.setItem('redirect_after_login', hash);
                     window.location.href = 'login.html';
                 } else {
-                    // Si está logueado, ir al detalle
                     window.location.href = `recipe-detail.html?id=${recipeId}`;
                 }
             }
+        }
+    }
+
+    async saveSharedRecipe(recipeId) {
+        try {
+            window.utils.showToast(window.i18n ? window.i18n.t('savingRecipe') : 'Guardando receta...', 'info');
+            const result = await window.db.duplicateRecipe(recipeId, window.authManager.currentUser.id);
+            if (result.success) {
+                window.utils.showToast(window.i18n ? window.i18n.t('saveSuccess') : '✅ Receta agregada a tu colección', 'success');
+            } else {
+                throw new Error(result.error);
+            }
+        } catch (err) {
+            console.error('Save shared recipe error:', err);
+            window.utils.showToast(window.i18n ? window.i18n.t('saveError') : 'Error al guardar la receta', 'error');
         }
     }
 }

@@ -746,6 +746,7 @@
                 window.location.replace('index.html');
                 return;
             }
+            if (window.updateGlobalUserUI) window.updateGlobalUserUI();
             setupDragAndDrop();
         });
 
@@ -839,7 +840,7 @@
             const ingContainer = document.getElementById('parsedIngredients');
             ingContainer.innerHTML = parsedData.ingredients.map((ing, i) => `
                 <div class="parsed-item">
-                    <input type="text" class="form-input" value="${ing.quantity || ''} ${ing.unit || ''} ${ing.name}" 
+                    <input type="text" class="form-input" value="${(ing.quantity || '') + ' ' + (ing.unit || '') + ' ' + (ing.name || '')}"
                            onchange="updateIng(${i}, this.value)">
                 </div>
             `).join('') || `<p style="color:#9CA3AF; font-size:14px;">${window.i18n ? window.i18n.t('ocrNoIngredients') : 'No se detectaron ingredientes'}</p>`;

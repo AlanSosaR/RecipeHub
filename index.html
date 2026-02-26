@@ -551,32 +551,16 @@
                     <!-- New search/invite section -->
                     <div class="search-section">
                         <div class="chip-input-container">
-                            <div id="selected-users-chips" class="chips-list"></div>
+                            <!-- Hidden chips container -->
+                            <div id="selected-users-chips" class="chips-list hidden"></div>
                             <input type="text" id="user-search-input" data-i18n-placeholder="searchUserPlaceholder"
                                 placeholder="Buscar por nombre o correo…">
                         </div>
                         <div id="search-suggestions" class="search-suggestions hidden"></div>
                     </div>
 
-                    <div class="permission-section" style="margin-bottom: 24px;">
-                        <p class="select-label" data-i18n="permissionLabel"
-                            style="margin-bottom: 12px; font-weight: 600;">Permiso:</p>
-                        <div style="display: flex; flex-direction: column; gap: 12px;">
-                            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                                <input type="radio" name="share-permission" value="view" class="m3-radio" checked>
-                                <span data-i18n="permView">Solo ver</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                                <input type="radio" name="share-permission" value="add" class="m3-radio">
-                                <span data-i18n="permAdd">Puede copiar</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <button id="btn-share-submit" class="btn-share-main" disabled onclick="window.shareModal.share()"
-                        data-i18n="shareBtn">
-                        Compartir ahora
-                    </button>
+                    <!-- Removed Permission Section and Main Share Button per User Request -->
+                    <!-- Sharing now happens immediately on user selection -->
 
                     <!-- Manage Access Section -->
                     <div id="manage-access-section" class="manage-access-section-m3">

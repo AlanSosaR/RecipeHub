@@ -203,6 +203,9 @@
             saveError: 'Error al guardar la receta',
             ocrScanning: 'Receta escaneada con OCR',
             toastLoginSuccess: "Ha iniciado sesión en Recipe Pantry",
+            addToMyRecipes: 'Agregar a mis recetas',
+            savingRecipe: 'Guardando receta en tu colección...',
+            recipeShared: 'Receta compartida',
 
             // ── Share Modal ───────────────────────────────────────────────
             shareRecipeTitle: 'Compartir "{recipe}"',
@@ -450,6 +453,9 @@
             saveError: 'Error saving recipe',
             ocrScanning: 'Recipe scanned with OCR',
             toastLoginSuccess: "Welcome to Recipe Pantry!",
+            addToMyRecipes: 'Add to my recipes',
+            savingRecipe: 'Saving recipe to your collection...',
+            recipeShared: 'Shared recipe',
 
             // ── Share Modal ───────────────────────────────────────────────
             shareRecipeTitle: 'Share "{recipe}"',

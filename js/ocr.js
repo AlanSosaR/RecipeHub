@@ -23,12 +23,13 @@ class OCRProcessor {
             console.log('🤖 Intentando extracción con Claude 3.5...');
             const claudeResult = await this.processWithClaude(imageFile);
 
-            if (claudeResult.success) {
+            if (claudeResult && claudeResult.success && claudeResult.text && claudeResult.text.length > 10) {
                 console.log('✅ Usando Claude | Precisión esperada: ~97%');
                 return await this.enhanceResult(claudeResult);
             }
+            console.warn('⚠️ Claude devolvió texto insuficiente o vacío, intentando otro método...');
         } catch (claudeError) {
-            console.warn('⚠️ Claude falló o no está configurado, usando Tesseract PRO...', claudeError);
+            console.warn('⚠️ Claude falló, usando fallbacks...', claudeError);
         }
 
         try {
@@ -263,7 +264,7 @@ class OCRProcessor {
             .replace(/^- \s/gm, '• ');
 
         return {
-            nombre_receta: nombreReceta || (lineas[0] ? lineas[0].substring(0, 50) : 'Receta sin nombre'),
+            nombre_receta: nombreReceta || (lineas[0] ? lineas[0].substring(0, 50) : ''),
             texto_corregido: texto.trim(),
             confianza: 98
         };
