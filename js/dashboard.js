@@ -17,9 +17,9 @@ class DashboardManager {
             // 1. Verificar autenticación silenciosamente
             const isAuthenticated = await window.authManager.checkAuth();
 
-            // Inicializar notificaciones si hay autenticación
+            // Inicializar notificaciones en paralelo (no bloquea recetas)
             if (isAuthenticated && window.notificationManager) {
-                await window.notificationManager.init();
+                window.notificationManager.init(); // fire-and-forget
             }
 
             const landingEl = document.getElementById('landing-section');

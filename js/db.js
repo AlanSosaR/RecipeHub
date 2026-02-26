@@ -34,6 +34,34 @@ class DatabaseManager {
     // ============================================
 
     async getMyRecipes(filters = {}) {
+        // Cache-first: show cached data instantly, then refresh in background
+        const isUnfiltered = !filters.search && !filters.categoryId && !filters.favorite && !filters.shared;
+        if (isUnfiltered) {
+            const cached = this._loadFromCache(DB_CACHE_KEY, 5 * 60 * 1000);
+            if (cached) {
+                console.log(`⚡ ${cached.length} recetas desde caché (instantáneo)`);
+                this._refreshRecipesInBackground(filters);
+                return { success: true, recipes: cached, fromCache: true };
+            }
+        }
+        return this._fetchRecipesFromServer(filters);
+    }
+
+    async _refreshRecipesInBackground(filters) {
+        try {
+            const result = await this._fetchRecipesFromServer(filters);
+            if (result.success && !result.fromCache && window.dashboard) {
+                const oldIds = window.dashboard.currentRecipes?.map(r => r.id).sort().join(',');
+                const newIds = result.recipes.map(r => r.id).sort().join(',');
+                if (oldIds !== newIds) {
+                    window.dashboard.currentRecipes = result.recipes;
+                    window.dashboard.renderRecipesGrid(result.recipes);
+                }
+            }
+        } catch (e) { /* silent — cached version is showing */ }
+    }
+
+    async _fetchRecipesFromServer(filters = {}) {
         try {
             let query = window.supabaseClient
                 .from('recipes')
@@ -154,14 +182,15 @@ class DatabaseManager {
 
             if (error) throw error;
 
-            // Incrementar contador de vistas
-            await window.supabaseClient
+            // Fire-and-forget: don't block on view counter
+            window.supabaseClient
                 .from('recipes')
                 .update({
                     view_count: (recipe.view_count || 0) + 1,
                     last_viewed_at: new Date().toISOString()
                 })
-                .eq('id', recipeId);
+                .eq('id', recipeId)
+                .then(() => { }).catch(() => { });
 
             return { success: true, recipe };
 

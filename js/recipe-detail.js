@@ -91,17 +91,26 @@ class RecipeDetailManager {
 
         if (titleEl) {
             titleEl.innerHTML = `<span class="text-primary">${firstWord}</span> ${restOfTitle}`;
+        }
 
-            // Show "Compartida por" badge if recipe was shared
-            const existingBadge = document.getElementById('shared-by-badge');
-            if (existingBadge) existingBadge.remove();
+        // Show "Compartida por" badge in the header nav bar
+        const existingBadge = document.getElementById('shared-by-badge');
+        if (existingBadge) existingBadge.remove();
 
-            if (this.sharedBy) {
+        if (this.sharedBy) {
+            const nav = document.querySelector('.premium-nav');
+            if (nav) {
                 const badge = document.createElement('div');
                 badge.id = 'shared-by-badge';
-                badge.style.cssText = 'display:inline-flex; align-items:center; gap:6px; padding:6px 14px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); border-radius:99px; font-size:13px; font-weight:600; color:#10B981; margin-bottom:8px;';
+                badge.style.cssText = 'display:inline-flex; align-items:center; gap:6px; padding:6px 14px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); border-radius:99px; font-size:12px; font-weight:600; color:#10B981; white-space:nowrap;';
                 badge.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">share</span> Compartida por ${this.sharedBy}`;
-                titleEl.parentElement.insertBefore(badge, titleEl);
+                // Insert between back button and action buttons
+                const actionsDiv = nav.querySelector('div');
+                if (actionsDiv) {
+                    nav.insertBefore(badge, actionsDiv);
+                } else {
+                    nav.appendChild(badge);
+                }
             }
         }
 
