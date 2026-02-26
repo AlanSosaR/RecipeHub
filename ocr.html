@@ -213,20 +213,21 @@
             }
         }
 
-        /* ─── Mobile Adjustments ──────────────────────── */
-        @media (max-width: 768px) {
+        /* ─── Mobile Adjustments (Sync with 1023px index logic) ─── */
+        @media (max-width: 1023px) {
             .sidebar {
-                position: fixed;
-                left: -320px;
+                position: fixed !important;
+                left: -320px !important;
                 top: 0;
                 bottom: 0;
                 z-index: 1001;
-                /* Show above overlay */
+                /* Show above top bar and overlay */
                 transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                display: flex !important;
             }
 
             .sidebar.active {
-                left: 0;
+                left: 0 !important;
             }
 
             .sidebar-overlay {
