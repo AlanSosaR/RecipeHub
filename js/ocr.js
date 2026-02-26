@@ -15,9 +15,6 @@ class OCRProcessor {
      * Intenta Claude primero, si falla usa Tesseract PRO.
      */
     async processImage(imageFile, onProgress) {
-        const loading = document.getElementById('ocrLoading');
-        if (loading) loading.style.display = 'flex';
-
         try {
             // NIVEL 1: Intentar con Claude 3.5 Sonnet (mejor calidad)
             console.log('🤖 Intentando extracción con Claude 3.5...');
@@ -47,8 +44,6 @@ class OCRProcessor {
         } catch (err) {
             console.error('❌ Error en processImage:', err.message);
             throw err;
-        } finally {
-            if (loading) loading.style.display = 'none';
         }
     }
 
@@ -357,34 +352,46 @@ class OCRScanner {
         modal.classList.add('open');
         this.videoElement = document.getElementById('videoFeed');
         await this.startCamera();
-        document.getElementById('ocrCameraState').style.display = 'flex';
-        document.getElementById('ocrResultState').style.display = 'none';
-        document.getElementById('ocrLoading').style.display = 'none';
+        const cameraState = document.getElementById('ocrCameraState');
+        const resultState = document.getElementById('ocrResultState');
+        const loadingState = document.getElementById('ocrLoading');
+        if (cameraState) cameraState.style.display = 'flex';
+        if (resultState) resultState.style.display = 'none';
+        if (loadingState) loadingState.style.display = 'none';
     }
 
     async close() {
         const modal = document.getElementById('ocrModal');
         if (modal) modal.classList.remove('open');
         this.stopCamera();
-        this.reset();
+        this.resetModal();
     }
 
-    reset() {
+    resetModal() {
         this.stopCamera();
         const preview = document.getElementById('capturePreview');
         const video = document.getElementById('videoFeed');
-        const loading = document.getElementById('ocrLoading');
+        const loadingState = document.getElementById('ocrLoading');
         const cameraState = document.getElementById('ocrCameraState');
         const resultState = document.getElementById('ocrResultState');
 
         if (preview) { preview.style.display = 'none'; preview.src = ''; }
         if (video) video.style.display = 'block';
-        if (loading) loading.style.display = 'none';
+        if (loadingState) loadingState.style.display = 'none';
         if (cameraState) cameraState.style.display = 'flex';
         if (resultState) resultState.style.display = 'none';
 
+        // Reset progress
+        const progressText = document.getElementById('ocrProgressText');
+        const progressBar = document.getElementById('ocrProgressBar');
+        if (progressText) progressText.textContent = 'Iniciando OCR...';
+        if (progressBar) progressBar.style.width = '0%';
+
         this.startCamera();
     }
+
+    // Legacy alias
+    reset() { this.resetModal(); }
 
     async startCamera() {
         if (this.stream) this.stopCamera();
@@ -395,8 +402,6 @@ class OCRScanner {
             });
             if (this.videoElement) {
                 this.videoElement.srcObject = this.stream;
-
-                // Manejar error de play() interrumpido por una nueva carga
                 try {
                     await this.videoElement.play();
                 } catch (playError) {
@@ -422,6 +427,44 @@ class OCRScanner {
         await this.startCamera();
     }
 
+    /**
+     * Show the "Analizando..." processing state with image preview
+     */
+    showProcessingState(imageDataUrl) {
+        const cameraState = document.getElementById('ocrCameraState');
+        const resultState = document.getElementById('ocrResultState');
+        const loadingState = document.getElementById('ocrLoading');
+
+        if (cameraState) cameraState.style.display = 'none';
+        if (resultState) resultState.style.display = 'none';
+        if (loadingState) loadingState.style.display = 'flex';
+
+        // Set the image preview
+        const processingPreview = document.getElementById('ocrProcessingPreview');
+        if (processingPreview && imageDataUrl) {
+            processingPreview.src = imageDataUrl;
+        }
+
+        // Reset progress
+        const progressText = document.getElementById('ocrProgressText');
+        const progressBar = document.getElementById('ocrProgressBar');
+        if (progressText) progressText.textContent = window.i18n ? window.i18n.t('ocrProcessing') : 'Iniciando OCR...';
+        if (progressBar) progressBar.style.width = '0%';
+    }
+
+    /**
+     * Update progress during OCR processing
+     */
+    updateProgress(message) {
+        if (message.status === 'recognizing text') {
+            const p = Math.round(message.progress * 100);
+            const progressText = document.getElementById('ocrProgressText');
+            const progressBar = document.getElementById('ocrProgressBar');
+            if (progressText) progressText.textContent = window.i18n ? window.i18n.t('ocrReading', { progress: p }) : `Leyendo... ${p}%`;
+            if (progressBar) progressBar.style.width = p + '%';
+        }
+    }
+
     async capture() {
         if (!this.videoElement || !this.stream) return;
         const video = this.videoElement;
@@ -431,42 +474,35 @@ class OCRScanner {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0);
 
-        const videoPreview = document.getElementById('capturePreview');
-        if (videoPreview) {
-            videoPreview.src = canvas.toDataURL('image/jpeg', 0.85);
-            videoPreview.style.display = 'block';
-            video.style.display = 'none';
-        }
+        const imageDataUrl = canvas.toDataURL('image/jpeg', 0.85);
 
-        // Show loading overlay
-        const loadingEl = document.getElementById('ocrLoading');
-        if (loadingEl) loadingEl.style.display = 'flex';
+        // Show "Analizando..." with image preview
+        this.stopCamera();
+        this.showProcessingState(imageDataUrl);
 
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
         const file = new File([blob], 'scan.jpg', { type: 'image/jpeg' });
 
         try {
-            const results = await window.ocrProcessor.processImage(file);
-            if (loadingEl) loadingEl.style.display = 'none';
+            const results = await window.ocrProcessor.processImage(file, m => this.updateProgress(m));
             this.showResults(results);
         } catch (error) {
             console.error('Capture error:', error);
-            if (loadingEl) loadingEl.style.display = 'none';
-            if (videoPreview) videoPreview.style.display = 'none';
-            video.style.display = 'block';
             if (window.utils) window.utils.showToast('No se pudo analizar la imagen. Intenta con mejor iluminación.', 'error');
+            this.resetModal();
         }
     }
 
     showResults(results) {
-        this.stopCamera();
-
         const cameraState = document.getElementById('ocrCameraState');
         const resultState = document.getElementById('ocrResultState');
+        const loadingState = document.getElementById('ocrLoading');
+
         if (cameraState) cameraState.style.display = 'none';
+        if (loadingState) loadingState.style.display = 'none';
         if (resultState) resultState.style.display = 'flex';
 
-        // Texto extraído - soporta tanto modal como página ocr.html
+        // Texto extraído
         const text = results.text || results.texto || '';
         const textOutput = document.getElementById('extractedText');
         if (textOutput) textOutput.value = text;
@@ -474,7 +510,7 @@ class OCRScanner {
         const nameInput = document.getElementById('ocrRecipeName');
         if (nameInput) nameInput.value = results.name || results.nombre || '';
 
-        // Confidence badge del modal
+        // Confidence badge (if exists)
         const conf = Math.round(results.confidence || 0);
         const confBadge = document.getElementById('ocrConfBadge');
         if (confBadge) {
@@ -482,28 +518,43 @@ class OCRScanner {
             confBadge.style.background = conf >= 85 ? '#10B981' : conf >= 60 ? '#F59E0B' : '#EF4444';
         }
 
-        // Feedback al usuario
+        // Feedback
         if (!text || text.length < 10) {
             if (window.utils) window.utils.showToast('La imagen no contenía texto legible. Intenta con mejor iluminación.', 'warning');
         } else if (results.needsReview) {
             if (window.utils) window.utils.showToast('Revisa los datos. Algunos campos pueden requerir corrección.', 'info');
         }
 
-        console.log(`✅ showResults: ${text.length} caracteres mostrados, confianza ${conf}%`);
+        // Auto-scroll para que se vea el texto
+        if (resultState) {
+            resultState.scrollTop = 0;
+            setTimeout(() => resultState.scrollTop = 0, 100);
+        }
+
+        console.log(`✅ showResults: ${text.length} chars, confianza ${conf}%`);
     }
 
     async handleGallery(file) {
         if (!file) return;
-        const loadingEl = document.getElementById('ocrLoading');
-        if (loadingEl) loadingEl.style.display = 'flex';
+
+        // Generate preview from the gallery file
+        const reader = new FileReader();
+        const imageDataUrl = await new Promise((resolve) => {
+            reader.onload = e => resolve(e.target.result);
+            reader.readAsDataURL(file);
+        });
+
+        // Show Analizando with preview
+        this.stopCamera();
+        this.showProcessingState(imageDataUrl);
+
         try {
-            const results = await window.ocrProcessor.processImage(file);
-            if (loadingEl) loadingEl.style.display = 'none';
+            const results = await window.ocrProcessor.processImage(file, m => this.updateProgress(m));
             this.showResults(results);
         } catch (error) {
             console.error('Gallery error:', error);
-            if (loadingEl) loadingEl.style.display = 'none';
             if (window.utils) window.utils.showToast('No se pudo analizar la imagen.', 'error');
+            this.resetModal();
         }
     }
 }

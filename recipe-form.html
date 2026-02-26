@@ -936,22 +936,17 @@
 
         <!-- Top App Bar -->
         <header class="m3-top-bar">
-            <!-- Left: Avatar (Initials) -->
             <div class="left">
-                <div id="btnOpenMenu" class="header-avatar-m3">
+                <div id="btnOpenMenu" class="header-avatar-m3"
+                    onclick="event.stopPropagation(); window.toggleSidebar(true)">
                     <span class="user-initials-m3">CH</span>
                 </div>
-            </div>
-
-            <!-- Right: OCR Button + Title + Logo -->
-            <div class="right">
-                <button type="button" id="btnOCROpen" class="m3-tonal-btn">
+                <button type="button" id="btnOCROpen" class="m3-icon-btn" style="color: var(--md-primary);">
                     <span class="material-symbols-outlined">document_scanner</span>
-                    <span class="ocr-label" data-i18n="ocrTitle">Escanear</span>
                 </button>
-
+            </div>
+            <div class="right">
                 <h1 id="formTitle" data-i18n="formNewRecipe" style="margin:0; font-size: 18px;">Nueva Receta</h1>
-
                 <div class="sidebar-logo desktop-only-logo"
                     style="display:flex; align-items:center; gap:4px; opacity:0.9;">
                     <span class="material-symbols-outlined logo-icon"
@@ -1141,22 +1136,52 @@
                 </div>
             </div>
 
-            <!-- Loading -->
+            <!-- Processing / Analizando state -->
             <div id="ocrLoading"
-                style="position:absolute;inset:0;background:rgba(255,255,255,.92);z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;">
+                style="flex:1;flex-direction:column;padding:20px;background:#F9F9F9;overflow-y:auto;display:none;align-items:center;">
+
+                <h3 style="font-weight:800;font-size:22px;margin-bottom:6px;align-self:flex-start;"
+                    data-i18n="ocrStep2Title">Analizando...</h3>
+                <p style="color:#6B7280;font-size:14px;margin-bottom:16px;align-self:flex-start;"
+                    data-i18n="ocrStep2Desc">Estamos extrayendo los secretos de tu receta.</p>
+
+                <!-- Image preview with scanning line -->
                 <div
-                    style="width:40px;height:40px;border:3px solid #10B981;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite;">
+                    style="position:relative;width:100%;max-width:320px;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.15);margin-bottom:20px;">
+                    <img id="ocrProcessingPreview" style="width:100%;display:block;border-radius:16px;" alt="Preview">
+                    <div id="ocrScanLine"
+                        style="position:absolute;top:0;left:0;width:100%;height:60px;background:linear-gradient(to bottom,transparent,rgba(16,185,129,.5));opacity:0.6;animation:modalScan 2.5s ease-in-out infinite;pointer-events:none;">
+                    </div>
                 </div>
-                <p style="font-size:14px;font-weight:500;color:#555;" data-i18n="ocrReading">Procesando receta...</p>
+
+                <!-- Progress text + bar -->
+                <p id="ocrProgressText" style="font-weight:600;color:#10B981;font-size:16px;margin-bottom:12px;"
+                    data-i18n="ocrProcessing">Iniciando OCR...</p>
+                <div
+                    style="width:100%;max-width:320px;height:8px;background:#E5E7EB;border-radius:99px;overflow:hidden;">
+                    <div id="ocrProgressBar"
+                        style="height:100%;width:0%;background:linear-gradient(90deg,#10B981,#F59E0B);border-radius:99px;transition:width .3s ease;">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Spin animation -->
+    <!-- Animations -->
     <style>
         @keyframes spin {
             to {
                 transform: rotate(360deg);
+            }
+        }
+
+        @keyframes modalScan {
+            0% {
+                top: 0%;
+            }
+
+            100% {
+                top: calc(100% - 60px);
             }
         }
     </style>
@@ -1169,7 +1194,7 @@
     <script src="js/auth.js?v=2"></script>
     <script src="js/db.js?v=2"></script>
     <script src="js/utils.js?v=2"></script>
-    <script src="js/ocr.js?v=3"></script>
+    <script src="js/ocr.js?v=4"></script>
     <script src="js/ui.js?v=2"></script>
     <script src="js/i18n.js?v=2"></script>
     <script src="js/recipe-form.js?v=2"></script>
@@ -1184,20 +1209,7 @@
             window.setupMobileMenu();
             window.updateGlobalUserUI();
 
-            // Open menu handler
-            const btnOpenMenu = document.getElementById('btnOpenMenu');
-            if (btnOpenMenu) {
-                btnOpenMenu.addEventListener('click', () => {
-                    console.log('Abrir menú clickeado');
-                    if (window.toggleSidebar) window.toggleSidebar(true);
-                    else {
-                        const sidebar = document.querySelector('.sidebar');
-                        const overlay = document.getElementById('sidebar-overlay');
-                        if (sidebar) sidebar.classList.add('active');
-                        if (overlay) overlay.classList.add('active');
-                    }
-                });
-            }
+            // Menu is handled by inline onclick on #btnOpenMenu (same as ocr.html)
 
             // Set app-specific active nav
             const navItems = document.querySelectorAll('.nav-item');
