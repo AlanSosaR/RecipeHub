@@ -330,8 +330,12 @@
         }
 
         .m3-field.textarea label {
-            top: 20px;
-            transform: none;
+            top: 0;
+            transform: translateY(-50%) scale(0.85);
+            font-size: 14px;
+            font-weight: 700;
+            background: var(--md-surface);
+            padding: 0 6px;
         }
 
         .m3-field input,
@@ -434,8 +438,9 @@
         .m3-field textarea:focus+label,
         .m3-field textarea:not(:placeholder-shown)+label {
             top: 0;
-            font-size: 12px;
-            font-weight: 500;
+            transform: translateY(-50%) scale(0.85);
+            font-size: 14px;
+            font-weight: 700;
             color: var(--md-primary);
         }
 
@@ -446,11 +451,7 @@
             font-size: 12px;
         }
 
-        .m3-field.textarea label {
-            top: 8px;
-            transform: none;
-            font-size: 12px;
-        }
+
 
         .m3-field input:not(:focus):not(:placeholder-shown)+label,
         .m3-field textarea:not(:focus):not(:placeholder-shown)+label {
