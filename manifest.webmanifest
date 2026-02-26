@@ -1,8 +1,10 @@
 {
+    "id": "/RecipeHub/",
     "name": "Recipe Pantry",
     "short_name": "Recipe Pantry",
     "description": "Tu recetario personal premium — guarda, organiza y escanea recetas.",
-    "start_url": "/index.html",
+    "start_url": "/RecipeHub/index.html",
+    "scope": "/RecipeHub/",
     "display": "standalone",
     "orientation": "portrait",
     "background_color": "#F9FAFB",
@@ -78,7 +80,7 @@
         {
             "name": "Nueva Receta",
             "short_name": "Nueva",
-            "url": "/recipe-form.html",
+            "url": "/RecipeHub/recipe-form.html",
             "icons": [
                 {
                     "src": "assets/icons/icon-96.png",

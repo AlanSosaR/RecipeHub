@@ -604,6 +604,15 @@
             // También podemos importar managers globales si es necesario
             console.log('✨ Material 3 Expressive Modules Loaded');
         </script>
+
+        <!-- Register Service Worker (PWA) -->
+        <script>
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.register("./sw.js", { scope: "./" })
+                    .then(r => console.log("SW registered:", r.scope))
+                    .catch(e => console.warn("SW registration failed:", e));
+            }
+        </script>
 </body>
 
 </html>
