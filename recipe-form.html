@@ -130,10 +130,35 @@
             color: var(--md-on-surface);
         }
 
+        .m3-top-bar .left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
         .m3-top-bar .right {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 16px;
+        }
+
+        .header-avatar-m3 {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: var(--on-primary);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 12px oklch(from var(--primary) l c h / 0.2);
+        }
+
+        .header-avatar-m3:active {
+            transform: scale(0.92);
         }
 
         /* OCR tonal button */
@@ -804,7 +829,7 @@
 
         <div class="sidebar-user-profile">
             <div class="user-avatar-m3">
-                <span id="sidebar-user-initials">CH</span>
+                <span id="sidebar-user-initials" class="user-initials-m3">CH</span>
             </div>
             <div class="user-info-m3">
                 <span id="sidebar-user-greeting" class="user-greeting" data-i18n="chefGreeting">Chef</span>
@@ -848,27 +873,34 @@
 
         <!-- Top App Bar -->
         <header class="m3-top-bar">
+            <!-- Left: Avatar (Initials) + Utilities -->
             <div class="left">
-                <button class="m3-icon-btn" onclick="history.back()" data-i18n-title="navBack" title="Volver">
-                    <span class="material-symbols-outlined">arrow_back</span>
-                </button>
-                <h1 id="formTitle" data-i18n="formNewRecipe">Nueva Receta</h1>
+                <div class="header-avatar-m3" onclick="window.toggleSidebar(true)">
+                    <span class="user-initials-m3">AS</span>
+                </div>
+
+                <div style="display:flex; gap:8px;">
+                    <button class="m3-icon-btn" onclick="window.i18n && window.i18n.toggle()"
+                        data-i18n-title="navToggleLanguage" title="Cambiar idioma">
+                        <span class="material-symbols-outlined">language</span>
+                    </button>
+                    <button id="btnOCROpen" class="m3-tonal-btn">
+                        <span class="material-symbols-outlined" style="font-size:18px">center_focus_strong</span>
+                        <span class="ocr-label" data-i18n="navScan">Escanear</span>
+                    </button>
+                </div>
             </div>
-            <div class="right" style="display:flex; gap:8px; align-items:center;">
-                <button class="m3-icon-btn" onclick="window.i18n && window.i18n.toggle()"
-                    data-i18n-title="navToggleLanguage" title="Cambiar idioma">
-                    <span class="material-symbols-outlined">language</span>
-                </button>
-                <button id="btnOCROpen" class="m3-tonal-btn">
-                    <span class="material-symbols-outlined" style="font-size:18px">center_focus_strong</span>
-                    <span class="ocr-label" data-i18n="navScan">Escanear</span>
-                </button>
-                <div class="m3-avatar">
-                    <div id="userAvatar"
-                        style="width:100%;height:100%;background:var(--md-primary-container);display:flex;align-items:center;justify-content:center;">
-                        <span class="material-symbols-outlined"
-                            style="font-size:20px;color:var(--md-on-primary-container)">person</span>
-                    </div>
+
+            <!-- Right: Title + Logo -->
+            <div class="right">
+                <h1 id="formTitle" data-i18n="formNewRecipe" style="margin:0;">Nueva Receta</h1>
+
+                <div class="sidebar-logo" style="display:flex; align-items:center; gap:4px; opacity:0.9;">
+                    <span class="material-symbols-outlined logo-icon"
+                        style="color: var(--primary); font-size:24px;">menu_book</span>
+                    <span class="logo-text"
+                        style="color: var(--logo-color); font-weight:700; font-size:16px; font-family:var(--font-brand);">Recipe
+                        Pantry</span>
                 </div>
             </div>
         </header>

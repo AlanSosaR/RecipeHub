@@ -36,6 +36,13 @@ window.closeSidebar = function () {
     if (sidebar) sidebar.classList.remove('active');
 }
 
+window.toggleSidebar = function (open) {
+    const sidebar = document.querySelector('.sidebar');
+    if (!sidebar) return;
+    if (open) sidebar.classList.add('active');
+    else sidebar.classList.remove('active');
+}
+
 // Global user UI updater
 window.updateGlobalUserUI = function () {
     if (!window.authManager || !window.authManager.currentUser) return;
@@ -48,12 +55,12 @@ window.updateGlobalUserUI = function () {
         sidebarGreeting.textContent = `${chefText} ${user.first_name || ''}`;
     }
 
-    // Update initials
-    const sidebarInitials = document.getElementById('sidebar-user-initials');
-    if (sidebarInitials) {
-        const initials = (user.first_name?.[0] || 'C') + (user.last_name?.[0] || 'H');
-        sidebarInitials.textContent = initials.toUpperCase();
-    }
+    // Update initials in all avatar circles (sidebar and header)
+    const initialsElements = document.querySelectorAll('.user-initials-m3');
+    const initials = (user.first_name?.[0] || 'C') + (user.last_name?.[0] || 'H');
+    initialsElements.forEach(el => {
+        el.textContent = initials.toUpperCase();
+    });
 }
 
 // Global slim sidebar toggle (desktop)
