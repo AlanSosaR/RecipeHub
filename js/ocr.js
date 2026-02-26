@@ -430,16 +430,23 @@ class OCRScanner {
             video.style.display = 'none';
         }
 
+        // Show loading overlay
+        const loadingEl = document.getElementById('ocrLoading');
+        if (loadingEl) loadingEl.style.display = 'flex';
+
         const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
         const file = new File([blob], 'scan.jpg', { type: 'image/jpeg' });
 
         try {
             const results = await window.ocrProcessor.processImage(file);
+            if (loadingEl) loadingEl.style.display = 'none';
             this.showResults(results);
         } catch (error) {
             console.error('Capture error:', error);
+            if (loadingEl) loadingEl.style.display = 'none';
             if (videoPreview) videoPreview.style.display = 'none';
             video.style.display = 'block';
+            if (window.utils) window.utils.showToast('No se pudo analizar la imagen. Intenta con mejor iluminación.', 'error');
         }
     }
 
@@ -448,43 +455,38 @@ class OCRScanner {
         document.getElementById('ocrCameraState').style.display = 'none';
         document.getElementById('ocrResultState').style.display = 'flex';
 
+        // Use correct field names from enhanceResult(): .text and .name
         const textOutput = document.getElementById('extractedText');
-        if (textOutput) textOutput.value = results.texto;
+        if (textOutput) textOutput.value = results.text || results.texto || '';
 
         const nameInput = document.getElementById('ocrRecipeName');
-        if (nameInput) nameInput.value = results.nombre || '';
+        if (nameInput) nameInput.value = results.name || results.nombre || '';
 
-        // Badge de confianza y avisos
-        const resultHeader = document.querySelector('#ocrResultState .m3-card-title');
-        if (resultHeader) {
-            let badge = document.getElementById('ocrConfidenceBadge');
-            if (!badge) {
-                badge = document.createElement('span');
-                badge.id = 'ocrConfidenceBadge';
-                badge.style.marginLeft = 'auto';
-                badge.style.padding = '4px 10px';
-                badge.style.borderRadius = '12px';
-                badge.style.fontSize = '12px';
-                badge.style.fontWeight = '700';
-                badge.style.color = 'white';
-                resultHeader.appendChild(badge);
-            }
-            badge.textContent = `${results.confidence.toFixed(1)}%`;
-            badge.style.background = results.confidence >= 95 ? '#10B981' : (results.confidence >= 85 ? '#F59E0B' : '#EF4444');
+        // Show a confidence badge if element exists
+        const conf = Math.round(results.confidence || 0);
+        const confBadge = document.getElementById('ocrConfBadge');
+        if (confBadge) {
+            confBadge.textContent = `${conf}%`;
+            confBadge.style.background = conf >= 85 ? '#10B981' : conf >= 60 ? '#F59E0B' : '#EF4444';
         }
 
         if (results.needsReview) {
-            window.utils.showToast('Revisa los datos. Algunos campos pueden ser imprecisos.', 'info');
+            if (window.utils) window.utils.showToast('Revisa los datos. Algunos campos pueden ser imprecisos.', 'info');
         }
     }
 
     async handleGallery(file) {
         if (!file) return;
+        const loadingEl = document.getElementById('ocrLoading');
+        if (loadingEl) loadingEl.style.display = 'flex';
         try {
             const results = await window.ocrProcessor.processImage(file);
+            if (loadingEl) loadingEl.style.display = 'none';
             this.showResults(results);
         } catch (error) {
             console.error('Gallery error:', error);
+            if (loadingEl) loadingEl.style.display = 'none';
+            if (window.utils) window.utils.showToast('No se pudo analizar la imagen.', 'error');
         }
     }
 }

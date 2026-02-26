@@ -223,8 +223,9 @@
                 bottom: 0;
                 z-index: 1001;
                 /* Show above top bar and overlay */
-                transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                background: var(--bg);
                 display: flex !important;
+                transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .sidebar.active {
@@ -232,7 +233,15 @@
             }
 
             .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(4px);
                 z-index: 1000;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+                display: block !important;
             }
 
             .m3-scroll {
@@ -552,7 +561,7 @@
         <header class="m3-top-bar">
             <div class="left">
                 <div id="btnOpenMenu" class="header-avatar-m3" onclick="window.toggleSidebar(true)">
-                    <span class="user-initials-m3">AS</span>
+                    <span class="user-initials-m3">CH</span>
                 </div>
             </div>
             <div class="right">
@@ -709,13 +718,14 @@
 
 
                     <div style="display: flex; gap: 12px; margin-top: 32px; padding-bottom: 40px;">
-                        <button class="btn btn-secondary" style="flex: 1; border-radius: 16px; height: 56px;"
+                        <button class="btn btn-secondary"
+                            style="flex: 1; border-radius: 16px; height: 56px; display: flex; align-items: center; justify-content: center; gap: 8px;"
                             onclick="goToStep(1)">
                             <span class="material-symbols-outlined">refresh</span>
                             <span data-i18n="ocrRetry">Reintentar</span>
                         </button>
                         <button id="btnSaveRecipe" class="btn btn-primary"
-                            style="flex: 2; border-radius: 16px; height: 56px; background: var(--primary);"
+                            style="flex: 2; border-radius: 16px; height: 56px; background: var(--primary); display: flex; align-items: center; justify-content: center; gap: 8px;"
                             onclick="saveRecipe()">
                             <span class="material-symbols-outlined">check_circle</span>
                             <span data-i18n="ocrSave">Guardar Receta</span>
@@ -930,7 +940,7 @@
                 window.showToast(nameRequiredMsg, 'error');
                 btn.disabled = false;
                 const saveBtnTxt = window.i18n ? window.i18n.t('ocrSave') : 'Guardar Receta';
-                btn.innerHTML = `<span class="material-symbols-rounded">check_circle</span> ${saveBtnTxt}`;
+                btn.innerHTML = `<span class="material-symbols-outlined">check_circle</span> ${saveBtnTxt}`;
             }
         }
 

@@ -819,25 +819,37 @@
         }
 
         /* ─── Mobile Adjustments ──────────────────────── */
-        @media (max-width: 768px) {
-
-            /* Ensure sidebar is a drawer on mobile */
+        @media (max-width: 1023px) {
             .sidebar {
-                position: fixed;
-                left: -320px;
+                position: fixed !important;
+                left: -320px !important;
                 top: 0;
                 bottom: 0;
                 z-index: 1001;
-                /* Above overlay */
+                background: var(--md-surface);
+                display: flex !important;
                 transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .sidebar.active {
-                left: 0;
+                left: 0 !important;
             }
 
             .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(4px);
                 z-index: 1000;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+                display: block !important;
+            }
+
+            .sidebar-overlay.active {
+                opacity: 1;
+                pointer-events: auto;
             }
 
             .m3-scroll {
@@ -927,7 +939,7 @@
             <!-- Left: Avatar (Initials) + Utilities -->
             <div class="left">
                 <div id="btnOpenMenu" class="header-avatar-m3" onclick="window.toggleSidebar(true)">
-                    <span class="user-initials-m3">AS</span>
+                    <span class="user-initials-m3">CH</span>
                 </div>
             </div>
 
@@ -1109,17 +1121,19 @@
                         placeholder="El texto aparecerá aquí..." data-i18n-placeholder="ocrTextPlaceholder"></textarea>
                 </div>
 
-                <div style="display:flex; justify-content:center;">
+                <div style="display:flex; justify-content:center; gap: 12px;">
                     <button id="btnRetryOCR"
-                        style="width:100%;padding:14px;background:white;border:1px solid #ddd;border-radius:14px;font-weight:600;font-size:14px;cursor:pointer;"
-                        data-i18n="ocrRetry">Reintentar</button>
+                        style="flex:1; padding:14px; background:white; border:1px solid #ddd; border-radius:14px; font-weight:600; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;"
+                        data-i18n="ocrRetry">
+                        <span class="material-symbols-outlined" style="font-size:18px">refresh</span>
+                        <span data-i18n="ocrRetry">Reintentar</span>
+                    </button>
+                    <button id="btnSaveDirectOCR"
+                        style="flex:2; padding:14px; background:#10B981; color:white; border:none; border-radius:14px; font-weight:600; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                        <span class="material-symbols-outlined" style="font-size:18px">save</span>
+                        <span data-i18n="ocrSave">Crear Receta Ahora</span>
+                    </button>
                 </div>
-
-                <button id="btnSaveDirectOCR"
-                    style="margin-top:12px;width:100%;padding:14px;background:#10B981;color:white;border:none;border-radius:14px;font-weight:600;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-                    <span class="material-symbols-outlined" style="font-size:18px">cloud_upload</span>
-                    <span data-i18n="ocrSave">Crear Receta Ahora</span>
-                </button>
             </div>
 
             <!-- Loading -->
