@@ -161,6 +161,29 @@
             transform: scale(0.92);
         }
 
+        /* Responsive Logo */
+        @media (max-width: 768px) {
+            .m3-top-bar .desktop-only-logo {
+                display: none !important;
+            }
+
+            .m3-top-bar {
+                padding: 0 16px;
+            }
+
+            .m3-top-bar .left {
+                gap: 8px;
+            }
+
+            .ocr-label {
+                display: none;
+            }
+
+            .m3-tonal-btn {
+                padding: 8px 12px;
+            }
+        }
+
         /* OCR tonal button */
         .m3-tonal-btn {
             display: flex;
@@ -879,7 +902,7 @@
                     <span class="user-initials-m3">AS</span>
                 </div>
 
-                <div style="display:flex; gap:8px;">
+                <div style="display:flex; gap:8px; align-items:center;">
                     <button class="m3-icon-btn" onclick="window.i18n && window.i18n.toggle()"
                         data-i18n-title="navToggleLanguage" title="Cambiar idioma">
                         <span class="material-symbols-outlined">language</span>
@@ -891,11 +914,12 @@
                 </div>
             </div>
 
-            <!-- Right: Title + Logo -->
+            <!-- Right: Title + Logo (Desktop only) -->
             <div class="right">
-                <h1 id="formTitle" data-i18n="formNewRecipe" style="margin:0;">Nueva Receta</h1>
+                <h1 id="formTitle" data-i18n="formNewRecipe" style="margin:0; font-size: 18px;">Nueva Receta</h1>
 
-                <div class="sidebar-logo" style="display:flex; align-items:center; gap:4px; opacity:0.9;">
+                <div class="sidebar-logo desktop-only-logo"
+                    style="display:flex; align-items:center; gap:4px; opacity:0.9;">
                     <span class="material-symbols-outlined logo-icon"
                         style="color: var(--primary); font-size:24px;">menu_book</span>
                     <span class="logo-text"
