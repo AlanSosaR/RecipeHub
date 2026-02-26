@@ -838,7 +838,7 @@
 
 <body>
     <!-- Sidebar Overlay -->
-    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="window.toggleSidebar(false)"></div>
 
     <!-- Sidebar Desktop & Mobile Drawer -->
     <aside id="main-sidebar" class="sidebar">
@@ -898,7 +898,7 @@
         <header class="m3-top-bar">
             <!-- Left: Avatar (Initials) + Utilities -->
             <div class="left">
-                <div class="header-avatar-m3" onclick="window.toggleSidebar(true)">
+                <div id="btnOpenMenu" class="header-avatar-m3">
                     <span class="user-initials-m3">AS</span>
                 </div>
 
@@ -1147,6 +1147,21 @@
             window.initSidebarState();
             window.setupMobileMenu();
             window.updateGlobalUserUI();
+
+            // Open menu handler
+            const btnOpenMenu = document.getElementById('btnOpenMenu');
+            if (btnOpenMenu) {
+                btnOpenMenu.addEventListener('click', () => {
+                    console.log('Abrir menú clickeado');
+                    if (window.toggleSidebar) window.toggleSidebar(true);
+                    else {
+                        const sidebar = document.querySelector('.sidebar');
+                        const overlay = document.getElementById('sidebar-overlay');
+                        if (sidebar) sidebar.classList.add('active');
+                        if (overlay) overlay.classList.add('active');
+                    }
+                });
+            }
 
             // Set app-specific active nav
             const navItems = document.querySelectorAll('.nav-item');
