@@ -815,10 +815,26 @@
             }
         }
 
-        /* ─── Mobile ──────────────────────────────────── */
+        /* ─── Mobile Adjustments ──────────────────────── */
         @media (max-width: 768px) {
-            .m3-sidebar {
-                display: none;
+
+            /* Ensure sidebar is a drawer on mobile */
+            .sidebar {
+                position: fixed;
+                left: -320px;
+                top: 0;
+                bottom: 0;
+                z-index: 1001;
+                /* Above overlay */
+                transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .sidebar-overlay {
+                z-index: 1000;
             }
 
             .m3-scroll {
