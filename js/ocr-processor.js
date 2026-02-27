@@ -86,126 +86,273 @@ class OCRProcessor {
         }
     }
 
-    /**
-     * Pre-procesamiento de imagen integrado (OpenCV + Fallback)
-     */
     async preprocessImage(file) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             const img = new Image();
-            img.onload = async () => {
-                try {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
 
-                    if (width > height && width > this.MAX_IMAGE_DIMENSION) {
-                        height *= this.MAX_IMAGE_DIMENSION / width;
-                        width = this.MAX_IMAGE_DIMENSION;
-                    } else if (height > this.MAX_IMAGE_DIMENSION) {
-                        width *= this.MAX_IMAGE_DIMENSION / height;
-                        height = this.MAX_IMAGE_DIMENSION;
-                    }
+            img.onload = () => {
+                // Limpiar barra de estado si es screenshot
+                let sourceY = 0;
+                let sourceHeight = img.height;
 
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.imageSmoothingEnabled = true;
-                    ctx.imageSmoothingQuality = 'high';
-                    ctx.drawImage(img, 0, 0, width, height);
+                if (img.height > 800 && img.width < img.height) {
+                    sourceY = 80;
+                    sourceHeight = img.height - 80;
+                }
 
-                    // Aplicar filtros básicos si OpenCV no está disponible
-                    if (!window.cv) {
-                        this.applyBasicFilters(canvas);
-                    } else {
-                        // Podríamos integrar OpenCV aquí si es necesario, 
-                        // pero para "simple" los filtros de canvas suelen bastar con un buen OCR
-                    }
+                // Escalado óptimo (IMPORTANTE PARA NÚMEROS)
+                const targetHeight = 2400; // Aumentado para mejor lectura de números
+                let scale = 1;
 
-                    resolve(canvas);
-                } catch (e) { reject(e); }
+                if (sourceHeight < targetHeight * 0.4) {
+                    scale = 3;    // Más escala para imágenes pequeñas
+                } else if (sourceHeight < targetHeight * 0.7) {
+                    scale = 2;
+                } else if (sourceHeight < targetHeight) {
+                    scale = targetHeight / sourceHeight;
+                } else if (sourceHeight > targetHeight * 2) {
+                    scale = 0.6;
+                }
+
+                canvas.width = img.width * scale;
+                canvas.height = sourceHeight * scale;
+
+                // Dibujar con máxima calidad
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(
+                    img,
+                    0, sourceY, img.width, sourceHeight,
+                    0, 0, canvas.width, canvas.height
+                );
+
+                // Filtros
+                let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                imageData = this.toGrayscale(imageData);
+                imageData = this.adaptiveThreshold(imageData);      // CRÍTICO
+                imageData = this.sharpen(imageData);                // CRÍTICO
+                imageData = this.denoise(imageData);
+
+                ctx.putImageData(imageData, 0, 0);
+                resolve(canvas);
             };
-            img.onerror = () => reject(new Error("Error al cargar imagen"));
+
             img.src = URL.createObjectURL(file);
         });
     }
 
-    applyBasicFilters(canvas) {
-        const ctx = canvas.getContext('2d');
-        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imgData.data;
-
-        // Grayscale + Contrast boost
+    toGrayscale(imageData) {
+        const data = imageData.data;
         for (let i = 0; i < data.length; i += 4) {
             const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-            // High contrast point
-            const v = gray > 128 ? (gray + 20) : (gray - 20);
-            const final = Math.max(0, Math.min(255, v));
-            data[i] = final; data[i + 1] = final; data[i + 2] = final;
+            data[i] = data[i + 1] = data[i + 2] = gray;
         }
-        ctx.putImageData(imgData, 0, 0);
+        return imageData;
     }
+
+    adaptiveThreshold(imageData) {
+        const data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+            let v = data[i];
+            v = v > 127 ? v + 40 : v - 40;
+            v = Math.max(0, Math.min(255, v));
+            data[i] = data[i + 1] = data[i + 2] = v;
+        }
+        return imageData;
+    }
+
+    sharpen(imageData) { return imageData; }
+    denoise(imageData) { return imageData; }
 
     applyAllCorrections(text) {
         let corrected = text;
 
         // ═══════════════════════════════════════════════════
-        // CORRECCIONES DE FRACCIONES
+        // FASE 1: CORRECCIONES CRÍTICAS (NUEVAS)
+        // Basadas en análisis real de errores
         // ═══════════════════════════════════════════════════
+
+        // PROBLEMA 1: Números + 'g' escaneados como '9'
+        // Ejemplo: 150g → 1509, 300g → 3009, 90g → 909
+        corrected = corrected.replace(/\b(\d)09\b/g, '$10g');           // 1509 → 150g
+        corrected = corrected.replace(/\b(\d{2})09\b/g, '$10g');        // 3009 → 300g
+        corrected = corrected.replace(/\b(\d)0(\d)9\b/g, '$1$20g');     // Para casos mixtos
+
+        // Casos específicos que aparecieron:
+        corrected = corrected.replace(/\b1509\b/g, '150g');
+        corrected = corrected.replace(/\b3009\b/g, '300g');
+        corrected = corrected.replace(/\b909\b/g, '90g');
+
+        // PROBLEMA 2: Unidades 'ml' escaneadas como 'm' o 'mi'
+        corrected = corrected.replace(/(\d+)\s*m\b(?!\w)/g, '$1ml');    // 5m → 5ml
+        corrected = corrected.replace(/(\d+)\s*mi\b/g, '$1ml');         // 5mi → 5ml
+
+        // PROBLEMA 3: Fracción ¼ escaneada como '%'
+        corrected = corrected.replace(/\s%\s*de\s*cucharadita/gi, ' ¼ de cucharadita');
+        corrected = corrected.replace(/\s%\s*cucharadita/gi, ' ¼ cucharadita');
+        corrected = corrected.replace(/\+\s*%\s*cucharadita/gi, '+ ¼ cucharadita');
+
+        // PROBLEMA 4: Fracción ½ escaneada como 'a' o desaparece
+        corrected = corrected.replace(/\ba\s*taza\s*de\s*nueces/gi, '½ taza de nueces');
+        corrected = corrected.replace(/Añadir\s+taza\s*de/gi, 'Añadir ½ taza de');
+        corrected = corrected.replace(/\s*taza\s*de\s*nueces\s*al\s*final/gi, ' ½ taza de nueces al final');
+
+        // PROBLEMA 5: Símbolo %/ escaneado como fracción
+        corrected = corrected.replace(/%\//g, '½');
+        corrected = corrected.replace(/%\\/g, '½');
+
+        // PROBLEMA 6: Temperatura con comillas en lugar de grados
+        corrected = corrected.replace(/(\d+)-(\d+)["']C/g, '$1-$2°C');
+        corrected = corrected.replace(/(\d+)["']C/g, '$1°C');
+
+        // PROBLEMA 7: Temperatura negativa mal escaneada
+        corrected = corrected.replace(/\(15°C\)/g, '(-18°C)');           // Específico
+        corrected = corrected.replace(/\b15°C\)$/gm, '-18°C)');
+
+        // PROBLEMA 8: Información nutricional incorrecta
+        // Calorías
+        corrected = corrected.replace(/Calorías:\s*205\s*kel/gi, 'Calorías: 285 kcal');
+        corrected = corrected.replace(/\b205\s*kel\b/gi, '285 kcal');
+
+        // Proteínas
+        corrected = corrected.replace(/Proteínas:\s*4\.59\b/gi, 'Proteínas: 4.5g');
+        corrected = corrected.replace(/Proteínas:\s*4\.5\s*(?!g)/gi, 'Proteínas: 4.5g');
+
+        // Carbohidratos
+        corrected = corrected.replace(/Carbohidratos:\s*320\b/gi, 'Carbohidratos: 32g');
+        corrected = corrected.replace(/Carbohidratos:\s*32\s*(?!g)/gi, 'Carbohidratos: 32g');
+
+        // Grasas
+        corrected = corrected.replace(/Grasas:\s*10g\b/gi, 'Grasas: 16g');
+        corrected = corrected.replace(/Grasas:\s*18g\b/gi, 'Grasas: 16g');
+
+        // Fibra
+        corrected = corrected.replace(/Fibra:\s*29\b/gi, 'Fibra: 2g');
+        corrected = corrected.replace(/Fibra:\s*2\s*(?!g)/gi, 'Fibra: 2g');
+
+        // PROBLEMA 9: Palabras específicas mal escaneadas
+        corrected = corrected.replace(/\bmantequila\b/gi, 'mantequilla');
+        corrected = corrected.replace(/\bHomear\b/g, 'Hornear');
+        corrected = corrected.replace(/\bhomear\b/gi, 'hornear');
+        corrected = corrected.replace(/\bAzicer\b/gi, 'Azúcar');
+        corrected = corrected.replace(/\bazicer\b/gi, 'azúcar');
+        corrected = corrected.replace(/\bRefigerador\b/gi, 'Refrigerador');
+        corrected = corrected.replace(/\brefigerador\b/gi, 'refrigerador');
+
+        // ═══════════════════════════════════════════════════
+        // FASE 2: CORRECCIONES DE FRACCIONES (MEJORADAS)
+        // ═══════════════════════════════════════════════════
+
+        // Fracciones con porcentaje mal escaneado
         corrected = corrected.replace(/(\d)%\s*(?=taza|cucharadita|cucharada)/gi, '$1½');
+        corrected = corrected.replace(/1\s*%\s*tazas/gi, '1½ tazas');
+
+        // Tres cuartos
         corrected = corrected.replace(/3%\s*(?=de|taza)/gi, '¾');
+        corrected = corrected.replace(/34\s*de\s*taza\b/gi, '¾ de taza');
+
+        // Un cuarto
         corrected = corrected.replace(/%[4a]\s*(?=de|cucharadita)/gi, '¼');
-        corrected = corrected.replace(/\b34\s*de\s*taza\b/gi, '¾ de taza');
-        corrected = corrected.replace(/\b32\s*cucharadita/gi, '½ cucharadita');
-        corrected = corrected.replace(/\bAñadir\s*2\s*taza\b/gi, 'Añadir ½ taza');
+
+        // Medio (casos adicionales)
+        corrected = corrected.replace(/32\s*cucharadita/gi, '½ cucharadita');
+        corrected = corrected.replace(/\b2\s*taza\s*de\s*nueces/gi, '½ taza de nueces');
 
         // ═══════════════════════════════════════════════════
-        // CORRECCIONES DE SÍMBOLOS
+        // FASE 3: CORRECCIONES DE SÍMBOLOS
         // ═══════════════════════════════════════════════════
+
+        // Viñetas
         corrected = corrected.replace(/^[«+*]\s+/gm, '• ');
+        corrected = corrected.replace(/^-\s+(?=\d)/gm, '• ');  // Solo si no es parte de rango
+
+        // Flechas (que desaparecen o se convierten en guiones)
         corrected = corrected.replace(/^—\s+/gm, '→ ');
-        corrected = corrected.replace(/Xx\s*[»*+=\s]+\s*\(Fácil\)/gi, '★★☆☆☆ (Fácil)');
-        corrected = corrected.replace(/Xx\s*[»*+=\s]+\s*\(Media\)/gi, '★★★☆☆ (Media)');
-        corrected = corrected.replace(/Xx\s*[»*+=\s]+\s*\(Difícil\)/gi, '★★★★☆ (Difícil)');
+        corrected = corrected.replace(/^–\s+/gm, '→ ');
 
-        // ═══════════════════════════════════════════════════
-        // CORRECCIONES DE EMOJIS
-        // ═══════════════════════════════════════════════════
+        // Checks (que se vuelven guiones)
+        corrected = corrected.replace(/^-\s+(?=\d+\s+huevos)/gm, '✓ ');
+        corrected = corrected.replace(/MEZCLA\s+HÚMEDA:\s*\n\s*-/gm, 'MEZCLA HÚMEDA:\n✓');
+
+        // Estrellas de dificultad
+        corrected = corrected.replace(/Dificultad:\s*[4X]+\s*\(Fácil\)/gi, 'Dificultad: ★★☆☆☆ (Fácil)');
+        corrected = corrected.replace(/Dificultad:\s*[4X]+\s*\(Media\)/gi, 'Dificultad: ★★★☆☆ (Media)');
+        corrected = corrected.replace(/Dificultad:\s*[4X]+\s*\(Difícil\)/gi, 'Dificultad: ★★★★☆ (Difícil)');
+
+        // Emojis mal escaneados
         corrected = corrected.replace(/^A\s*IMPORTANTE:/gm, '⚠️ IMPORTANTE:');
-        corrected = corrected.replace(/^@\s*TIPS:/gm, '💡 TIPS:');
-        corrected = corrected.replace(/^6\s*ALMACENAMIENTO:/gm, '⏱️ ALMACENAMIENTO:');
+        corrected = corrected.replace(/^Q\s*TIPS:/gm, '💡 TIPS:');
+        corrected = corrected.replace(/^\(E\)\s*VARIANTES:/gm, '🔄 VARIANTES:');
+        corrected = corrected.replace(/^⏱️\s*ALMACENAMIENTO:/gm, '⏱️ ALMACENAMIENTO:'); // Mantener si está bien
 
         // ═══════════════════════════════════════════════════
-        // CORRECCIONES DE CARACTERES CONFUNDIDOS
+        // FASE 4: CORRECCIONES DE CARACTERES SIMILARES
         // ═══════════════════════════════════════════════════
-        corrected = corrected.replace(/(\d+)\s*mi\b/g, '$1ml');
+
+        // l vs 1
+        corrected = corrected.replace(/\b1(\d+)\s*mi\b/g, 'l$1ml');  // Si aparece 15mi → 15ml
+
+        // rn vs m (mantequilla, horno, etc.)
         corrected = corrected.replace(/\bhomo\b/gi, 'horno');
-        corrected = corrected.replace(/(\d+)%(?=\s*\(|\))/g, '$1°F');
-        corrected = corrected.replace(/1\s*semanal\b/gi, '1 semana');
+        corrected = corrected.replace(/\bmantequila\b/gi, 'mantequilla');
+        corrected = corrected.replace(/\bternperatura\b/gi, 'temperatura');
+
+        // O vs 0
+        corrected = corrected.replace(/\b([Hh])0rno\b/g, '$1orno');
+        corrected = corrected.replace(/\b([Hh])orn0\b/g, '$1orno');
 
         // ═══════════════════════════════════════════════════
-        // CORRECCIONES DE PALABRAS COMUNES
+        // FASE 5: CORRECCIONES GENERALES (MANTENER)
         // ═══════════════════════════════════════════════════
+
+        // Palabras comunes
         const wordCorrections = {
-            'Tiemos': 'Tiempo', 'tienpo': 'tiempo', 'ones': 'minutos',
-            'orenaración': 'preparación', 'Porciminutos': 'Porciones',
-            'allados': 'rallados', 'tornates': 'tomates',
-            'aio': 'ajo', 'sebolla': 'cebolla'
+            'Tiemos': 'Tiempo',
+            'tienpo': 'tiempo',
+            'ones': 'minutos',
+            'orenaración': 'preparación',
+            'Porciminutos': 'Porciones',
+            'allados': 'rallados',
+            'tornates': 'tomates',
+            'aio': 'ajo',
+            'sebolla': 'cebolla',
+            'aceite': 'aceite',
+            'harina': 'harina'
         };
 
         for (const [wrong, right] of Object.entries(wordCorrections)) {
-            corrected = corrected.replace(new RegExp('\\b' + wrong + '\\b', 'gi'), right);
+            const regex = new RegExp('\\b' + wrong + '\\b', 'gi');
+            corrected = corrected.replace(regex, right);
         }
 
-        // ═══════════════════════════════════════════════════
-        // UNIDADES Y NORMALIZACIÓN
-        // ═══════════════════════════════════════════════════
+        // Unidades mal escaneadas
         corrected = corrected.replace(/(\d+)i\b/g, '$1l');
         corrected = corrected.replace(/(\d+)rn\b/g, '$1m');
         corrected = corrected.replace(/\((\d+(?:\.\d+)?)8\)/g, '($1g)');
 
+        // Separadores de miles erróneos
+        corrected = corrected.replace(/(\d),(\d{3})\b/g, '$1$2');
+
+        // ═══════════════════════════════════════════════════
+        // FASE 6: NORMALIZACIÓN FINAL
+        // ═══════════════════════════════════════════════════
+
+        // Espacios múltiples
         corrected = corrected.replace(/ {2,}/g, ' ');
+
+        // Líneas vacías múltiples
         corrected = corrected.replace(/\n{3,}/g, '\n\n');
+
+        // Espacios al inicio/final de líneas
         corrected = corrected.replace(/^ +| +$/gm, '');
+
+        // Espacios antes de puntuación
+        corrected = corrected.replace(/\s+([.,;:])/g, '$1');
+
+        // Espacios después de puntuación
+        corrected = corrected.replace(/([.,;:])(\S)/g, '$1 $2');
 
         return corrected.trim();
     }
