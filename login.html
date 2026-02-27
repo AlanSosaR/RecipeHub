@@ -418,8 +418,13 @@
             const name = document.getElementById('name').value.trim();
             const confirmPass = document.getElementById('confirm-password').value;
 
-            if (!isLogin) {
-                if (!name) return showMsg(window.i18n ? window.i18n.t('msgNameReq') : "Nombre obligatorio", 'error');
+            if (isLogin) {
+                if (!email) return showMsg(window.i18n ? window.i18n.t('msgEmailReq') : "Debes ingresar el correo", 'error');
+                if (!password) return showMsg(window.i18n ? window.i18n.t('msgPassReq') : "Debes ingresar la contraseña", 'error');
+            } else {
+                if (!name) return showMsg(window.i18n ? window.i18n.t('msgNameReq') : "Debes ingresar el nombre", 'error');
+                if (!email) return showMsg(window.i18n ? window.i18n.t('msgEmailReq') : "Debes ingresar el correo", 'error');
+                if (!password) return showMsg(window.i18n ? window.i18n.t('msgPassReq') : "Debes ingresar la contraseña", 'error');
                 if (password.length < 6) return showMsg(window.i18n ? window.i18n.t('msgPassLen') : "Mínimo 6 caracteres", 'error');
                 if (password !== confirmPass) return showMsg(window.i18n ? window.i18n.t('msgPassMismatch') : "Contraseñas no coinciden", 'error');
             }

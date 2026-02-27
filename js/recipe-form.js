@@ -141,7 +141,7 @@ class RecipeFormManager {
         item.innerHTML = `
             <div class="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-sm flex items-center justify-center mt-3 step-number">${stepNum}</div>
             <div class="m3-field textarea flex-1 mb-0 has-action" style="margin-bottom:0">
-                <textarea class="step-textarea block w-full resize-none" placeholder=" " rows="2" required>${data ? (isEn ? (data.instruction_en || data.instruction_es) : data.instruction_es) : ''}</textarea>
+                <textarea class="step-textarea block w-full resize-none" placeholder=" " rows="2">${data ? (isEn ? (data.instruction_en || data.instruction_es) : data.instruction_es) : ''}</textarea>
                 <label>${labelTxt}</label>
                 <button type="button" class="m3-field-action del-btn" title="${delBtnTxt}">
                     <span class="material-symbols-outlined">close</span>
@@ -176,13 +176,30 @@ class RecipeFormManager {
         const btnSave = document.getElementById('btnSave');
 
         try {
+            const isEn = window.i18n && window.i18n.getLang() === 'en';
+
+            // 1. Validaciones previas
+            const recipeName = form.name.value.trim();
+            if (!recipeName) {
+                const msg = isEn ? "Recipe name is required" : "El nombre de la receta es obligatorio";
+                window.showToast(msg, 'error');
+                return; // Stop execution
+            }
+
+            const ingredientInputs = document.querySelectorAll('.ingredient-input');
+            const validIngredientsList = Array.from(ingredientInputs).filter(input => input.value.trim() !== '');
+            if (validIngredientsList.length === 0) {
+                const msg = isEn ? "At least one ingredient is required" : "Debes agregar al menos un ingrediente";
+                window.showToast(msg, 'error');
+                return; // Stop execution
+            }
+
             btnSave.disabled = true;
             const savingTxt = window.i18n ? window.i18n.t('saving') : 'Guardando...';
             btnSave.innerHTML = `<span class="spinner-small"></span> ${savingTxt}`;
 
             // Obtener ID de categoría 'General'
             const catsResult = await window.db.getMyCategories();
-            const isEn = window.i18n && window.i18n.getLang() === 'en';
             const generalCat = catsResult.categories.find(c => (isEn ? (c.name_en || c.name_es) : c.name_es) === 'General') || catsResult.categories[0];
 
             const recipeData = {};
@@ -213,7 +230,6 @@ class RecipeFormManager {
 
 
             // 2. Recolectar y Guardar Ingredientes
-            const ingredientInputs = document.querySelectorAll('.ingredient-input');
             const ingredientsData = Array.from(ingredientInputs)
                 .map(input => {
                     const data = {};
