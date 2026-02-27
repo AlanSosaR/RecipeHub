@@ -115,23 +115,30 @@ class RecipeFormManager {
         item.className = 'flex items-center gap-3 group animate-fade-in mb-4';
         const labelTxt = window.i18n ? window.i18n.t('formIngredientsLabel') : 'Ingrediente';
         const delBtnTxt = window.i18n ? window.i18n.t('deleteBtn') : 'Eliminar';
+        const msgError = window.i18n && window.i18n.getLang() === 'en' ? 'Ingredient cannot be empty' : 'El ingrediente no puede estar vacío';
         const isEn = window.i18n && window.i18n.getLang() === 'en';
 
         item.innerHTML = `
             <span class="material-symbols-outlined text-gray-300 cursor-move">drag_indicator</span>
-            <div class="m3-field flex-1 mb-0 has-action" style="margin-bottom:0">
-                <input type="text" class="ingredient-input" placeholder=" " value="${data ? (isEn ? (data.name_en || data.name_es) : data.name_es) : ''}" required>
-                <label>${labelTxt}</label>
+            <div class="m3-field m3-field-container flex-1 mb-0 has-action" style="margin-bottom:24px">
+                <input type="text" class="ingredient-input m3-field-input" placeholder=" " value="${data ? (isEn ? (data.name_en || data.name_es) : data.name_es) : ''}">
+                <label class="m3-field-label">${labelTxt}</label>
                 <button type="button" class="m3-field-action del-btn" title="${delBtnTxt}">
                     <span class="material-symbols-outlined">close</span>
                 </button>
+                <span class="m3-field-error">${msgError}</span>
             </div>
         `;
 
         const input = item.querySelector('input');
-        input.addEventListener('input', () => {
+        input.addEventListener('input', (e) => {
             if (input.value) input.classList.add('has-value');
             else input.classList.remove('has-value');
+
+            const group = e.target.closest('.m3-field-container');
+            if (group && group.classList.contains('has-error')) {
+                group.classList.remove('has-error');
+            }
         });
         if (data) input.classList.add('has-value');
 
@@ -202,10 +209,21 @@ class RecipeFormManager {
             }
 
             const ingredientInputs = document.querySelectorAll('.ingredient-input');
-            const validIngredientsList = Array.from(ingredientInputs).filter(input => input.value.trim() !== '');
-            if (validIngredientsList.length === 0) {
+            let hasValidIngredient = false;
+            ingredientInputs.forEach(input => {
+                const group = input.closest('.m3-field-container');
+                if (input.value.trim() === '') {
+                    if (group) group.classList.add('has-error');
+                    hasError = true;
+                } else {
+                    if (group) group.classList.remove('has-error');
+                    hasValidIngredient = true;
+                }
+            });
+
+            if (ingredientInputs.length === 0) {
                 const msg = isEn ? "At least one ingredient is required" : "Debes agregar al menos un ingrediente";
-                window.showToast(msg, 'error'); // Keep toast for ingredients as they are dynamic lists
+                window.showToast(msg, 'error');
                 hasError = true;
             }
 

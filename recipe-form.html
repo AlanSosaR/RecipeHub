@@ -991,7 +991,7 @@
         <!-- Scroll area -->
         <div class="m3-scroll">
             <div class="form-wrapper">
-                <form id="recipeForm">
+                <form id="recipeForm" novalidate>
 
                     <!-- ── Unified Recipe Card ── -->
                     <div class="m3-card">
@@ -1003,8 +1003,8 @@
 
 
                         <!-- Recipe name -->
-                        <div class="m3-field-container" id="recipe-name-group">
-                            <input id="name" class="m3-field-input" name="name_es" type="text" placeholder=" " required
+                        <div class="m3-field m3-field-container" id="recipe-name-group">
+                            <input id="name" class="m3-field-input" name="name_es" type="text" placeholder=" "
                                 autocomplete="off" data-i18n-placeholder="placeholderRecipeName">
                             <label class="m3-field-label" for="name" data-i18n="formNameLabel">Nombre de la receta
                                 *</label>
