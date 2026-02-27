@@ -28,7 +28,7 @@
             searchPlaceholder: 'Buscar en mi recetario...',
 
             // ── Auth / Login ──────────────────────────────────────────────
-            authTitleLogin: "Bienvenido",
+            authTitleLogin: "",
             authSubtitleLogin: "Ingresa a tu colección privada de recetas.",
             authTitleRegister: "Crear Cuenta",
             authSubtitleRegister: "Únete para guardar tus recetas familiares.",
@@ -36,7 +36,7 @@
             lblEmail: "Email",
             lblPassword: "Contraseña",
             lblConfirm: "Confirmar Contraseña",
-            btnSubmitLogin: "Ingresar",
+            btnSubmitLogin: "Iniciar Sesión",
             btnSubmitRegister: "Registrarse",
             switchTextLogin: "¿No tienes cuenta? Regístrate",
             switchTextRegister: "¿Ya tienes cuenta? Ingresa",

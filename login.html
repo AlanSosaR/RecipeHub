@@ -308,7 +308,7 @@
                         style="color: var(--logo-color); font-weight: 800; font-size: 32px; letter-spacing: -1px; margin: 0;">
                         Recipe Pantry</h1>
                 </div>
-                <h2 id="auth-title" class="login-title" data-i18n="authTitleLogin">Bienvenido</h2>
+                <h2 id="auth-title" class="login-title" data-i18n="authTitleLogin"></h2>
                 <p id="auth-subtitle" class="login-subtitle" data-i18n="authSubtitleLogin">Ingresa a tu colección
                     privada de recetas.</p>
             </div>
@@ -349,7 +349,7 @@
                 </div>
 
                 <button type="submit" id="btn-submit" class="btn-m3-full">
-                    <span id="btn-submit-text" data-i18n="btnSubmitLogin">Ingresar</span>
+                    <span id="btn-submit-text" data-i18n="btnSubmitLogin">Iniciar Sesión</span>
                     <span class="material-symbols-outlined">arrow_forward</span>
                 </button>
             </form>
@@ -397,9 +397,9 @@
 
             // Handle toggleable texts
             if (isLogin) {
-                document.getElementById('auth-title').textContent = window.i18n ? window.i18n.t('authTitleLogin') : "Bienvenido";
+                document.getElementById('auth-title').textContent = window.i18n ? window.i18n.t('authTitleLogin') : "";
                 document.getElementById('auth-subtitle').textContent = window.i18n ? window.i18n.t('authSubtitleLogin') : "Ingresa a tu colección privada de recetas.";
-                document.getElementById('btn-submit-text').textContent = window.i18n ? window.i18n.t('btnSubmitLogin') : "Ingresar";
+                document.getElementById('btn-submit-text').textContent = window.i18n ? window.i18n.t('btnSubmitLogin') : "Iniciar Sesión";
                 document.getElementById('switch-text').textContent = window.i18n ? window.i18n.t('switchTextLogin') : "¿No tienes cuenta? Regístrate";
             } else {
                 document.getElementById('auth-title').textContent = window.i18n ? window.i18n.t('authTitleRegister') : "Crear Cuenta";
