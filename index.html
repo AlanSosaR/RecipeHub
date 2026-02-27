@@ -23,6 +23,7 @@
         }
     </script>
   <title>Recipe Pantry - Tu Recetario Personal</title>
+  <link rel="icon" type="image/svg+xml" href="assets/icons/icon.svg">
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.webmanifest">
@@ -307,7 +308,7 @@
 
 <body class="body-drive">
   <div id="landing-section" class="mode-landing-wrapper">
-    <div class="language-toggle" onclick="window.i18n &amp;&amp; window.i18n.toggle(); updateTranslations()"
+    <div class="language-toggle" onclick="if(window.i18n) window.i18n.toggle(); updateTranslations();"
       data-i18n-title="navToggleLanguage" title="Cambiar idioma">
       <span class="material-symbols-outlined" style="font-size: 18px">language</span>
       <span class="lang-label">ES</span>
