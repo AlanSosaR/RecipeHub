@@ -151,7 +151,7 @@ class OCRScanner {
             this.showResults(results.data, results);
         } catch (error) {
             console.error('Capture error:', error);
-            if (window.utils) window.utils.showToast('No se pudo analizar la imagen. Intenta con mejor iluminación.', 'error');
+            if (window.showSnackbar) window.showSnackbar('No se pudo analizar la imagen. Intenta con mejor iluminación.');
             this.resetModal();
         }
     }
@@ -188,9 +188,9 @@ class OCRScanner {
 
         // Feedback
         if (!data || !data.ingredients) {
-            if (window.utils) window.utils.showToast('La imagen no contenía texto legible.', 'warning');
+            if (window.showSnackbar) window.showSnackbar('La imagen no contenía texto legible.');
         } else if (metadata.needsReview) {
-            if (window.utils) window.utils.showToast(`Revisa las cantidades. Alertas pendientes.`, 'warning');
+            if (window.showSnackbar) window.showSnackbar('Revisa las cantidades. Alertas pendientes.');
         }
 
         // Auto-scroll para que se vea el texto
@@ -222,7 +222,7 @@ class OCRScanner {
             this.showResults(results.data, results);
         } catch (error) {
             console.error('Gallery error:', error);
-            if (window.utils) window.utils.showToast('No se pudo analizar la imagen.', 'error');
+            if (window.showSnackbar) window.showSnackbar('No se pudo analizar la imagen.');
             this.resetModal();
         }
     }

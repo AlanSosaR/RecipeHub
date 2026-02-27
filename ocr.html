@@ -813,6 +813,7 @@
     <script src="js/ocr-engine/CulinaryValidator.js"></script>
     <script src="js/ocr-engine/HybridOCR.js"></script>
     <script src="js/ocr-engine/ImagePreprocessor.js"></script>
+    <!-- OCRManager debe ir ANTES de ocr.js porque ocr.js instancia window.ocrManager = new OCRManager() -->
     <script src="js/ocr-engine/OCRManager.js"></script>
     <script src="js/ocr.js?v=6"></script>
 
@@ -916,7 +917,11 @@
                 console.error(err);
                 if (scanLine) scanLine.classList.add('hidden');
                 const readErr = window.i18n ? window.i18n.t('ocrReadError') : 'No pudimos leer la imagen. Intenta con más luz.';
-                alert(readErr);
+                if (window.showSnackbar) {
+                    window.showSnackbar(readErr);
+                } else {
+                    console.warn(readErr);
+                }
                 goToStep(1);
             }
         }
