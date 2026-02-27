@@ -35,6 +35,17 @@ class RecipeFormManager {
             this.addStep();
         }
 
+        // Limpiar error del nombre al escribir
+        const nameInput = document.getElementById('name');
+        if (nameInput) {
+            nameInput.addEventListener('input', (e) => {
+                const group = e.target.closest('.m3-field-container');
+                if (group && group.classList.contains('has-error')) {
+                    group.classList.remove('has-error');
+                }
+            });
+        }
+
         this.setupEventListeners();
     }
 
@@ -179,20 +190,26 @@ class RecipeFormManager {
             const isEn = window.i18n && window.i18n.getLang() === 'en';
 
             // 1. Validaciones previas
+            let hasError = false;
+            const nameGroup = document.getElementById('recipe-name-group');
+
             const recipeName = form.name.value.trim();
             if (!recipeName) {
-                const msg = isEn ? "Recipe name is required" : "El nombre de la receta es obligatorio";
-                window.showToast(msg, 'error');
-                return; // Stop execution
+                if (nameGroup) nameGroup.classList.add('has-error');
+                hasError = true;
+            } else {
+                if (nameGroup) nameGroup.classList.remove('has-error');
             }
 
             const ingredientInputs = document.querySelectorAll('.ingredient-input');
             const validIngredientsList = Array.from(ingredientInputs).filter(input => input.value.trim() !== '');
             if (validIngredientsList.length === 0) {
                 const msg = isEn ? "At least one ingredient is required" : "Debes agregar al menos un ingrediente";
-                window.showToast(msg, 'error');
-                return; // Stop execution
+                window.showToast(msg, 'error'); // Keep toast for ingredients as they are dynamic lists
+                hasError = true;
             }
+
+            if (hasError) return;
 
             btnSave.disabled = true;
             const savingTxt = window.i18n ? window.i18n.t('saving') : 'Guardando...';

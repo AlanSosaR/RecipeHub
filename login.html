@@ -200,6 +200,35 @@
             padding-right: 52px;
         }
 
+        .m3-field-error {
+            color: var(--error);
+            font-size: 12px;
+            margin-top: 4px;
+            margin-left: 12px;
+            display: none;
+            position: absolute;
+            bottom: -20px;
+        }
+
+        .m3-field-container.has-error .m3-field-input {
+            border-color: var(--error);
+        }
+
+        .m3-field-container.has-error .m3-field-label {
+            color: var(--error);
+        }
+
+        .m3-field-container.has-error .m3-field-error {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .m3-field-container {
+            margin-bottom: 32px;
+            /* Aumentado para dejar espacio al error text */
+            position: relative;
+        }
+
         .btn-m3-full {
             width: 100%;
             height: auto;
@@ -287,15 +316,17 @@
                 <div id="name-group" class="m3-field-container hidden-m3">
                     <input class="m3-field-input" id="name" type="text" placeholder=" " autocomplete="name" />
                     <label class="m3-field-label" id="lbl-name" for="name" data-i18n="lblName">Nombre Completo</label>
+                    <span class="m3-field-error" id="name-error">Debes ingresar el nombre</span>
                 </div>
 
-                <div class="m3-field-container">
+                <div id="email-group" class="m3-field-container">
                     <input class="m3-field-input" id="email" type="email" placeholder=" " required
                         autocomplete="email" />
                     <label class="m3-field-label" id="lbl-email" for="email" data-i18n="lblEmail">Email</label>
+                    <span class="m3-field-error" id="email-error">Ingresa tu correo o teléfono</span>
                 </div>
 
-                <div class="m3-field-container">
+                <div id="password-group" class="m3-field-container">
                     <input class="m3-field-input has-trailing" id="password" type="password" placeholder=" " required
                         autocomplete="current-password" />
                     <label class="m3-field-label" id="lbl-password" for="password"
@@ -303,6 +334,7 @@
                     <div class="m3-field-trailing" onclick="togglePass('password', this)">
                         <span class="material-symbols-outlined">visibility</span>
                     </div>
+                    <span class="m3-field-error" id="password-error">Debes ingresar la contraseña</span>
                 </div>
 
                 <div id="confirm-password-group" class="m3-field-container hidden-m3">
@@ -312,6 +344,7 @@
                     <div class="m3-field-trailing" onclick="togglePass('confirm-password', this)">
                         <span class="material-symbols-outlined">visibility</span>
                     </div>
+                    <span class="m3-field-error" id="confirm-password-error">Las contraseñas no coinciden</span>
                 </div>
 
                 <button type="submit" id="btn-submit" class="btn-m3-full">
@@ -409,8 +442,37 @@
             }, 300);
         });
 
+        // Helper para mostrar/ocultar el error inline
+        function setError(groupId, msgId, message, show) {
+            const group = document.getElementById(groupId);
+            const errorSpan = document.getElementById(msgId);
+            if (show) {
+                group.classList.add('has-error');
+                if (message) errorSpan.textContent = message;
+            } else {
+                group.classList.remove('has-error');
+            }
+        }
+
+        // Limpiar errores cuando se escribe
+        document.querySelectorAll('.m3-field-input').forEach(input => {
+            input.addEventListener('input', (e) => {
+                const group = e.target.closest('.m3-field-container');
+                if (group && group.classList.contains('has-error')) {
+                    group.classList.remove('has-error');
+                }
+            });
+        });
+
         document.getElementById('unified-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            // Limpiar errores previos
+            setError('name-group', 'name-error', null, false);
+            setError('email-group', 'email-error', null, false);
+            setError('password-group', 'password-error', null, false);
+            setError('confirm-password-group', 'confirm-password-error', null, false);
+
             const btn = document.getElementById('btn-submit');
             const span = document.getElementById('btn-submit-text');
             const email = document.getElementById('email').value.trim();
@@ -418,16 +480,43 @@
             const name = document.getElementById('name').value.trim();
             const confirmPass = document.getElementById('confirm-password').value;
 
+            let hasError = false;
+
             if (isLogin) {
-                if (!email) return showMsg(window.i18n ? window.i18n.t('msgEmailReq') : "Debes ingresar el correo", 'error');
-                if (!password) return showMsg(window.i18n ? window.i18n.t('msgPassReq') : "Debes ingresar la contraseña", 'error');
+                if (!email) {
+                    setError('email-group', 'email-error', window.i18n ? window.i18n.t('msgEmailReq') : "Ingresa tu correo o teléfono", true);
+                    hasError = true;
+                }
+                if (!password) {
+                    setError('password-group', 'password-error', window.i18n ? window.i18n.t('msgPassReq') : "Debes ingresar la contraseña", true);
+                    hasError = true;
+                }
             } else {
-                if (!name) return showMsg(window.i18n ? window.i18n.t('msgNameReq') : "Debes ingresar el nombre", 'error');
-                if (!email) return showMsg(window.i18n ? window.i18n.t('msgEmailReq') : "Debes ingresar el correo", 'error');
-                if (!password) return showMsg(window.i18n ? window.i18n.t('msgPassReq') : "Debes ingresar la contraseña", 'error');
-                if (password.length < 6) return showMsg(window.i18n ? window.i18n.t('msgPassLen') : "Mínimo 6 caracteres", 'error');
-                if (password !== confirmPass) return showMsg(window.i18n ? window.i18n.t('msgPassMismatch') : "Contraseñas no coinciden", 'error');
+                if (!name) {
+                    setError('name-group', 'name-error', window.i18n ? window.i18n.t('msgNameReq') : "Debes ingresar el nombre", true);
+                    hasError = true;
+                }
+                if (!email) {
+                    setError('email-group', 'email-error', window.i18n ? window.i18n.t('msgEmailReq') : "Ingresa tu correo o teléfono", true);
+                    hasError = true;
+                }
+                if (!password) {
+                    setError('password-group', 'password-error', window.i18n ? window.i18n.t('msgPassReq') : "Debes ingresar la contraseña", true);
+                    hasError = true;
+                } else if (password.length < 6) {
+                    setError('password-group', 'password-error', window.i18n ? window.i18n.t('msgPassLen') : "Mínimo 6 caracteres", true);
+                    hasError = true;
+                }
+                if (password && confirmPass && password !== confirmPass) {
+                    setError('confirm-password-group', 'confirm-password-error', window.i18n ? window.i18n.t('msgPassMismatch') : "Contraseñas no coinciden", true);
+                    hasError = true;
+                } else if (!isLogin && !confirmPass && password) {
+                    setError('confirm-password-group', 'confirm-password-error', window.i18n ? window.i18n.t('msgConfirmPass') : "Debes confirmar tu contraseña", true);
+                    hasError = true;
+                }
             }
+
+            if (hasError) return;
 
             btn.disabled = true;
             const originalTxt = span.textContent;

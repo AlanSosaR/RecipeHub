@@ -216,6 +216,35 @@
             box-shadow: var(--md-elev-1);
         }
 
+        /* Error Text Validation */
+        .m3-field-error {
+            color: var(--error, #d32f2f);
+            font-size: 12px;
+            margin-top: 4px;
+            margin-left: 12px;
+            display: none;
+            position: absolute;
+            bottom: -20px;
+        }
+
+        .m3-field-container.has-error .m3-field-input {
+            border-color: var(--error, #d32f2f);
+        }
+
+        .m3-field-container.has-error .m3-field-label {
+            color: var(--error, #d32f2f);
+        }
+
+        .m3-field-container.has-error .m3-field-error {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .m3-field-container {
+            margin-bottom: 32px;
+            position: relative;
+        }
+
         .m3-avatar {
             width: 36px;
             height: 36px;
@@ -973,17 +1002,21 @@
 
 
                         <!-- Recipe name -->
-                        <div class="m3-field">
-                            <input id="name" name="name_es" type="text" placeholder=" " required autocomplete="off"
-                                data-i18n-placeholder="placeholderRecipeName">
-                            <label for="name" data-i18n="formNameLabel">Nombre de la receta *</label>
+                        <div class="m3-field-container" id="recipe-name-group">
+                            <input id="name" class="m3-field-input" name="name_es" type="text" placeholder=" " required
+                                autocomplete="off" data-i18n-placeholder="placeholderRecipeName">
+                            <label class="m3-field-label" for="name" data-i18n="formNameLabel">Nombre de la receta
+                                *</label>
+                            <span class="m3-field-error" id="recipe-name-error">El nombre de la receta es
+                                obligatorio</span>
                         </div>
 
                         <!-- Description -->
-                        <div class="m3-field textarea">
-                            <textarea id="description" name="description_es" placeholder=" " rows="3"
-                                data-i18n-placeholder="placeholderDescription"></textarea>
-                            <label for="description" data-i18n="formDescriptionLabel">Descripción</label>
+                        <div class="m3-field textarea m3-field-container" style="margin-bottom: 32px;">
+                            <textarea id="description" class="m3-field-input" name="description_es" placeholder=" "
+                                rows="3" data-i18n-placeholder="placeholderDescription"></textarea>
+                            <label class="m3-field-label" for="description"
+                                data-i18n="formDescriptionLabel">Descripción</label>
                         </div>
 
 
