@@ -102,12 +102,27 @@ class DatabaseManager {
                 const userId = window.authManager.currentUser.id;
                 const { data: shared, error: err } = await window.supabaseClient
                     .from('shared_recipes')
-                    .select('*, sender:sender_user_id(first_name, last_name), recipe:recipe_id(*, category:categories(*), images:recipe_images(*)), permission')
+                    .select('*, recipe:recipe_id(*, category:categories(*), images:recipe_images(*)), permission, sender_user_id')
                     .eq('recipient_user_id', userId);
 
                 if (err) throw err;
 
                 if (!shared || shared.length === 0) return { success: true, recipes: [], fromCache: false };
+
+                // Fetch sender names separately to avoid ambiguous FK resolution
+                const senderIds = [...new Set(shared.map(s => s.sender_user_id).filter(Boolean))];
+                let senderMap = {};
+                if (senderIds.length > 0) {
+                    const { data: senders } = await window.supabaseClient
+                        .from('users')
+                        .select('id, first_name, last_name')
+                        .in('id', senderIds);
+                    if (senders) {
+                        senders.forEach(u => {
+                            senderMap[u.id] = `${u.first_name || ''} ${u.last_name || ''}`.trim() || 'Chef';
+                        });
+                    }
+                }
 
                 let recipes = shared.map(s => {
                     const r = s.recipe;
@@ -118,7 +133,7 @@ class DatabaseManager {
                         totalImages: r.images?.length || 0,
                         sharingContext: 'received',
                         sharedPermission: s.permission,
-                        senderName: s.sender ? `${s.sender.first_name} ${s.sender.last_name}`.trim() : 'Chef'
+                        senderName: senderMap[s.sender_user_id] || 'Chef'
                     };
                 }).filter(Boolean);
 
@@ -144,16 +159,36 @@ class DatabaseManager {
             const { data, error } = await query;
             if (error) throw error;
 
-            // Fetch sharing info for current user's recipes (sent)
+            // Fetch sharing info for current user's recipes (sent) — split query to avoid FK ambiguity
             const { data: sentShared } = await window.supabaseClient
                 .from('shared_recipes')
-                .select('recipe_id, recipient:recipient_user_id(first_name, last_name)')
+                .select('recipe_id, recipient_user_id')
                 .eq('sender_user_id', window.authManager.currentUser.id);
 
+            // Fetch recipient names
+            let recipientMap = {};
+            if (sentShared && sentShared.length > 0) {
+                const recipientIds = [...new Set(sentShared.map(s => s.recipient_user_id).filter(Boolean))];
+                if (recipientIds.length > 0) {
+                    const { data: recipientUsers } = await window.supabaseClient
+                        .from('users')
+                        .select('id, first_name, last_name')
+                        .in('id', recipientIds);
+                    if (recipientUsers) {
+                        recipientUsers.forEach(u => {
+                            recipientMap[u.id] = `${u.first_name || ''} ${u.last_name || ''}`.trim() || 'Chef';
+                        });
+                    }
+                }
+            }
+
             let recipes = data.map(recipe => {
-                const recipients = sentShared ? sentShared
-                    .filter(s => s.recipe_id === recipe.id && s.recipient)
-                    .map(s => `${s.recipient.first_name} ${s.recipient.last_name}`.trim()) : [];
+                const recipients = sentShared
+                    ? sentShared
+                        .filter(s => s.recipe_id === recipe.id)
+                        .map(s => `Chef ${recipientMap[s.recipient_user_id] || ''}`.trim())
+                        .filter(Boolean)
+                    : [];
 
                 return {
                     ...recipe,
