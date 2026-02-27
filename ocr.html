@@ -715,19 +715,9 @@
                             compatibles</p>
                     </div>
 
-                    <input type="file" id="fileInput" accept="image/*" capture="environment" style="display: none;"
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;"
                         onchange="handleFileSelect(event)">
 
-                    <div class="m3-action-grid">
-                        <button class="m3-expressive-card" onclick="openCamera()">
-                            <span class="material-symbols-outlined">photo_camera</span>
-                            <span class="card-label" data-i18n="ocrCamera">Cámara</span>
-                        </button>
-                        <button class="m3-expressive-card secondary" onclick="openGallery()">
-                            <span class="material-symbols-outlined">image</span>
-                            <span class="card-label" data-i18n="ocrGallery">Galería</span>
-                        </button>
-                    </div>
 
                     <div
                         style="margin-top: 32px; padding: 20px; background: var(--surface); border-radius: 20px; border: 1px solid var(--border);">
@@ -902,17 +892,6 @@
             });
         }
 
-        function openCamera() {
-            const input = document.getElementById('fileInput');
-            input.setAttribute('capture', 'environment');
-            input.click();
-        }
-
-        function openGallery() {
-            const input = document.getElementById('fileInput');
-            input.removeAttribute('capture');
-            input.click();
-        }
 
         function handleFileSelect(e) {
             if (e.target.files[0]) handleImageFile(e.target.files[0]);
