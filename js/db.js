@@ -102,7 +102,7 @@ class DatabaseManager {
                 const userId = window.authManager.currentUser.id;
                 const { data: shared, error: err } = await window.supabaseClient
                     .from('shared_recipes')
-                    .select('*, recipe:recipe_id(*, category:categories(*), images:recipe_images(*)), permission')
+                    .select('*, sender:sender_user_id(first_name, last_name), recipe:recipe_id(*, category:categories(*), images:recipe_images(*)), permission')
                     .eq('recipient_user_id', userId);
 
                 if (err) throw err;
@@ -117,7 +117,8 @@ class DatabaseManager {
                         primaryImage: r.images?.find(img => img.is_primary)?.image_url || null,
                         totalImages: r.images?.length || 0,
                         sharingContext: 'received',
-                        sharedPermission: s.permission
+                        sharedPermission: s.permission,
+                        senderName: s.sender ? `${s.sender.first_name} ${s.sender.last_name}`.trim() : 'Chef'
                     };
                 }).filter(Boolean);
 
@@ -143,12 +144,23 @@ class DatabaseManager {
             const { data, error } = await query;
             if (error) throw error;
 
+            // Fetch sharing info for current user's recipes (sent)
+            const { data: sentShared } = await window.supabaseClient
+                .from('shared_recipes')
+                .select('recipe_id, recipient:recipient_user_id(first_name, last_name)')
+                .eq('sender_user_id', window.authManager.currentUser.id);
+
             let recipes = data.map(recipe => {
+                const recipients = sentShared ? sentShared
+                    .filter(s => s.recipe_id === recipe.id && s.recipient)
+                    .map(s => `${s.recipient.first_name} ${s.recipient.last_name}`.trim()) : [];
+
                 return {
                     ...recipe,
                     primaryImage: recipe.images?.find(img => img.is_primary)?.image_url || null,
                     totalImages: recipe.images?.length || 0,
-                    sharingContext: null
+                    sharingContext: recipients.length > 0 ? 'sent' : null,
+                    sharedWith: recipients.join(', ')
                 };
             });
 

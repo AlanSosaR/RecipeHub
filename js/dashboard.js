@@ -318,6 +318,17 @@ class DashboardManager {
 
                 <div class="col-name text-ellipsis">
                     <span class="recipe-name">${isEn ? (recipe.name_en || recipe.name_es) : recipe.name_es}</span>
+                    ${recipe.sharingContext === 'received' ? `
+                        <div class="shared-by-label" style="font-size: 11px; color: var(--on-surface-variant); opacity: 0.8; margin-top: 2px;">
+                            <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;">person</span>
+                            ${window.i18n ? window.i18n.t('sharedBy') : 'Compartida por'}: ${recipe.senderName || 'Chef'}
+                        </div>
+                    ` : recipe.sharingContext === 'sent' && recipe.sharedWith ? `
+                        <div class="shared-by-label" style="font-size: 11px; color: var(--primary); opacity: 0.85; margin-top: 2px;">
+                            <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;">group</span>
+                            ${window.i18n ? window.i18n.t('sharedWith') : 'Compartida con'}: ${recipe.sharedWith}
+                        </div>
+                    ` : ''}
                 </div>
                 <div class="col-category">
                     <span class="badge-tag">General</span>
@@ -383,6 +394,17 @@ class DashboardManager {
                 </div>
                 <div class="recipe-card-content">
                     <h4 class="recipe-card-title">${isEn ? (recipe.name_en || recipe.name_es) : recipe.name_es}</h4>
+                    ${recipe.sharingContext === 'received' ? `
+                        <div class="shared-by-label" style="font-size: 10px; color: var(--on-surface-variant); margin-bottom: 4px;">
+                            <span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle;">person</span>
+                            ${window.i18n ? window.i18n.t('sharedBy') : 'Compartida por'}: ${recipe.senderName || 'Chef'}
+                        </div>
+                    ` : recipe.sharingContext === 'sent' && recipe.sharedWith ? `
+                        <div class="shared-by-label" style="font-size: 10px; color: var(--primary); margin-bottom: 4px;">
+                            <span class="material-symbols-outlined" style="font-size:12px;vertical-align:middle;">group</span>
+                            ${window.i18n ? window.i18n.t('sharedWith') : 'Compartida con'}: ${recipe.sharedWith}
+                        </div>
+                    ` : ''}
                     <div class="recipe-card-meta">
                         <span>General</span>
                         <span>${date}</span>
@@ -435,6 +457,17 @@ class DashboardManager {
             </div>
             <div class="details-info-list" style="padding: 24px;">
                 <h3 style="margin-bottom: 8px;">${isEn ? (recipe.name_en || recipe.name_es) : recipe.name_es}</h3>
+                ${isShared ? `
+                    <div style="font-size: 13px; color: var(--on-surface-variant); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">person</span>
+                        <span>${window.i18n ? window.i18n.t('sharedBy') : 'Compartida por'}: <strong>${recipe.senderName || 'Chef'}</strong></span>
+                    </div>
+                ` : recipe.sharingContext === 'sent' && recipe.sharedWith ? `
+                    <div style="font-size: 13px; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">group</span>
+                        <span>${window.i18n ? window.i18n.t('sharedWith') : 'Compartida con'}: <strong>${recipe.sharedWith}</strong></span>
+                    </div>
+                ` : ''}
                 <div class="details-meta-m3">
                     <span class="badge-tag">General</span>
                     <span class="badge-tag">${accessLabel}</span>
@@ -524,6 +557,11 @@ class DashboardManager {
                     <span class="material-symbols-outlined">link</span>
                     ${window.i18n ? window.i18n.t('copyLinkLabel') : 'Copiar enlace'}
                 </button>
+                <div class="context-menu-divider"></div>
+                <button class="context-menu-item" style="color: var(--md-error);" onclick="window.dashboard.confirmDelete('${recipe.id}')">
+                    <span class="material-symbols-outlined">delete</span>
+                    ${window.i18n ? window.i18n.t('deleteBtn') : 'Eliminar'}
+                </button>
             `;
         } else {
             menu.innerHTML = `
@@ -590,13 +628,22 @@ class DashboardManager {
     }
 
     async confirmDelete(recipeId) {
-        const confirmMsg = window.i18n ? window.i18n.t('deleteConfirm') : '¿Seguro que desea eliminar la receta?';
+        const recipe = this.currentRecipes.find(r => r.id === recipeId);
+        const isReceived = recipe && recipe.sharingContext === 'received';
+
+        const confirmMsg = isReceived
+            ? (window.i18n ? window.i18n.t('deleteSharedConfirm') : '¿Deseas eliminar esta receta compartida?')
+            : (window.i18n ? window.i18n.t('deleteConfirm') : '¿Seguro que desea eliminar la receta?');
+
         const deleteBtnTxt = window.i18n ? window.i18n.t('deleteBtn') : 'ELIMINAR';
 
         window.showActionSnackbar(confirmMsg, deleteBtnTxt, async () => {
-            const result = await window.db.deleteRecipe(recipeId);
+            const result = isReceived
+                ? await window.db.deleteSharedRecipe(window.authManager.currentUser.id, recipeId)
+                : await window.db.deleteRecipe(recipeId);
+
             if (result.success) {
-                window.utils.showToast(window.i18n ? window.i18n.t('deleteSuccess') : 'Receta eliminada correctamente', 'success');
+                window.utils.showToast(window.i18n ? window.i18n.t('deleteSuccess') : 'Eliminada correctamente', 'success');
                 this.currentRecipes = this.currentRecipes.filter(r => r.id !== recipeId);
                 this.renderRecipesGrid(this.currentRecipes);
                 if (this.selectedRecipeId === recipeId) {
@@ -696,15 +743,28 @@ class DashboardManager {
     }
 
     async saveSharedRecipe(recipeId) {
+        const recipe = this.currentRecipes.find(r => r.id === recipeId);
+        const recipeName = recipe ? (window.i18n.getLang() === 'en' ? (recipe.name_en || recipe.name_es) : recipe.name_es) : '';
+
+        // Cerrar menú inmediatamente
+        const existingMenu = document.querySelector('.dropbox-menu-m3');
+        if (existingMenu) existingMenu.remove();
+
         try {
             window.utils.showToast(window.i18n ? window.i18n.t('savingRecipe') : 'Guardando receta...', 'info');
             const result = await window.db.duplicateRecipe(recipeId, window.authManager.currentUser.id);
             if (result.success) {
-                window.utils.showToast(window.i18n ? window.i18n.t('saveSuccess') : '✅ Receta agregada a tu colección', 'success');
+                const successMsg = window.i18n
+                    ? window.i18n.t('recipeAddedToCollection', { name: recipeName })
+                    : `✅ Receta ${recipeName} agregada a tu colección`;
+                window.utils.showToast(successMsg, 'success');
+
                 // Switch back to "My Recipes" tab to show the newly saved recipe
-                const recipesNavItem = document.querySelector('.nav-item[data-view="recipes"]');
-                this.switchView('recipes', recipesNavItem);
-                this.toggleDetailsSidebar(false);
+                setTimeout(() => {
+                    const recipesNavItem = document.querySelector('.nav-item[data-view="recipes"]');
+                    this.switchView('recipes', recipesNavItem);
+                    this.toggleDetailsSidebar(false);
+                }, 100);
             } else {
                 throw new Error(result.error);
             }

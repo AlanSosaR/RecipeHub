@@ -16,6 +16,11 @@
             navScan: 'Escanear Receta',
             navShared: 'Compartidas',
             navLogout: 'Cerrar Sesión',
+            sharedBy: 'Compartida por',
+            sharedWith: 'Compartida con',
+            copyLinkLabel: 'Copiar enlace',
+            recipeAddedToCollection: '✅ Receta {name} agregada a tu colección',
+            deleteSharedConfirm: '¿Deseas eliminar esta receta compartida?',
             navBack: 'Volver',
             navToggleLanguage: 'Cambiar idioma',
 
@@ -269,6 +274,11 @@
             navScan: 'Scan Recipe',
             navShared: 'Shared',
             navLogout: 'Log Out',
+            sharedBy: 'Shared by',
+            sharedWith: 'Shared with',
+            copyLinkLabel: 'Copy link',
+            recipeAddedToCollection: '✅ Recipe {name} added to your collection',
+            deleteSharedConfirm: 'Do you want to remove this shared recipe?',
             navBack: 'Back',
             navToggleLanguage: 'Toggle language',
 
