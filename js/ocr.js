@@ -118,12 +118,19 @@ class OCRScanner {
      * Update progress during OCR processing
      */
     updateProgress(message) {
-        if (message.status === 'recognizing text') {
-            const p = Math.round(message.progress * 100);
+        if (message.status === 'recognizing text' || message.status === 'reconociendo') {
+            const p = Math.round((message.progress || 0) * 100);
             const progressText = document.getElementById('ocrProgressText');
             const progressBar = document.getElementById('ocrProgressBar');
-            if (progressText) progressText.textContent = window.i18n ? window.i18n.t('ocrReading', { progress: p }) : `Leyendo... ${p}%`;
+            if (progressText) {
+                progressText.textContent = window.i18n ?
+                    window.i18n.t('ocrReading', { progress: p }) :
+                    `Leyendo... ${p}%`;
+            }
             if (progressBar) progressBar.style.width = p + '%';
+        } else if (message.message) {
+            const progressText = document.getElementById('ocrProgressText');
+            if (progressText) progressText.textContent = message.message;
         }
     }
 
@@ -146,9 +153,12 @@ class OCRScanner {
         const file = new File([blob], 'scan.jpg', { type: 'image/jpeg' });
 
         try {
-            const mode = document.querySelector('input[name="ocrMode"]:checked')?.value || 'fidelity';
-            const results = await window.ocrManager.processImage(file, m => this.updateProgress(m), { mode, returnJSON: true });
-            this.showResults(results.data, results);
+            const results = await window.ocrProcessor.processImage(file, m => this.updateProgress(m));
+            if (results.success) {
+                this.showResults(results);
+            } else {
+                throw new Error(results.error);
+            }
         } catch (error) {
             console.error('Capture error:', error);
             if (window.showSnackbar) window.showSnackbar('No se pudo analizar la imagen. Intenta con mejor iluminación.');
@@ -156,7 +166,7 @@ class OCRScanner {
         }
     }
 
-    showResults(data, metadata) {
+    showResults(results) {
         const cameraState = document.getElementById('ocrCameraState');
         const resultState = document.getElementById('ocrResultState');
         const loadingState = document.getElementById('ocrLoading');
@@ -165,32 +175,48 @@ class OCRScanner {
         if (loadingState) loadingState.style.display = 'none';
         if (resultState) resultState.style.display = 'flex';
 
-        // Render generated JSON back into strings for Editor
-        const jsonText = JSON.stringify(data, null, 2);
-        const textOutput = document.getElementById('extractedText');
-        if (textOutput) textOutput.value = jsonText;
+        // Set Recipe Name
+        const nameInput = document.getElementById('ocrRecipeName') || document.getElementById('ocrRawName');
+        if (nameInput) nameInput.value = results.nombre || '';
 
-        const nameInput = document.getElementById('ocrRecipeName');
-        if (nameInput) nameInput.value = data.title || '';
+        // Set Main Text / JSON Output
+        const textOutput = document.getElementById('extractedText');
+        if (textOutput) {
+            // En ocr.html mostramos el texto corregido para editar
+            textOutput.value = results.texto;
+        }
+
+        // Si estamos en ocr.html, también actualizamos la tab de "Vista Previa"
+        const parsedName = document.getElementById('parsedName');
+        if (parsedName) parsedName.value = results.nombre || '';
+
+        const parsedIngredients = document.getElementById('parsedIngredients');
+        if (parsedIngredients && results.ingredientes) {
+            parsedIngredients.innerHTML = results.ingredientes.map(ing => `
+                <div class="parsed-item">
+                    <span class="material-symbols-outlined" style="color: var(--primary); font-size: 18px;">check_circle</span>
+                    <span>${ing}</span>
+                </div>
+            `).join('');
+        }
+
+        const parsedSteps = document.getElementById('parsedSteps');
+        if (parsedSteps && results.pasos) {
+            parsedSteps.innerHTML = results.pasos.map((step, i) => `
+                <div class="parsed-item" style="align-items: flex-start;">
+                    <span style="font-weight: 700; color: var(--primary); min-width: 20px;">${i + 1}.</span>
+                    <span>${step}</span>
+                </div>
+            `).join('');
+        }
 
         // Confidence badge
-        const conf = Math.round(metadata.confidence || 0);
+        const conf = Math.round(results.confidence || 0);
         const confBadge = document.getElementById('confidenceBadge');
         if (confBadge) {
             confBadge.textContent = `Precisión: ${conf}%`;
             confBadge.style.color = conf >= 85 ? '#10B981' : conf >= 60 ? '#F59E0B' : '#EF4444';
-            confBadge.style.fontWeight = 'bold';
-            confBadge.style.fontSize = '14px';
-        }
-
-        // Store original text for Phase 7 (Adaptive Learning)
-        this.originalRawText = jsonText;
-
-        // Feedback
-        if (!data || !data.ingredients) {
-            if (window.showSnackbar) window.showSnackbar('La imagen no contenía texto legible.');
-        } else if (metadata.needsReview) {
-            if (window.showSnackbar) window.showSnackbar('Revisa las cantidades. Alertas pendientes.');
+            confBadge.className = 'confidence-badge ' + (conf >= 85 ? 'confidence-high' : conf >= 60 ? 'confidence-medium' : 'confidence-low');
         }
 
         // Auto-scroll para que se vea el texto
@@ -199,7 +225,10 @@ class OCRScanner {
             setTimeout(() => resultState.scrollTop = 0, 100);
         }
 
-        console.log(`✅ showResults: ${text.length} chars, confianza ${conf}%`);
+        console.log(`✅ showResults: ${results.texto.length} chars, confianza ${conf}% | Método: ${results.method}`);
+
+        // Guardar para uso global por otros botones (como saveRecipe en ocr.html)
+        window.currentOCRResults = results;
     }
 
     async handleGallery(file) {
@@ -217,9 +246,12 @@ class OCRScanner {
         this.showProcessingState(imageDataUrl);
 
         try {
-            const mode = document.querySelector('input[name="ocrMode"]:checked')?.value || 'fidelity';
-            const results = await window.ocrManager.processImage(file, m => this.updateProgress(m), { mode, returnJSON: true });
-            this.showResults(results.data, results);
+            const results = await window.ocrProcessor.processImage(file, m => this.updateProgress(m));
+            if (results.success) {
+                this.showResults(results);
+            } else {
+                throw new Error(results.error);
+            }
         } catch (error) {
             console.error('Gallery error:', error);
             if (window.showSnackbar) window.showSnackbar('No se pudo analizar la imagen.');
@@ -227,26 +259,10 @@ class OCRScanner {
         }
     }
 
-    /**
-     * Phase 7: Adaptive Learning
-     * Compares original text with edited text and saves word mappings.
-     */
     learnCorrections() {
-        const textOutput = document.getElementById('extractedText');
-        if (!textOutput || !this.originalRawText) return;
-
-        const editedText = textOutput.value;
-        if (editedText === this.originalRawText) return;
-
-        try {
-            const originalJSON = JSON.parse(this.originalRawText);
-            const latestJSON = JSON.parse(editedText);
-            if (window.ocrManager) window.ocrManager.adaptiveProfile.learnCorrections(originalJSON, latestJSON);
-        } catch (e) {
-            console.log("JSON parse error on learning phase", e);
-        }
+        console.log("Sistema local no requiere fase de aprendizaje.");
     }
 }
 
-window.ocrManager = new OCRManager();
+// Global initialization
 window.ocr = new OCRScanner();

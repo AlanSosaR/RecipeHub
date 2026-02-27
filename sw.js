@@ -1,5 +1,5 @@
 // Recipe Pantry Service Worker — v4 (Soporte Imágenes Offline + IndexedDB Sync)
-const CACHE_NAME = 'recipe-pantry-v26';
+const CACHE_NAME = 'recipe-pantry-v27';
 const IMAGE_CACHE = 'recipe-pantry-images-v1';
 
 // App shell — archivos core a cachear al instalar
@@ -20,12 +20,7 @@ const APP_SHELL = [
     './js/sync-manager.js',
     './js/db.js',
     './js/utils.js',
-    './js/ocr-engine/AdaptiveProfile.js',
-    './js/ocr-engine/JSONBuilder.js',
-    './js/ocr-engine/CulinaryValidator.js',
-    './js/ocr-engine/HybridOCR.js',
-    './js/ocr-engine/ImagePreprocessor.js',
-    './js/ocr-engine/OCRManager.js',
+    './js/ocr-processor.js',
     './js/app.js',
     './js/dashboard.js',
     './js/ocr.js',
