@@ -941,8 +941,13 @@
         }
 
         async function saveRecipeFromModal() {
-            const name = document.getElementById('ocrRecipeNameModal').value.trim();
-            const rawText = document.getElementById('extractedTextModal').value;
+            const nameEl = document.getElementById('ocrRecipeNameModal');
+            const rawTextEl = document.getElementById('extractedTextModal');
+
+            if (!nameEl || !rawTextEl) return;
+
+            const name = nameEl.value.trim();
+            const rawText = rawTextEl.value;
 
             if (!name) {
                 const nameReq = window.i18n ? window.i18n.t('ocrNameRequired') : 'La receta necesita un nombre';
@@ -951,24 +956,16 @@
             }
 
             // Sync with main page data
+            if (!window.currentOCRResults) window.currentOCRResults = {};
             window.currentOCRResults.nombre = name;
             window.currentOCRResults.texto = rawText;
 
-            // Simple auto-parse for Step 3 preview
-            const parsed = window.ocrProcessor.parseRecipeText(rawText);
-            window.currentOCRResults.ingredientes = parsed.ingredients.map(i => {
-                if (typeof i === 'string') return i;
-                return `${i.quantity || ''} ${i.unit || ''} ${i.name}`.trim();
-            });
-            window.currentOCRResults.pasos = parsed.steps.map(s => {
-                if (typeof s === 'string') return s;
-                return s.instruction;
-            });
+            // Update main page fields (Step 3)
+            const mainName = document.getElementById('ocrRecipeName');
+            const mainFullText = document.getElementById('ocrFullText');
 
-            // Populate Step 3
-            document.getElementById('ocrRecipeName').value = name;
-            document.getElementById('ocrIngredients').value = window.currentOCRResults.ingredientes.join('\n');
-            document.getElementById('ocrSteps').value = window.currentOCRResults.pasos.join('\n');
+            if (mainName) mainName.value = name;
+            if (mainFullText) mainFullText.value = rawText;
 
             if (window.ocr) window.ocr.close();
             goToStep(3);
@@ -1092,9 +1089,21 @@
                 if (!recipeRes.success) throw new Error(recipeRes.error);
                 const recipeId = recipeRes.recipe.id;
 
-                // 2. Ingredientes (Si el usuario no los editó por separado, usamos lo detectado)
-                if (ocrData.ingredientes && ocrData.ingredientes.length > 0) {
-                    const ings = ocrData.ingredientes.map(line => ({
+                // Re-procesar el texto para asegurar que los cambios manuales se reflejen en la lista de ingredientes/pasos
+                const reParsed = window.ocrProcessor.parseRecipeText(fullText);
+                const currentIngs = reParsed.ingredients.map(i => {
+                    if (typeof i === 'string') return i;
+                    return `${i.quantity || ''} ${i.unit || ''} ${i.name}`.trim();
+                }).filter(Boolean);
+
+                const currentSteps = reParsed.steps.map(s => {
+                    if (typeof s === 'string') return s;
+                    return s.instruction;
+                }).filter(Boolean);
+
+                // 2. Ingredientes
+                if (currentIngs.length > 0) {
+                    const ings = currentIngs.map(line => ({
                         name_es: line.trim(),
                         raw_text: line.trim()
                     }));
@@ -1102,8 +1111,8 @@
                 }
 
                 // 3. Pasos
-                if (ocrData.pasos && ocrData.pasos.length > 0) {
-                    const steps = ocrData.pasos.map((line, idx) => ({
+                if (currentSteps.length > 0) {
+                    const steps = currentSteps.map((line, idx) => ({
                         instruction_es: line.trim(),
                         step_order: idx + 1
                     }));
