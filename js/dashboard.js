@@ -654,6 +654,10 @@ class DashboardManager {
             const result = await window.db.duplicateRecipe(recipeId, window.authManager.currentUser.id);
             if (result.success) {
                 window.utils.showToast(window.i18n ? window.i18n.t('saveSuccess') : '✅ Receta agregada a tu colección', 'success');
+                // Switch back to "My Recipes" tab to show the newly saved recipe
+                const recipesNavItem = document.querySelector('.nav-item[data-view="recipes"]');
+                this.switchView('recipes', recipesNavItem);
+                this.toggleDetailsSidebar(false);
             } else {
                 throw new Error(result.error);
             }

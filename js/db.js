@@ -484,10 +484,6 @@ class DatabaseManager {
                     description_es: recipe.description_es,
                     description_en: recipe.description_en,
                     category_id: recipe.category_id,
-                    difficulty: recipe.difficulty,
-                    prep_time: recipe.prep_time,
-                    cook_time: recipe.cook_time,
-                    servings: recipe.servings,
                     is_active: true,
                     is_favorite: false
                 }])
@@ -532,6 +528,16 @@ class DatabaseManager {
                     file_size: img.file_size
                 }));
                 await window.supabaseClient.from('recipe_images').insert(images);
+            }
+
+            // 6. Eliminar el enlace compartido para este usuario
+            // Esto asegura que la receta "se mueva" a sus recetas en lugar de quedarse solo como compartida
+            if (targetUserId === window.authManager.currentUser.id) {
+                await window.supabaseClient
+                    .from('shared_recipes')
+                    .delete()
+                    .eq('recipe_id', recipeId)
+                    .eq('recipient_user_id', targetUserId);
             }
 
             return { success: true, recipe: newRecipe };
