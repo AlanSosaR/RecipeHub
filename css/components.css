@@ -183,16 +183,16 @@ ol {
 .toast {
     background: var(--on-surface);
     color: var(--bg);
-    padding: var(--space-sm) var(--space-lg);
+    padding: 14px var(--space-lg);
     border-radius: var(--radius-full);
-    font-size: 0.875rem;
+    font-size: 1rem;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: var(--space-sm);
     box-shadow: var(--shadow-lg);
     pointer-events: auto;
-    width: min(400px, 90vw);
+    width: min(480px, 92vw);
 }
 
 .toast-success {
@@ -4246,16 +4246,17 @@ html[data-auth-likely="true"] #dashboard-app {
     transform: translateX(-50%) translateY(100px);
     background: #1B1B1F;
     color: #E3E2E6;
-    padding: 16px 24px;
-    border-radius: 12px;
-    font-size: 14px;
+    padding: 18px 28px;
+    border-radius: 16px;
+    font-size: 15px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    gap: 14px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
     z-index: 6000;
     transition: all 0.4s var(--m3-easing);
-    min-width: 320px;
+    min-width: 360px;
+    max-width: 92vw;
     justify-content: flex-start;
     pointer-events: auto;
 }
@@ -4266,8 +4267,7 @@ html[data-auth-likely="true"] #dashboard-app {
 
 .snackbar-m3 .icon {
     color: var(--success);
-    /* Verde mantenido para icono de éxito — semántico */
-    font-size: 24px;
+    font-size: 26px;
 }
 
 /* Fix Grid View Text Deformation */
@@ -4316,14 +4316,14 @@ html[data-auth-likely="true"] #dashboard-app {
     background: transparent;
     border: none;
     color: #34D399;
-    /* Emerald 400 */
     font-weight: 700;
-    font-size: 14px;
+    font-size: 15px;
     cursor: pointer;
-    padding: 8px 12px;
+    padding: 10px 14px;
     border-radius: 8px;
     transition: background 0.2s;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .snackbar-btn:hover {

@@ -293,7 +293,7 @@ class ShareModalManager {
         if (!this.btnShare) return;
         if (this.selectedUsers.length > 0) {
             this.btnShare.style.display = 'flex';
-            const names = this.selectedUsers.map(u => u.name).join(', ');
+            const names = this.selectedUsers.map(u => `Chef ${u.name}`).join(', ');
             this.btnShare.textContent = `Compartir con ${names}`;
         } else {
             this.btnShare.style.display = 'none';
@@ -342,7 +342,7 @@ class ShareModalManager {
 
             await window.supabaseClient.from('notifications').insert(notifications);
 
-            const names = this.selectedUsers.map(u => u.name).join(', ');
+            const names = this.selectedUsers.map(u => `Chef ${u.name}`).join(', ');
             const successMsg = window.i18n ? window.i18n.t('sharedWith', { names }) : `✅ Compartido con ${names}`;
             window.utils.showToast(successMsg, 'success');
 
