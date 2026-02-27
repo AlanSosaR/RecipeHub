@@ -52,14 +52,21 @@ class RecipeDetailManager {
                 try {
                     const { data: shareData } = await window.supabaseClient
                         .from('shared_recipes')
-                        .select('owner_user_id, owner:owner_user_id(first_name, last_name)')
+                        .select('owner_user_id')
                         .eq('recipe_id', this.recipeId)
                         .eq('recipient_user_id', currentUserId)
                         .limit(1)
                         .maybeSingle();
 
-                    if (shareData?.owner) {
-                        this.sharedBy = [shareData.owner.first_name, shareData.owner.last_name].filter(Boolean).join(' ') || 'Alguien';
+                    if (shareData?.owner_user_id) {
+                        const { data: ownerData } = await window.supabaseClient
+                            .from('users')
+                            .select('first_name, last_name')
+                            .eq('id', shareData.owner_user_id)
+                            .maybeSingle();
+                        if (ownerData) {
+                            this.sharedBy = [ownerData.first_name, ownerData.last_name].filter(Boolean).join(' ') || 'Alguien';
+                        }
                     }
                 } catch (e) {
                     console.warn('Could not check share info:', e);
