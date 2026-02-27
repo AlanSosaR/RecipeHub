@@ -977,8 +977,14 @@
 
             // Simple auto-parse for Step 3 preview
             const parsed = window.ocrProcessor.parseRecipeText(rawText);
-            window.currentOCRResults.ingredientes = parsed.ingredients.map(i => `${i.quantity || ''} ${i.unit || ''} ${i.name}`.trim());
-            window.currentOCRResults.pasos = parsed.steps.map(s => s.instruction);
+            window.currentOCRResults.ingredientes = parsed.ingredients.map(i => {
+                if (typeof i === 'string') return i;
+                return `${i.quantity || ''} ${i.unit || ''} ${i.name}`.trim();
+            });
+            window.currentOCRResults.pasos = parsed.steps.map(s => {
+                if (typeof s === 'string') return s;
+                return s.instruction;
+            });
 
             // Populate Step 3
             document.getElementById('ocrRecipeName').value = name;

@@ -348,15 +348,26 @@ class RecipeFormManager {
             // 2. Guardar Ingredientes
             if (ingredients.length > 0) {
                 const ingredientsData = ingredients.map(ing => {
-                    const data = {
-                        quantity: ing.quantity
-                    };
+                    // Si ya es un objeto (formato nuevo/IA)
+                    if (typeof ing === 'object' && ing !== null) {
+                        const data = { quantity: ing.quantity || '' };
+                        if (isEn) {
+                            data.name_en = ing.name || '';
+                            data.unit_en = ing.unit || '';
+                        } else {
+                            data.name_es = ing.name || '';
+                            data.unit_es = ing.unit || '';
+                        }
+                        return data;
+                    }
+                    // Si es un string (formato legacy/Tesseract directo)
+                    const data = { quantity: '' };
                     if (isEn) {
-                        data.name_en = ing.name;
-                        data.unit_en = ing.unit;
+                        data.name_en = ing;
+                        data.unit_en = '';
                     } else {
-                        data.name_es = ing.name;
-                        data.unit_es = ing.unit;
+                        data.name_es = ing;
+                        data.unit_es = '';
                     }
                     return data;
                 });
@@ -366,10 +377,18 @@ class RecipeFormManager {
 
             // 3. Guardar Pasos
             if (steps.length > 0) {
-                const stepsData = steps.map(step => {
-                    const data = { step_number: step.number };
-                    if (isEn) data.instruction_en = step.instruction;
-                    else data.instruction_es = step.instruction;
+                const stepsData = steps.map((step, index) => {
+                    // Si ya es un objeto
+                    if (typeof step === 'object' && step !== null) {
+                        const data = { step_number: step.number || (index + 1) };
+                        if (isEn) data.instruction_en = step.instruction || '';
+                        else data.instruction_es = step.instruction || '';
+                        return data;
+                    }
+                    // Si es un string
+                    const data = { step_number: index + 1 };
+                    if (isEn) data.instruction_en = step;
+                    else data.instruction_es = step;
                     return data;
                 });
                 const stepResult = await window.db.addSteps(recipeId, stepsData);
