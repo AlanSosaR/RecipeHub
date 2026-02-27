@@ -90,9 +90,9 @@ class ImagePreprocessor {
             this.deskew(src);
             console.log("[Preprocessor] Deskew phase completed");
 
-            // 4. Binarización Adaptativa de Otsu
-            cv.threshold(src, dst, 0, 255, cv.THRESH_BINARY | cv.THRESH_OTSU);
-            console.log("[Preprocessor] Otsu Threshold applied");
+            // 4. Binarización Adaptativa (Mucho mejor que Otsu para fotos con sombras de celular)
+            cv.adaptiveThreshold(src, dst, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 21, 10);
+            console.log("[Preprocessor] Adaptive Threshold applied");
 
             // Dibuja el resultado de vuelta en el Canvas original
             cv.imshow(canvas, dst);

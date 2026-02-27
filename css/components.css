@@ -1301,17 +1301,28 @@ select.input-field {
 
 .sidebar-logo {
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 12px;
-    padding: 0 32px;
-    margin-bottom: 48px;
-    font-size: 20px;
-    font-weight: 800;
+    padding: 32px 16px;
+    margin-bottom: 24px;
     font-family: var(--font-display);
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.sidebar-logo:hover {
+    background: var(--surface-variant);
+    border-radius: 0 0 24px 24px;
 }
 
 .sidebar-logo .logo-text {
     color: var(--logo-color);
+    white-space: nowrap;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
 }
 
 .sidebar-logo .logo-icon {
