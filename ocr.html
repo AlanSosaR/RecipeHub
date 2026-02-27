@@ -504,6 +504,56 @@
             border-radius: 4px;
             background: var(--primary);
         }
+
+        /* Material 3 Expressive Action Cards */
+        .m3-action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .m3-expressive-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 32px 16px;
+            border-radius: 32px;
+            /* --md-shape-xl */
+            border: none;
+            background: var(--md-primary-container);
+            color: var(--md-on-primary-container);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            box-shadow: var(--md-elev-1);
+        }
+
+        .m3-expressive-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--md-elev-2);
+            filter: brightness(0.95);
+        }
+
+        .m3-expressive-card .material-symbols-outlined {
+            font-size: 40px;
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+
+        .m3-expressive-card .card-label {
+            font-family: var(--font-brand);
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .m3-expressive-card.secondary {
+            background: #E8DEF8;
+            /* Material 3 Secondary Container Tonal */
+            color: #1D192B;
+            /* Material 3 On Secondary Container */
+        }
     </style>
 </head>
 
@@ -620,47 +670,14 @@
                     <input type="file" id="fileInput" accept="image/*" capture="environment" style="display: none;"
                         onchange="handleFileSelect(event)">
 
-                    <div class="ocr-mode-selector"
-                        style="margin-top: 24px; display: flex; flex-direction: column; gap: 12px;">
-                        <label class="mode-label"
-                            style="display: flex; align-items: flex-start; gap: 12px; padding: 16px; border: 2px solid var(--primary); border-radius: 16px; cursor: pointer; background: var(--primary-light); transition: all 0.2s;"
-                            onclick="document.querySelectorAll('.mode-label').forEach(l => {l.style.border='1px solid var(--border)'; l.style.background='transparent'}); this.style.border='2px solid var(--primary)'; this.style.background='var(--primary-light)'; document.getElementById('modeFidelity').checked = true;">
-                            <input type="radio" id="modeFidelity" name="ocrMode" value="fidelity" checked
-                                style="display:none;">
-                            <span class="material-symbols-outlined"
-                                style="color: var(--primary);">document_scanner</span>
-                            <div>
-                                <div style="font-weight: 600; font-size: 16px; color: var(--on-surface);">Fidelidad
-                                    Total</div>
-                                <div style="font-size: 14px; color: var(--on-surface-variant); margin-top: 4px;">Extrae
-                                    el texto exacto del papel sin auto-correcciones.</div>
-                            </div>
-                        </label>
-                        <label class="mode-label"
-                            style="display: flex; align-items: flex-start; gap: 12px; padding: 16px; border: 1px solid var(--border); border-radius: 16px; cursor: pointer; transition: all 0.2s;"
-                            onclick="document.querySelectorAll('.mode-label').forEach(l => {l.style.border='1px solid var(--border)'; l.style.background='transparent'}); this.style.border='2px solid var(--primary)'; this.style.background='var(--primary-light)'; document.getElementById('modeContextual').checked = true;">
-                            <input type="radio" id="modeContextual" name="ocrMode" value="contextual"
-                                style="display:none;">
-                            <span class="material-symbols-outlined" style="color: var(--primary);">auto_fix_high</span>
-                            <div>
-                                <div style="font-weight: 600; font-size: 16px; color: var(--on-surface);">Optimización
-                                    Culinaria</div>
-                                <div style="font-size: 14px; color: var(--on-surface-variant); margin-top: 4px;">Mejora
-                                    fracciones, unidades y estructura de la receta.</div>
-                            </div>
-                        </label>
-                    </div>
-
-                    <div style="display: flex; gap: 12px; margin-top: 24px;">
-                        <button class="btn btn-secondary" style="flex: 1; border-radius: 16px; height: 56px;"
-                            onclick="openCamera()">
-                            <span class="material-symbols-outlined">camera</span>
-                            <span data-i18n="ocrCamera">Cámara</span>
+                    <div class="m3-action-grid">
+                        <button class="m3-expressive-card" onclick="openCamera()">
+                            <span class="material-symbols-outlined">photo_camera</span>
+                            <span class="card-label" data-i18n="ocrCamera">Cámara</span>
                         </button>
-                        <button class="btn btn-secondary" style="flex: 1; border-radius: 16px; height: 56px;"
-                            onclick="openGallery()">
+                        <button class="m3-expressive-card secondary" onclick="openGallery()">
                             <span class="material-symbols-outlined">image</span>
-                            <span data-i18n="ocrGallery">Galería</span>
+                            <span class="card-label" data-i18n="ocrGallery">Galería</span>
                         </button>
                     </div>
 
