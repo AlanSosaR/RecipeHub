@@ -814,18 +814,6 @@
                                 placeholder="Los pasos aparecerán aquí..."></textarea>
                         </div>
 
-                        <!-- Texto Completo (Colapsable) -->
-                        <details style="margin-top: 8px;">
-                            <summary id="summaryFullText"
-                                style="cursor: pointer; color: var(--md-on-surface-var); font-size: 14px; font-weight: 600; padding: 8px 0; display: flex; align-items: center; gap: 8px;">
-                                <span class="material-symbols-outlined">description</span>
-                                <span data-i18n="ocrSeeFullText">Ver texto completo extraído</span>
-                            </summary>
-                            <div style="margin-top: 12px;">
-                                <textarea id="extractedText" class="extracted-text" readonly
-                                    style="min-height:300px; font-size:13px; line-height:1.5; padding:16px; border-radius:16px; border:none; width:100%; box-sizing:border-box; background-color: var(--md-surface-variant); color: var(--md-on-surface-var); font-family: monospace;"></textarea>
-                            </div>
-                        </details>
                     </div>
 
                     <div style="display: flex; gap: 16px; margin-top: 36px; padding-bottom: 48px;">
@@ -977,7 +965,7 @@
                 const name = document.getElementById('ocrRecipeName').value.trim();
                 const ingredientsRaw = document.getElementById('ocrIngredients').value;
                 const stepsRaw = document.getElementById('ocrSteps').value;
-                const fullText = document.getElementById('extractedText').value;
+                const fullText = window.currentOCRResults ? window.currentOCRResults.texto : '';
 
                 if (!name) {
                     const nameReq = window.i18n ? window.i18n.t('ocrNameRequired') : 'La receta necesita un nombre';
