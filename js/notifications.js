@@ -147,7 +147,7 @@ class NotificationManager {
                             ${n.sender ? n.sender.charAt(0).toUpperCase() : '?'}
                         </div>
                         <div style="flex:1; min-width:0;">
-                            <span style="color:white; display:block; font-size:13px; font-weight:600;">${n.sender} te compartió una receta</span>
+                            <span style="color:white; display:block; font-size:13px; font-weight:600;">Chef ${n.sender} te ha compartido una receta</span>
                             <span style="color:#10B981; font-weight:700; display:block; margin-top:2px;">${n.recipeName}</span>
                             <span style="color:#666; font-size:10px; display:block; margin-top:4px;">${new Date(n.timestamp).toLocaleString([], { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
                             
