@@ -479,8 +479,8 @@ class DatabaseManager {
                 .from('recipes')
                 .insert([{
                     user_id: targetUserId,
-                    name_es: `${recipe.name_es} (Copia)`,
-                    name_en: recipe.name_en ? `${recipe.name_en} (Copy)` : null,
+                    name_es: recipe.name_es,
+                    name_en: recipe.name_en ? recipe.name_en : null,
                     description_es: recipe.description_es,
                     description_en: recipe.description_en,
                     category_id: recipe.category_id,
