@@ -87,85 +87,208 @@ class OCRProcessor {
         }
     }
 
+    /**
+     * Pre-procesamiento avanzado de imagen para maxima precision OCR.
+     * Pipeline: Escala -> Grayscale -> Normalizacion de contraste -> Umbral adaptativo -> Nitidez -> Denoising
+     */
     async preprocessImage(file) {
         return new Promise((resolve) => {
             const img = new Image();
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-
             img.onload = () => {
-                // Limpiar barra de estado si es screenshot
+                // ─────────────────────────────────────────────────────
+                // 1. ESCALADO OPTIMO
+                // Tesseract rinde mejor con texto de ~32-48px de altura.
+                // Objetivo: 2400px de altura para capturar el mayor detalle.
+                // ─────────────────────────────────────────────────────
                 let sourceY = 0;
                 let sourceHeight = img.height;
 
+                // Recortar barra de estado en capturas de pantalla
                 if (img.height > 800 && img.width < img.height) {
                     sourceY = 80;
                     sourceHeight = img.height - 80;
                 }
 
-                // Escalado óptimo (IMPORTANTE PARA NÚMEROS)
-                const targetHeight = 2400; // Aumentado para mejor lectura de números
+                const targetHeight = 2400;
                 let scale = 1;
+                if (sourceHeight < targetHeight * 0.4)      scale = 3.0;
+                else if (sourceHeight < targetHeight * 0.7) scale = 2.0;
+                else if (sourceHeight < targetHeight)        scale = targetHeight / sourceHeight;
+                else if (sourceHeight > targetHeight * 2)   scale = 0.6;
 
-                if (sourceHeight < targetHeight * 0.4) {
-                    scale = 3;    // Más escala para imágenes pequeñas
-                } else if (sourceHeight < targetHeight * 0.7) {
-                    scale = 2;
-                } else if (sourceHeight < targetHeight) {
-                    scale = targetHeight / sourceHeight;
-                } else if (sourceHeight > targetHeight * 2) {
-                    scale = 0.6;
-                }
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width  = Math.round(img.width * scale);
+                canvas.height = Math.round(sourceHeight * scale);
 
-                canvas.width = img.width * scale;
-                canvas.height = sourceHeight * scale;
-
-                // Dibujar con máxima calidad
                 ctx.imageSmoothingEnabled = true;
                 ctx.imageSmoothingQuality = 'high';
-                ctx.drawImage(
-                    img,
-                    0, sourceY, img.width, sourceHeight,
-                    0, 0, canvas.width, canvas.height
-                );
+                ctx.drawImage(img, 0, sourceY, img.width, sourceHeight, 0, 0, canvas.width, canvas.height);
 
-                // Filtros
+                // ─────────────────────────────────────────────────────
+                // 2. PIPELINE DE FILTROS (pixel-level)
+                // ─────────────────────────────────────────────────────
                 let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                imageData = this.toGrayscale(imageData);
-                imageData = this.adaptiveThreshold(imageData);      // CRÍTICO
-                imageData = this.sharpen(imageData);                // CRÍTICO
-                imageData = this.denoise(imageData);
+                imageData = this.toGrayscale(imageData);         // a) Escala de grises
+                imageData = this.normalizeContrast(imageData);   // b) Estiramiento de histograma
+                imageData = this.adaptiveThreshold(imageData);   // c) Umbral local por bloque
+                imageData = this.sharpen(imageData);             // d) Nitidez (unsharp mask)
+                imageData = this.denoise(imageData);             // e) Mediana 3x3
 
                 ctx.putImageData(imageData, 0, 0);
                 resolve(canvas);
             };
-
             img.src = URL.createObjectURL(file);
         });
     }
 
+    /** Convierte a escala de grises usando pesos perceptuales ITU-R BT.601 */
     toGrayscale(imageData) {
-        const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-            const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-            data[i] = data[i + 1] = data[i + 2] = gray;
+        const d = imageData.data;
+        for (let i = 0; i < d.length; i += 4) {
+            const g = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+            d[i] = d[i + 1] = d[i + 2] = g;
         }
         return imageData;
     }
 
+    /**
+     * Estiramiento de histograma: mapea [min, max] de la imagen a [0, 255].
+     * Hace que el texto oscuro sea mas negro y el fondo mas blanco,
+     * sin importar las condiciones de iluminacion de la foto.
+     */
+    normalizeContrast(imageData) {
+        const d = imageData.data;
+        let minV = 255, maxV = 0;
+
+        // Encontrar min y max (en gris, todos los canales son iguales)
+        for (let i = 0; i < d.length; i += 4) {
+            if (d[i] < minV) minV = d[i];
+            if (d[i] > maxV) maxV = d[i];
+        }
+
+        const range = maxV - minV || 1;
+        for (let i = 0; i < d.length; i += 4) {
+            const stretched = Math.round((d[i] - minV) * 255 / range);
+            d[i] = d[i + 1] = d[i + 2] = stretched;
+        }
+        return imageData;
+    }
+
+    /**
+     * Umbral adaptativo por bloques (Sauvola simplificado).
+     * Divide la imagen en bloques de ~32x32 px y calcula el umbral
+     * local de cada bloque. Esto maneja sombras y gradientes de luz,
+     * que es el principal problema al fotografiar recetas en papel.
+     */
     adaptiveThreshold(imageData) {
-        const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-            let v = data[i];
-            v = v > 127 ? v + 40 : v - 40;
-            v = Math.max(0, Math.min(255, v));
-            data[i] = data[i + 1] = data[i + 2] = v;
+        const { data, width, height } = imageData;
+        const blockSize = 32;  // Tamano del bloque para umbral local
+        const k = 0.12;        // Sensibilidad (0 = umbral global, 0.5 = muy sensible)
+        const output = new Uint8ClampedArray(data);
+
+        for (let by = 0; by < height; by += blockSize) {
+            for (let bx = 0; bx < width; bx += blockSize) {
+                const bw = Math.min(blockSize, width - bx);
+                const bh = Math.min(blockSize, height - by);
+
+                // Calcula media y desviacion del bloque
+                let sum = 0, count = 0;
+                for (let y = by; y < by + bh; y++) {
+                    for (let x = bx; x < bx + bw; x++) {
+                        sum += data[(y * width + x) * 4];
+                        count++;
+                    }
+                }
+                const mean = sum / count;
+
+                let variance = 0;
+                for (let y = by; y < by + bh; y++) {
+                    for (let x = bx; x < bx + bw; x++) {
+                        const diff = data[(y * width + x) * 4] - mean;
+                        variance += diff * diff;
+                    }
+                }
+                const stdDev = Math.sqrt(variance / count);
+                const threshold = mean * (1 - k * (1 - stdDev / 128));
+
+                // Binarizar el bloque
+                for (let y = by; y < by + bh; y++) {
+                    for (let x = bx; x < bx + bw; x++) {
+                        const idx = (y * width + x) * 4;
+                        const val = data[idx] < threshold ? 0 : 255;
+                        output[idx] = output[idx + 1] = output[idx + 2] = val;
+                        output[idx + 3] = 255;
+                    }
+                }
+            }
         }
+
+        imageData.data.set(output);
         return imageData;
     }
 
-    sharpen(imageData) { return imageData; }
-    denoise(imageData) { return imageData; }
+    /**
+     * Nitidez con mascara de desenfoque (Unsharp Mask 3x3).
+     * Acentua los bordes de las letras, lo que mejora la deteccion de
+     * caracteres delgados (tildes, puntos, comas, fracciones).
+     */
+    sharpen(imageData) {
+        const { data, width, height } = imageData;
+        // Kernel de nitidez (Laplaciano de Gaussiana)
+        const kernel = [
+             0, -1,  0,
+            -1,  5, -1,
+             0, -1,  0
+        ];
+        const output = new Uint8ClampedArray(data);
+
+        for (let y = 1; y < height - 1; y++) {
+            for (let x = 1; x < width - 1; x++) {
+                let sum = 0;
+                for (let ky = -1; ky <= 1; ky++) {
+                    for (let kx = -1; kx <= 1; kx++) {
+                        const px = ((y + ky) * width + (x + kx)) * 4;
+                        sum += data[px] * kernel[(ky + 1) * 3 + (kx + 1)];
+                    }
+                }
+                const val = Math.max(0, Math.min(255, sum));
+                const idx = (y * width + x) * 4;
+                output[idx] = output[idx + 1] = output[idx + 2] = val;
+            }
+        }
+
+        imageData.data.set(output);
+        return imageData;
+    }
+
+    /**
+     * Eliminacion de ruido con filtro de mediana 3x3.
+     * Quita puntos aislados y artefactos de JPEG sin borrar bordes de letras.
+     */
+    denoise(imageData) {
+        const { data, width, height } = imageData;
+        const output = new Uint8ClampedArray(data);
+        const neighbors = new Array(9);
+
+        for (let y = 1; y < height - 1; y++) {
+            for (let x = 1; x < width - 1; x++) {
+                let k = 0;
+                for (let ky = -1; ky <= 1; ky++) {
+                    for (let kx = -1; kx <= 1; kx++) {
+                        neighbors[k++] = data[((y + ky) * width + (x + kx)) * 4];
+                    }
+                }
+                neighbors.sort((a, b) => a - b);
+                const median = neighbors[4]; // Elemento central (mediana de 9)
+                const idx = (y * width + x) * 4;
+                output[idx] = output[idx + 1] = output[idx + 2] = median;
+            }
+        }
+
+        imageData.data.set(output);
+        return imageData;
+    }
 
     applyAllCorrections(text) {
         let corrected = text;
