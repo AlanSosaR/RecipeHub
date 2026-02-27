@@ -241,6 +241,16 @@ class OCRProcessor {
         corrected = corrected.replace(/\bRefigerador\b/gi, 'Refrigerador');
         corrected = corrected.replace(/\brefigerador\b/gi, 'refrigerador');
 
+        // PROBLEMA 10: Puntos de viñeta escaneados como 'e'
+        corrected = corrected.replace(/^e\s+/gm, '• ');
+        corrected = corrected.replace(/\ne\s+/g, '\n• ');
+
+        // PROBLEMA 11: Fracciones numéricas comunes mal escaneadas (Brownies/etc)
+        corrected = corrected.replace(/\b172\s+tazas\b/gi, '1½ tazas');
+        corrected = corrected.replace(/\b14\s+de\s+cucharadita\b/gi, '¼ de cucharadita');
+        corrected = corrected.replace(/\b17\s+taza\b/gi, '½ taza');
+        corrected = corrected.replace(/\b17\s+de\s+azúcar\b/gi, '1½ de azúcar');
+
         // ═══════════════════════════════════════════════════
         // FASE 2: CORRECCIONES DE FRACCIONES (MEJORADAS)
         // ═══════════════════════════════════════════════════
