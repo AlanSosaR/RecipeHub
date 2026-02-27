@@ -117,9 +117,13 @@ class DashboardManager {
     }
 
     toggleSlimSidebar() {
-        const sidebar = document.getElementById('main-sidebar');
-        if (sidebar) {
-            sidebar.classList.toggle('sidebar--slim');
+        if (window.toggleSlimSidebar) {
+            window.toggleSlimSidebar();
+        } else {
+            const sidebar = document.getElementById('main-sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('sidebar--slim');
+            }
         }
     }
 

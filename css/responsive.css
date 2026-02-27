@@ -136,7 +136,7 @@
     }
 
     /* Override for slim mode on desktop */
-    .sidebar.slim {
+    .sidebar.sidebar--slim {
         width: 96px;
         min-width: 96px;
     }
@@ -147,8 +147,8 @@
         display: block;
     }
 
-    .slim .logo-text,
-    .slim .nav-item span:not(.material-symbols-outlined) {
+    .sidebar--slim .logo-text,
+    .sidebar--slim .nav-item span:not(.material-symbols-outlined) {
         display: none !important;
     }
 
