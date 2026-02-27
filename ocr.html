@@ -602,6 +602,81 @@
             color: #1D192B;
             /* Material 3 On Secondary Container */
         }
+
+        /* --- Camera Modal (ocrModal) Styles --- */
+        #ocrModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            /* Controlled by window.ocr.openModal() */
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(8px);
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        #ocrModal.open {
+            display: flex;
+            animation: modalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .ocr-sheet {
+            width: 100%;
+            max-width: 500px;
+            height: 100%;
+            max-height: 85vh;
+            background: white;
+            border-radius: 32px 32px 0 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (min-width: 600px) {
+            .ocr-sheet {
+                border-radius: 32px;
+                height: auto;
+                min-height: 600px;
+            }
+        }
+
+        .ocr-sheet-header {
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--md-outline-var);
+        }
+
+        .ocr-sheet-header h2 {
+            font-family: var(--font-brand);
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes modalScan {
+            0% {
+                top: 0%;
+            }
+
+            100% {
+                top: calc(100% - 60px);
+            }
+        }
     </style>
 </head>
 
@@ -701,7 +776,8 @@
                             digitalizarla al instante.</p>
                     </div>
 
-                    <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+                    <div class="dropzone" id="dropzone"
+                        onclick="if(window.ocr) window.ocr.openModal(); else document.getElementById('fileInput').click()">
                         <div
                             style="background: var(--primary); color: white; width: 64px; height: 64px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 8px 16px rgba(0, 166, 118, 0.2);">
                             <span class="material-symbols-outlined" style="font-size: 32px;">add_a_photo</span>
@@ -862,7 +938,56 @@
             }
             if (window.updateGlobalUserUI) window.updateGlobalUserUI();
             setupDragAndDrop();
+            setupOCRModal();
         });
+
+        function setupOCRModal() {
+            const btnCloseOCR = document.getElementById('btnCloseOCR');
+            const btnCapture = document.getElementById('btnCapture');
+            const btnSwitchCamera = document.getElementById('btnSwitchCamera');
+            const btnGallery = document.getElementById('btnGallery');
+            const ocrGalleryInput = document.getElementById('ocrGalleryInput');
+            const btnRetryOCR = document.getElementById('btnRetryOCR');
+
+            if (btnCloseOCR) btnCloseOCR.onclick = () => window.ocr.close();
+            if (btnCapture) btnCapture.onclick = () => window.ocr.capture();
+            if (btnSwitchCamera) btnSwitchCamera.onclick = () => window.ocr.switchCamera();
+            if (btnGallery) btnGallery.onclick = () => ocrGalleryInput.click();
+            if (ocrGalleryInput) {
+                ocrGalleryInput.onchange = (e) => {
+                    if (window.ocr && e.target.files[0]) window.ocr.handleGallery(e.target.files[0]);
+                };
+            }
+            if (btnRetryOCR) btnRetryOCR.onclick = () => window.ocr.reset();
+        }
+
+        async function saveRecipeFromModal() {
+            const name = document.getElementById('ocrRecipeNameModal').value.trim();
+            const rawText = document.getElementById('extractedTextModal').value;
+
+            if (!name) {
+                const nameReq = window.i18n ? window.i18n.t('ocrNameRequired') : 'La receta necesita un nombre';
+                window.showToast(nameReq, 'error');
+                return;
+            }
+
+            // Sync with main page data
+            window.currentOCRResults.nombre = name;
+            window.currentOCRResults.texto = rawText;
+
+            // Simple auto-parse for Step 3 preview
+            const parsed = window.ocrProcessor.parseRecipeText(rawText);
+            window.currentOCRResults.ingredientes = parsed.ingredients.map(i => `${i.quantity || ''} ${i.unit || ''} ${i.name}`.trim());
+            window.currentOCRResults.pasos = parsed.steps.map(s => s.instruction);
+
+            // Populate Step 3
+            document.getElementById('ocrRecipeName').value = name;
+            document.getElementById('ocrIngredients').value = window.currentOCRResults.ingredientes.join('\n');
+            document.getElementById('ocrSteps').value = window.currentOCRResults.pasos.join('\n');
+
+            if (window.ocr) window.ocr.close();
+            goToStep(3);
+        }
 
         function setupDragAndDrop() {
             const dz = document.getElementById('dropzone');
@@ -1063,6 +1188,142 @@
     </div> <!-- .ocr-container -->
     </div> <!-- .m3-scroll -->
     </main> <!-- .m3-main -->
+
+    <!-- ── OCR Modal ── -->
+    <div id="ocrModal">
+        <div class="ocr-sheet">
+            <div class="ocr-sheet-header">
+                <button type="button" id="btnCloseOCR" class="m3-icon-btn" style="color:#1C1B1B"
+                    data-i18n-title="ocrClose" title="Cerrar">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+                <h2 data-i18n="ocrTitle">Escanear Receta</h2>
+                <div style="width:40px"></div>
+            </div>
+
+            <!-- Camera state -->
+            <div id="ocrCameraState"
+                style="flex:1;position:relative;background:#000;display:flex;flex-direction:column;">
+                <video id="videoFeed" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"
+                    autoplay playsinline muted></video>
+                <!-- Captured frame preview (shown while processing) -->
+                <img id="capturePreview"
+                    style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;">
+                <!-- Corner guides overlay -->
+                <div
+                    style="position:absolute;inset:48px 32px;border:2px solid rgba(255,255,255,.4);border-radius:12px;pointer-events:none;">
+                    <div
+                        style="position:absolute;top:0;left:0;width:16px;height:16px;border-top:3px solid white;border-left:3px solid white;border-radius:2px 0 0 0;">
+                    </div>
+                    <div
+                        style="position:absolute;top:0;right:0;width:16px;height:16px;border-top:3px solid white;border-right:3px solid white;border-radius:0 2px 0 0;">
+                    </div>
+                    <div
+                        style="position:absolute;bottom:0;left:0;width:16px;height:16px;border-bottom:3px solid white;border-left:3px solid white;border-radius:0 0 0 2px;">
+                    </div>
+                    <div
+                        style="position:absolute;bottom:0;right:0;width:16px;height:16px;border-bottom:3px solid white;border-right:3px solid white;border-radius:0 0 2px 0;">
+                    </div>
+                </div>
+                <!-- Hint -->
+                <p style="position:absolute;top:16px;left:0;right:0;text-align:center;color:rgba(255,255,255,.85);font-size:13px;font-weight:500;pointer-events:none;text-shadow:0 1px 4px rgba(0,0,0,.5);"
+                    data-i18n="ocrCameraHint">
+                    Apunta la cámara a la receta y presiona el botón
+                </p>
+                <!-- Controls bar -->
+                <div
+                    style="margin-top:auto;padding:24px 24px 28px;background:linear-gradient(to top,rgba(0,0,0,.7),transparent);display:flex;align-items:center;justify-content:space-around;z-index:10;">
+                    <!-- Gallery fallback -->
+                    <button id="btnGallery"
+                        style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px);"
+                        data-i18n-title="ocrGalleryTooltip" title="Subir imagen desde galería">
+                        <input type="file" id="ocrGalleryInput" accept="image/*" style="display:none">
+                        <span class="material-symbols-outlined">photo_library</span>
+                    </button>
+                    <!-- Main capture button: takes photo and auto-processes -->
+                    <button id="btnCapture"
+                        style="width:72px;height:72px;border-radius:50%;background:white;border:4px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4);"
+                        data-i18n-title="ocrCaptureTooltip" title="Capturar y analizar receta">
+                        <div
+                            style="width:58px;height:58px;border-radius:50%;background:white;border:2px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;">
+                            <span class="material-symbols-outlined"
+                                style="color:#10B981;font-size:28px;">document_scanner</span>
+                        </div>
+                    </button>
+                    <!-- Switch camera -->
+                    <button id="btnSwitchCamera"
+                        style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px);"
+                        data-i18n-title="ocrSwitchCameraTooltip" title="Cambiar cámara">
+                        <span class="material-symbols-outlined">cameraswitch</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Result state -->
+            <div id="ocrResultState"
+                style="flex:1;flex-direction:column;padding:20px;background:#F9F9F9;overflow-y:auto;display:none;">
+
+                <!-- Recipe Name Input -->
+                <div class="m3-field m3-field-container" style="margin-bottom:16px;">
+                    <input id="ocrRecipeNameModal" class="m3-field-input" type="text" placeholder=" "
+                        data-i18n-placeholder="placeholderRecipeName">
+                    <label class="m3-field-label" data-i18n="formNameLabel">Nombre de la receta</label>
+                </div>
+
+                <h3 style="font-weight:700;margin-bottom:12px;font-size:15px;" data-i18n="ocrTabRaw">Texto Detectado
+                </h3>
+                <div
+                    style="background:white;border-radius:16px;padding:16px;border:1px solid #eee;flex:1;display:flex;flex-direction:column;min-height:160px;margin-bottom:16px;">
+                    <textarea id="extractedTextModal"
+                        style="width:100%;flex:1;border:none;outline:none;font-size:14px;color:#333;background:transparent;resize:none;min-height:140px;"
+                        placeholder="El texto aparecerá aquí..." data-i18n-placeholder="ocrTextPlaceholder"></textarea>
+                </div>
+
+                <div style="display:flex; justify-content:center; gap: 12px;">
+                    <button id="btnRetryOCR"
+                        style="flex:1; padding:14px; background:white; border:1px solid #ddd; border-radius:14px; font-weight:600; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                        <span class="material-symbols-outlined" style="font-size:18px">refresh</span>
+                        <span data-i18n="ocrRetry">Reintentar</span>
+                    </button>
+                    <button id="btnSaveDirectOCR"
+                        style="flex:2; padding:14px; background:#10B981; color:white; border:none; border-radius:14px; font-weight:600; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;"
+                        onclick="saveRecipeFromModal()">
+                        <span class="material-symbols-outlined" style="font-size:18px">save</span>
+                        <span data-i18n="ocrSave">Crear Receta Ahora</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Processing / Analizando state -->
+            <div id="ocrLoading"
+                style="flex:1;flex-direction:column;padding:20px;background:#F9F9F9;overflow-y:auto;display:none;align-items:center;">
+
+                <h3 style="font-weight:800;font-size:22px;margin-bottom:6px;align-self:flex-start;"
+                    data-i18n="ocrStep2Title">Analizando...</h3>
+                <p style="color:#6B7280;font-size:14px;margin-bottom:16px;align-self:flex-start;"
+                    data-i18n="ocrStep2Desc">Estamos extrayendo los secretos de tu receta.</p>
+
+                <!-- Image preview with scanning line -->
+                <div
+                    style="position:relative;width:100%;max-width:320px;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.15);margin-bottom:20px;">
+                    <img id="ocrProcessingPreview" style="width:100%;display:block;border-radius:16px;" alt="Preview">
+                    <div id="ocrScanLine"
+                        style="position:absolute;top:0;left:0;width:100%;height:60px;background:linear-gradient(to bottom,transparent,rgba(16,185,129,.5));opacity:0.6;animation:modalScan 2.5s ease-in-out infinite;pointer-events:none;">
+                    </div>
+                </div>
+
+                <!-- Progress text + bar -->
+                <p id="ocrProgressText" style="font-weight:600;color:#10B981;font-size:16px;margin-bottom:12px;"
+                    data-i18n="ocrProcessing">Iniciando OCR...</p>
+                <div
+                    style="width:100%;max-width:320px;height:8px;background:#E5E7EB;border-radius:99px;overflow:hidden;">
+                    <div id="ocrProgressBar"
+                        style="height:100%;width:0%;background:linear-gradient(90deg,#10B981,#F59E0B);border-radius:99px;transition:width .3s ease;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="js/ui.js?v=2"></script>
     <script>

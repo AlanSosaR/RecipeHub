@@ -175,26 +175,32 @@ class OCRScanner {
         if (loadingState) loadingState.style.display = 'none';
         if (resultState) resultState.style.display = 'flex';
 
-        // Set Recipe Name
+        // Set Recipe Name (Page and Modal)
         const nameInput = document.getElementById('ocrRecipeName');
         if (nameInput) nameInput.value = results.nombre || '';
+        const nameInputModal = document.getElementById('ocrRecipeNameModal');
+        if (nameInputModal) nameInputModal.value = results.nombre || '';
 
-        // Set Ingredients (as line-separated text)
+        // Set Ingredients (Page)
         const ingredientsTextarea = document.getElementById('ocrIngredients');
         if (ingredientsTextarea && results.ingredientes) {
             ingredientsTextarea.value = results.ingredientes.join('\n');
         }
 
-        // Set Steps (as line-separated text)
+        // Set Steps (Page)
         const stepsTextarea = document.getElementById('ocrSteps');
         if (stepsTextarea && results.pasos) {
             stepsTextarea.value = results.pasos.join('\n');
         }
 
-        // Set Full Text
+        // Set Full Text (Page and Modal)
         const fullTextInput = document.getElementById('extractedText');
         if (fullTextInput) {
             fullTextInput.value = results.texto;
+        }
+        const fullTextInputModal = document.getElementById('extractedTextModal');
+        if (fullTextInputModal) {
+            fullTextInputModal.value = results.texto;
         }
 
         // Confidence badge
