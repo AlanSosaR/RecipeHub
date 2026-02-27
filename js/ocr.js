@@ -181,27 +181,18 @@ class OCRScanner {
         const nameInputModal = document.getElementById('ocrRecipeNameModal');
         if (nameInputModal) nameInputModal.value = results.nombre || '';
 
-        // Set Ingredients (Page)
-        const ingredientsTextarea = document.getElementById('ocrIngredients');
-        if (ingredientsTextarea && results.ingredientes) {
-            ingredientsTextarea.value = results.ingredientes.join('\n');
-        }
-
-        // Set Steps (Page)
-        const stepsTextarea = document.getElementById('ocrSteps');
-        if (stepsTextarea && results.pasos) {
-            stepsTextarea.value = results.pasos.join('\n');
-        }
-
         // Set Full Text (Page and Modal)
-        const fullTextInput = document.getElementById('extractedText');
-        if (fullTextInput) {
-            fullTextInput.value = results.texto;
-        }
-        const fullTextInputModal = document.getElementById('extractedTextModal');
-        if (fullTextInputModal) {
-            fullTextInputModal.value = results.texto;
-        }
+        // ocrFullText: Para la vista de Step 3 en ocr.html
+        // extractedText: Para el modal en recipe-form.html
+        // extractedTextModal: Para el modal en ocr.html
+        const pageFullText = document.getElementById('ocrFullText');
+        if (pageFullText) pageFullText.value = results.texto;
+
+        const modalFullText = document.getElementById('extractedText');
+        if (modalFullText) modalFullText.value = results.texto;
+
+        const modalOCRText = document.getElementById('extractedTextModal');
+        if (modalOCRText) modalOCRText.value = results.texto;
 
         // Confidence badge
         const conf = Math.round(results.confidence || 0);

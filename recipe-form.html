@@ -1137,28 +1137,27 @@
             </div>
 
             <!-- Result state -->
-            <div id="ocrResultState"
-                style="flex:1;flex-direction:column;padding:20px;background:#F9F9F9;overflow-y:auto;display:none;">
+            <div id="ocrResultState" class="ocr-result-unified"
+                style="flex:1;padding:20px;background:#F9F9F9;overflow-y:auto;display:none;">
 
-                <!-- Recipe Name Input (New) -->
-                <div class="m3-field" style="margin-bottom:16px;">
-                    <input id="ocrRecipeName" type="text" placeholder=" " data-i18n-placeholder="placeholderRecipeName">
-                    <label data-i18n="formNameLabel">Nombre de la receta</label>
+                <!-- Recipe Name Input (Material 3 Outlined) -->
+                <div class="m3-field-container">
+                    <input id="ocrRecipeName" class="m3-field-input" type="text" placeholder=" "
+                        data-i18n-placeholder="placeholderRecipeName">
+                    <label class="m3-field-label" data-i18n="formNameLabel">Nombre de la receta</label>
                 </div>
 
-                <h3 style="font-weight:700;margin-bottom:12px;font-size:15px;" data-i18n="ocrTabRaw">Texto Detectado
-                </h3>
-                <div
-                    style="background:white;border-radius:16px;padding:16px;border:1px solid #eee;flex:1;display:flex;flex-direction:column;min-height:160px;margin-bottom:16px;">
-                    <textarea id="extractedText"
-                        style="width:100%;flex:1;border:none;outline:none;font-size:14px;color:#333;background:transparent;resize:none;min-height:140px;"
-                        placeholder="El texto aparecerá aquí..." data-i18n-placeholder="ocrTextPlaceholder"></textarea>
+                <h3 style="font-weight:700;margin-bottom:12px;font-size:15px;color: var(--md-on-surface-var);"
+                    data-i18n="ocrTabRaw">Información de la receta</h3>
+                <div class="ocr-result-textarea-container" style="flex:1; margin-bottom:16px;">
+                    <textarea id="extractedText" class="ocr-result-textarea"
+                        placeholder="La información aparecerá aquí..."
+                        data-i18n-placeholder="ocrTextPlaceholder"></textarea>
                 </div>
 
-                <div style="display:flex; justify-content:center; gap: 12px;">
+                <div style="display:flex; justify-content:center; gap: 12px; margin-top: auto; padding-bottom: 20px;">
                     <button id="btnRetryOCR"
-                        style="flex:1; padding:14px; background:white; border:1px solid #ddd; border-radius:14px; font-weight:600; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;"
-                        data-i18n="ocrRetry">
+                        style="flex:1; padding:14px; background:white; border:1px solid #ddd; border-radius:14px; font-weight:600; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
                         <span class="material-symbols-outlined" style="font-size:18px">refresh</span>
                         <span data-i18n="ocrRetry">Reintentar</span>
                     </button>

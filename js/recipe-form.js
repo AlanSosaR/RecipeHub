@@ -97,6 +97,15 @@ class RecipeFormManager {
         }
 
         // Form Submit
+        const btnSaveDirectOCR = document.getElementById('btnSaveDirectOCR');
+        if (btnSaveDirectOCR) {
+            btnSaveDirectOCR.addEventListener('click', () => {
+                const name = document.getElementById('ocrRecipeName').value.trim();
+                const res = window.currentOCRResults || {};
+                this.saveProcessedRecipe(name, res.ingredientes || [], res.pasos || []);
+            });
+        }
+
         document.getElementById('recipeForm').addEventListener('submit', (e) => {
             e.preventDefault();
             this.saveRecipe();
