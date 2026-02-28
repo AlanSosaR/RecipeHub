@@ -1,6 +1,6 @@
 // Recipe Pantry Service Worker — v4 (Soporte Imágenes Offline + IndexedDB Sync)
-const CACHE_NAME = 'recipe-hub-cache-v56';
-const IMAGE_CACHE = 'recipe-pantry-images-v2';
+const CACHE_NAME = 'recipe-hub-cache-v57';
+const IMAGE_CACHE = 'recipe-pantry-images-v3';
 
 // App shell — archivos core a cachear al instalar
 const APP_SHELL = [
