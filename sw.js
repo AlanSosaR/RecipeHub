@@ -1,8 +1,8 @@
-// Recipe Pantry Service Worker — v8 (Cloudflare Native Routing)
-const CACHE_NAME = 'recipe-hub-cache-v62';
-const IMAGE_CACHE = 'recipe-pantry-images-v8';
+// Recipe Pantry Service Worker — v9 (Redirect 'follow' fix + Network First HTML)
+const CACHE_NAME = 'recipe-hub-cache-v63';
+const IMAGE_CACHE = 'recipe-pantry-images-v9';
 
-// App shell — archivos core a cachear al instalar (sin .html)
+// App shell — archivos core a cachear al instalar
 const APP_SHELL = [
     './',
     './login',
@@ -31,51 +31,56 @@ const APP_SHELL = [
     './assets/placeholder-recipe.svg'
 ];
 
-// ── Install: cachear app shell ────────────────────────
 self.addEventListener('install', event => {
+    console.log('[SW] Installing v63');
     event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => {
-            return Promise.allSettled(
-                APP_SHELL.map(url =>
-                    cache.add(url).catch(err => console.warn(`⚠️ No se pudo cachear ${url}:`, err))
-                )
-            );
-        })
+        caches.open(CACHE_NAME)
+            .then(cache => cache.addAll(APP_SHELL))
+            .then(() => self.skipWaiting())
     );
-    self.skipWaiting();
 });
 
-// ── Activate: eliminar cachés antiguas ────────────────
 self.addEventListener('activate', event => {
+    console.log('[SW] Activating v63');
     event.waitUntil(
-        caches.keys().then(keys =>
-            Promise.all(keys.filter(k => k !== CACHE_NAME && k !== IMAGE_CACHE).map(k => caches.delete(k)))
-        )
+        caches.keys()
+            .then(cacheNames => {
+                return Promise.all(
+                    cacheNames.map(cacheName => {
+                        if (cacheName !== CACHE_NAME && cacheName !== IMAGE_CACHE) {
+                            console.log('[SW] Deleting old cache:', cacheName);
+                            return caches.delete(cacheName);
+                        }
+                    })
+                );
+            })
+            .then(() => self.clients.claim())
     );
-    self.clients.claim();
 });
 
-// ── Fetch: network-first para API, cache-first para assets ──
 self.addEventListener('fetch', event => {
     const { request } = event;
     const url = new URL(request.url);
 
-    // API Supabase (datos JSON). Dejamos pasar libremente, será manejada por `db.js` + `IndexedDB`
+    // Ignorar requests que no son del mismo origen (API Supabase de datos JSON)
     if (url.hostname.includes('supabase.co') && url.pathname.includes('/rest/v1/')) {
-        return;
+        return; // Deja pasar libremente, manejada por db.js
     }
 
-    // Imágenes de Supabase Storage. Usaremos Cache-First para mostrarlas offline al instante
+    // Imágenes de Supabase (Origen distinto, Cache-First)
     if (url.hostname.includes('supabase.co') && url.pathname.includes('/storage/v1/object/public/')) {
         event.respondWith(
             caches.match(request).then(cached => {
-                const networkFetch = fetch(request).then(response => {
+                const networkFetch = fetch(request, {
+                    redirect: 'follow',
+                    mode: 'cors'
+                }).then(response => {
                     if (response && response.status === 200 && response.type !== 'opaque') {
                         const clone = response.clone();
                         caches.open(IMAGE_CACHE).then(cache => cache.put(request, clone));
                     }
                     return response;
-                }).catch(() => { /* offline fails silently */ });
+                }).catch(() => { /* silent fallback offline */ });
 
                 return cached || networkFetch;
             })
@@ -83,52 +88,96 @@ self.addEventListener('fetch', event => {
         return;
     }
 
-    // Ignorar extensiones y requests no-GET
+    // Ignorar otras extensiones (Chrome)
     if (request.method !== 'GET' || url.protocol === 'chrome-extension:' || url.protocol === 'data:') {
         return;
     }
 
-    // Resto del shell (CSS, HTML, JS) -> Cache-first clásico
-    event.respondWith(
-        (async () => {
-            try {
-                // NORMALIZAR RUTAS HTML PARA CLOUDFLARE PAGES
-                // Cloudflare redirige *.html a * (ej. /login.html -> /login)
-                // Hacemos que el SW evalúe y descargue siempre la ruta limpia para evitar el error de redirección 308.
-                let fetchUrl = request.url;
-                let cacheKey = request;
-
-                if (url.origin === location.origin && url.pathname.endsWith('.html')) {
-                    let cleanUrl = new URL(request.url);
-                    cleanUrl.pathname = cleanUrl.pathname.replace(/\.html$/, '');
-                    if (cleanUrl.pathname === '/index') cleanUrl.pathname = '/';
-
-                    fetchUrl = cleanUrl.href;
-                    cacheKey = cleanUrl.href;
-                }
-
-                const cached = await caches.match(cacheKey);
-
-                const network = fetch(fetchUrl).then(response => {
-                    // Solo cachear respuestas exitosas reales
-                    if (response && response.status === 200 && response.type !== 'opaque') {
-                        const clone = response.clone();
-                        caches.open(CACHE_NAME).then(cache => cache.put(cacheKey, clone));
-                    }
-                    return response;
-                }).catch(async () => {
-                    if (cached) return cached;
-                    if (request.destination === 'document') {
-                        return await caches.match('/');
-                    }
-                    return new Response('Sin conexión', { status: 503 });
-                });
-
-                return cached ? cached : await network;
-            } catch (err) {
-                console.error("SW Fetch Error:", err);
-                return new Response('Error interno offline', { status: 500 });
-            }
-        })()
-    );
+    // Para requests del mismo origen
+    event.respondWith(handleRequest(request));
 });
+
+async function handleRequest(request) {
+    const url = new URL(request.url);
+
+    // Estrategia 1: Network First para HTML (SPA)
+    if (request.destination === 'document' || request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html')) {
+        try {
+            const response = await fetch(request.url, {
+                redirect: 'follow'
+            });
+
+            if (response.ok && response.type !== 'opaque') {
+                const cache = await caches.open(CACHE_NAME);
+                cache.put(request, response.clone());
+            }
+
+            return response;
+        } catch (error) {
+            console.log('[SW] Network failed for HTML, checking cache');
+
+            // Fallback a cache directo
+            const cached = await caches.match(request);
+            if (cached) return cached;
+
+            // Fallback final a index.html o barra espaciadora
+            const indexCache = await caches.match('/index.html') || await caches.match('/');
+            if (indexCache) return indexCache;
+
+            return new Response('Offline - Page not cached', {
+                status: 503,
+                statusText: 'Service Unavailable',
+                headers: { 'Content-Type': 'text/plain' }
+            });
+        }
+    }
+
+    // Estrategia 2: Cache First para assets estáticos
+    if (request.destination === 'script' ||
+        request.destination === 'style' ||
+        request.destination === 'image' ||
+        request.destination === 'font' ||
+        url.pathname.endsWith('.js') ||
+        url.pathname.endsWith('.css')) {
+
+        const cached = await caches.match(request);
+        if (cached) {
+            return cached;
+        }
+
+        try {
+            const response = await fetch(request.url, {
+                redirect: 'follow'
+            });
+
+            if (response.ok && response.type !== 'opaque') {
+                const cache = await caches.open(CACHE_NAME);
+                cache.put(request, response.clone());
+            }
+
+            return response;
+        } catch (error) {
+            console.error('[SW] Asset fetch failed:', error);
+            return new Response('Network error', { status: 503 });
+        }
+    }
+
+    // Default: Cache First fallando a Network
+    try {
+        const cached = await caches.match(request);
+        if (cached) return cached;
+
+        const response = await fetch(request.url, {
+            redirect: 'follow'
+        });
+
+        if (response.ok && response.type !== 'opaque') {
+            const cache = await caches.open(CACHE_NAME);
+            cache.put(request, response.clone());
+        }
+
+        return response;
+    } catch (error) {
+        return new Response('Offline', { status: 503 });
+    }
+}
