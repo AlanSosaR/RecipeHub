@@ -1,6 +1,6 @@
-// Recipe Pantry Service Worker — v4 (Soporte Imágenes Offline + IndexedDB Sync)
-const CACHE_NAME = 'recipe-hub-cache-v58';
-const IMAGE_CACHE = 'recipe-pantry-images-v4';
+// Recipe Pantry Service Worker — v5 (Soporte Imágenes Offline + IndexedDB Sync)
+const CACHE_NAME = 'recipe-hub-cache-v59';
+const IMAGE_CACHE = 'recipe-pantry-images-v5';
 
 // App shell — archivos core a cachear al instalar
 const APP_SHELL = [
@@ -92,20 +92,35 @@ self.addEventListener('fetch', event => {
     // Resto del shell (CSS, HTML, JS) -> Cache-first clásico
     event.respondWith(
         caches.match(request).then(cached => {
+            // Fix para el error: "redirected response was used for a request whose redirect mode is not follow"
+            const cleanResponse = (res) => {
+                if (!res) return res;
+                if (request.mode === 'navigate' && res.redirected) {
+                    const cloned = res.clone();
+                    return new Response(cloned.body, {
+                        headers: cloned.headers,
+                        status: cloned.status,
+                        statusText: cloned.statusText
+                    });
+                }
+                return res;
+            };
+
             const network = fetch(request).then(response => {
                 if (response && response.status === 200 && response.type !== 'opaque') {
                     const clone = response.clone();
                     caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
                 }
-                return response;
+                return cleanResponse(response);
             }).catch(() => {
-                if (cached) return cached;
+                if (cached) return cleanResponse(cached);
                 if (request.destination === 'document') {
-                    return caches.match('/index.html');
+                    return caches.match('/index.html').then(idx => cleanResponse(idx));
                 }
                 return new Response('Sin conexión', { status: 503 });
             });
-            return cached || network;
+
+            return cached ? cleanResponse(cached) : network;
         })
     );
 });
