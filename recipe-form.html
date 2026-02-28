@@ -913,7 +913,7 @@
     <!-- Sidebar Desktop & Mobile Drawer -->
     <aside id="main-sidebar" class="sidebar">
         <div class="sidebar-header">
-            <div class="sidebar-logo" onclick="window.location.href='index.html'; window.closeSidebar();"
+            <div class="sidebar-logo" onclick="window.location.href='/'; window.closeSidebar();"
                 style="cursor: pointer;">
                 <img src="assets/icons/icon.svg" class="logo-icon" width="28" height="28" alt="Logo" />
                 <span class="logo-text" style="color: var(--logo-color);">Recipe Pantry</span>
@@ -930,19 +930,19 @@
         </div>
 
         <nav class="sidebar-nav">
-            <a href="index.html" class="nav-item">
+            <a href="/" class="nav-item">
                 <span class="material-symbols-outlined">home</span>
                 <span data-i18n="navRecipes">Recetas</span>
             </a>
-            <a href="index.html?view=favorites" class="nav-item">
+            <a href="/?view=favorites" class="nav-item">
                 <span class="material-symbols-outlined">star</span>
                 <span data-i18n="navFavorites">Favoritos</span>
             </a>
-            <a href="ocr.html" class="nav-item">
+            <a href="/ocr" class="nav-item">
                 <span class="material-symbols-outlined">document_scanner</span>
                 <span data-i18n="navScan">Escanear Receta</span>
             </a>
-            <a href="index.html?view=shared" class="nav-item">
+            <a href="/?view=shared" class="nav-item">
                 <span class="material-symbols-outlined">share</span>
                 <span data-i18n="navShared">Compartidas</span>
             </a>
@@ -1238,7 +1238,7 @@
     <script>
         (async () => {
             const ok = await window.authManager.checkAuth();
-            if (!ok) { window.location.replace('index.html'); return; }
+            if (!ok) { window.location.replace('/'); return; }
 
             // Initialize UI
             window.initSidebarState();

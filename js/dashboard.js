@@ -359,7 +359,7 @@ class DashboardManager {
                         <button class="btn-icon-m3" title="Copiar enlace" onclick="event.stopPropagation(); window.dashboard.copyLink('${recipe.id}')">
                             <span class="material-symbols-outlined">link</span>
                         </button>
-                        <button class="btn-icon-m3" title="Editar" onclick="event.stopPropagation(); window.location.href='recipe-form.html?id=${recipe.id}'">
+                        <button class="btn-icon-m3" title="Editar" onclick="event.stopPropagation(); window.location.href='/recipe-form?id=${recipe.id}'">
                             <span class="material-symbols-outlined">edit</span>
                         </button>
                         <button class="btn-icon-m3" title="Eliminar" style="color: var(--md-error);" onclick="event.stopPropagation(); window.dashboard.confirmDelete('${recipe.id}')">
@@ -583,7 +583,7 @@ class DashboardManager {
                     ${window.i18n ? window.i18n.t('shareBtn') : 'Compartir'}
                 </button>
                 <div class="context-menu-divider"></div>
-                <button class="context-menu-item" onclick="window.location.href='recipe-form.html?id=${recipe.id}'">
+                <button class="context-menu-item" onclick="window.location.href='/recipe-form?id=${recipe.id}'">
                     <span class="material-symbols-outlined">edit</span>
                     ${window.i18n ? window.i18n.t('formEditRecipe') : 'Editar receta'}
                 </button>
@@ -740,7 +740,7 @@ class DashboardManager {
                 const isAuthenticated = await window.authManager.checkAuth();
                 if (!isAuthenticated) {
                     localStorage.setItem('redirect_after_login', hash);
-                    window.location.href = 'login.html';
+                    window.location.href='/login';
                 } else {
                     window.location.href = `recipe-detail.html?id=${recipeId}`;
                 }

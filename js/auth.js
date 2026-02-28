@@ -103,7 +103,7 @@ class AuthManager {
             // Guardar URL actual para redirigir después del login
             sessionStorage.setItem('redirectAfterLogin', window.location.pathname + window.location.search);
             // Usar replace para evitar que esta página quede en el historial de atrás
-            window.location.replace('index.html');
+            window.location.replace('/');
             return false;
         }
 
@@ -194,7 +194,7 @@ class AuthManager {
             this.session = null;
 
             console.log('✅ Logout exitoso');
-            window.location.replace('index.html');
+            window.location.replace('/');
 
         } catch (error) {
             console.error('❌ Error en logout:', error);

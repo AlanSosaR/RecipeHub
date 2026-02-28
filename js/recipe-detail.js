@@ -11,7 +11,7 @@ class RecipeDetailManager {
         this.currentRecipe = null;
 
         if (!this.recipeId) {
-            window.location.replace('index.html');
+            window.location.replace('/');
             return;
         }
 
@@ -254,7 +254,7 @@ class RecipeDetailManager {
             if (result.success) {
                 window.showToast(window.i18n ? window.i18n.t('deleteSuccess') : 'Receta eliminada correctamente', 'success');
                 setTimeout(() => {
-                    window.location.replace('index.html');
+                    window.location.replace('/');
                 }, 1000);
             } else {
                 window.showToast(window.i18n ? window.i18n.t('deleteError') : 'Error al eliminar la receta', 'error');

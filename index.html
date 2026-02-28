@@ -366,7 +366,7 @@
             <p id="feat-plan-desc" data-i18n="featPlanDesc">Organiza tus comidas</p>
           </div>
         </div>
-        <button class="btn-comenzar" onclick="window.location.href='login.html'">
+        <button class="btn-comenzar" onclick="window.location.href='/login'">
           <span id="btn-get-started" data-i18n="btnGetStarted">Comenzar</span>
           <span class="material-symbols-outlined">arrow_forward</span>
         </button>
@@ -383,7 +383,7 @@
     <!-- Sidebar Desktop & Mobile Drawer -->
     <aside id="main-sidebar" class="sidebar">
       <div class="sidebar-header">
-        <div class="sidebar-logo" onclick="window.location.href='index.html'; window.closeSidebar();"
+        <div class="sidebar-logo" onclick="window.location.href='/'; window.closeSidebar();"
           style="cursor: pointer;">
           <img src="assets/icons/icon.svg" class="logo-icon" width="28" height="28" alt="Logo" />
           <span class="logo-text" style="color: var(--logo-color);">Recipe Pantry</span>
@@ -406,7 +406,7 @@
           <span class="material-symbols-outlined">star</span>
           <span data-i18n="navFavorites">Favoritos</span>
         </a>
-        <a href="#" class="nav-item" onclick="window.location.href='ocr.html'">
+        <a href="#" class="nav-item" onclick="window.location.href='/ocr'">
           <span class="material-symbols-outlined">document_scanner</span>
           <span data-i18n="navScan">Escanear Receta</span>
         </a>
@@ -515,7 +515,7 @@
             Comienza
             digitalizando tus recetas en
             papel o agrega una manualmente.</p>
-          <md-filled-button id="emptyStateBtn" style="margin-top: 24px;" onclick="window.location.href='ocr.html'">
+          <md-filled-button id="emptyStateBtn" style="margin-top: 24px;" onclick="window.location.href='/ocr'">
             <span slot="icon" class="material-symbols-outlined">document_scanner</span>
             <span data-i18n="scanRecipeBtn">Escanear Receta</span>
           </md-filled-button>
@@ -524,7 +524,7 @@
       <!-- .main-content-scroll close -->
 
       <!-- Floating Action Button (FAB) -->
-      <button class="fab-m3" onclick="window.location.href='recipe-form.html'" data-i18n-aria-label="formNewRecipe"
+      <button class="fab-m3" onclick="window.location.href='/recipe-form'" data-i18n-aria-label="formNewRecipe"
         aria-label="Nueva Receta">
         <span class="material-symbols-outlined">add</span>
       </button>

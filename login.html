@@ -378,7 +378,7 @@
                 <span id="switch-text" data-i18n="switchTextLogin">¿No tienes cuenta? Regístrate</span>
             </div>
 
-            <button type="button" onclick="window.location.href='index.html'" class="btn-m3-text"
+            <button type="button" onclick="window.location.href='/'" class="btn-m3-text"
                 style="color: var(--on-surface-variant); font-size: 13px;">
                 <span id="btn-back" data-i18n="btnBack">Volver al inicio</span>
             </button>
@@ -405,7 +405,7 @@
                 const { data } = await window.supabaseClient.auth.getSession();
                 if (data?.session) {
                     console.log('🔄 Usuario ya autenticado, redirigiendo...');
-                    window.location.replace('index.html');
+                    window.location.replace('/');
                 }
             }
         })();

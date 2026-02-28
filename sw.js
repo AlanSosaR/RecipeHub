@@ -1,6 +1,6 @@
-// Recipe Pantry Service Worker — v9 (Redirect 'follow' fix + Network First HTML)
-const CACHE_NAME = 'recipe-hub-cache-v63';
-const IMAGE_CACHE = 'recipe-pantry-images-v9';
+// Recipe Pantry Service Worker — v10 (Redirect 'follow' fix + Network First HTML)
+const CACHE_NAME = 'recipe-hub-cache-v64';
+const IMAGE_CACHE = 'recipe-pantry-images-v10';
 
 // App shell — archivos core a cachear al instalar
 const APP_SHELL = [
@@ -32,7 +32,7 @@ const APP_SHELL = [
 ];
 
 self.addEventListener('install', event => {
-    console.log('[SW] Installing v63');
+    console.log('[SW] Installing v64');
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => cache.addAll(APP_SHELL))
@@ -41,7 +41,7 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-    console.log('[SW] Activating v63');
+    console.log('[SW] Activating v64');
     event.waitUntil(
         caches.keys()
             .then(cacheNames => {
