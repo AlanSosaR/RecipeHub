@@ -5,7 +5,8 @@ class DashboardManager {
     constructor() {
         this.currentFilters = {};
         this.displayMode = localStorage.getItem('recipe_pantry_display_mode') || 'list';
-        this.currentView = localStorage.getItem('recipe_pantry_current_view') || 'recipes';
+        // Siempre inicia en recetas de primera (ignora localStorage para la vista inicial)
+        this.currentView = 'recipes';
         this.currentRecipes = [];
         this.selectedRecipeId = null;
     }
