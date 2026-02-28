@@ -102,7 +102,7 @@ class DatabaseManager {
                 const userId = window.authManager.currentUser.id;
                 const { data: shared, error: err } = await window.supabaseClient
                     .from('shared_recipes')
-                    .select('*, recipe:recipe_id(*, category:categories(*), images:recipe_images(*)), permission, sender_user_id')
+                    .select('*, recipe:recipe_id(*, category:categories(*), images:recipe_images(*)), permission, owner_user_id')
                     .eq('recipient_user_id', userId);
 
                 if (err) throw err;
@@ -110,7 +110,7 @@ class DatabaseManager {
                 if (!shared || shared.length === 0) return { success: true, recipes: [], fromCache: false };
 
                 // Fetch sender names separately to avoid ambiguous FK resolution
-                const senderIds = [...new Set(shared.map(s => s.sender_user_id).filter(Boolean))];
+                const senderIds = [...new Set(shared.map(s => s.owner_user_id).filter(Boolean))];
                 let senderMap = {};
                 if (senderIds.length > 0) {
                     const { data: senders } = await window.supabaseClient
@@ -133,7 +133,7 @@ class DatabaseManager {
                         totalImages: r.images?.length || 0,
                         sharingContext: 'received',
                         sharedPermission: s.permission,
-                        senderName: senderMap[s.sender_user_id] || 'Chef'
+                        senderName: senderMap[s.owner_user_id] || 'Chef'
                     };
                 }).filter(Boolean);
 
@@ -163,7 +163,7 @@ class DatabaseManager {
             const { data: sentShared } = await window.supabaseClient
                 .from('shared_recipes')
                 .select('recipe_id, recipient_user_id')
-                .eq('sender_user_id', window.authManager.currentUser.id);
+                .eq('owner_user_id', window.authManager.currentUser.id);
 
             // Fetch recipient names
             let recipientMap = {};

@@ -41,7 +41,13 @@ class DashboardManager {
             this.updateUserUI();
 
 
-            // 2. Cargar datos iniciales según la vista guardada
+            // 2. Cargar datos iniciales según la vista guardada o URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const viewParam = urlParams.get('view');
+            if (viewParam && ['recipes', 'favorites', 'shared'].includes(viewParam)) {
+                this.currentView = viewParam;
+            }
+
             console.log(`📦 Cargando vista: ${this.currentView}...`);
             const activeNavItem = document.querySelector(`.nav-item[data-view="${this.currentView}"]`);
             this.switchView(this.currentView, activeNavItem);
