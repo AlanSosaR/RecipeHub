@@ -74,6 +74,22 @@ class OCRScanner {
             }
         } catch (err) {
             console.error('Error camera:', err);
+            this.stream = null;
+
+            // Si el usuario denegó los permisos o no hay cámara
+            if (err.name === 'NotAllowedError' || err.name === 'NotFoundError') {
+                if (window.showSnackbar) {
+                    window.showSnackbar('No hay acceso a la cámara. Sube una foto de tu galería.');
+                }
+                // Ocultar feed de video para que solo quede el botón de subir foto
+                if (this.videoElement) {
+                    this.videoElement.style.display = 'none';
+                }
+            } else {
+                if (window.showSnackbar) {
+                    window.showSnackbar('Error al iniciar la cámara. Intenta subir una foto.');
+                }
+            }
         }
     }
 
