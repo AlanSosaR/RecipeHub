@@ -244,7 +244,12 @@ class DatabaseManager {
                         const { data: rpcRecipe, error: rpcError } = await window.supabaseClient
                             .rpc('get_shared_recipe_details', { p_recipe_id: recipeId });
                         if (!rpcError && rpcRecipe) {
-                            recipe = rpcRecipe;
+                            console.log('✅ Fallback RPC Data loaded:', rpcRecipe);
+                            recipe.ingredients = rpcRecipe.ingredients || [];
+                            recipe.steps = rpcRecipe.steps || [];
+                            recipe.images = rpcRecipe.images || [];
+                        } else {
+                            console.warn('⚠️ Fallback RPC failed or returned null', rpcError);
                         }
                     } catch (e) {
                         console.warn('Fallback RPC falló', e);
