@@ -228,13 +228,28 @@ class DatabaseManager {
 
         if (this._isOnline) {
             try {
-                const { data: recipe, error } = await window.supabaseClient
+                // 1) Intentar fetch normal
+                let { data: recipe, error } = await window.supabaseClient
                     .from('recipes')
                     .select(`*, category:categories(*), ingredients(*), steps:preparation_steps(*), images:recipe_images(*)`)
                     .eq('id', recipeId)
                     .single();
 
                 if (error) throw error;
+
+                // Si no es el dueño, los policies restrictivos pueden ocultar ingredientes/pasos.
+                // Usar RPC para bypassear RLS de relaciones compartidas de forma segura.
+                if (recipe && (!recipe.ingredients || recipe.ingredients.length === 0) && recipe.user_id !== window.authManager.currentUser.id) {
+                    try {
+                        const { data: rpcRecipe, error: rpcError } = await window.supabaseClient
+                            .rpc('get_shared_recipe_details', { p_recipe_id: recipeId });
+                        if (!rpcError && rpcRecipe) {
+                            recipe = rpcRecipe;
+                        }
+                    } catch (e) {
+                        console.warn('Fallback RPC falló', e);
+                    }
+                }
 
                 recipe.primaryImage = recipe.images?.find(img => img.is_primary)?.image_url || null;
                 await window.localDB.put('recipes', recipe); // Refresh cache
