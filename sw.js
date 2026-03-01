@@ -78,6 +78,9 @@ self.addEventListener('fetch', event => {
     // Evitar interceptar requests que no son GET (v.g. POST a base de datos o Auth)
     if (request.method !== 'GET') return;
 
+    // Ignorar esquemas no soportados por la caché (e.g. extensiones de Chrome)
+    if (!url.protocol.startsWith('http')) return;
+
     // 📄 HTML → Network First
     if (request.mode === 'navigate') {
         event.respondWith(
