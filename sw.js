@@ -87,7 +87,9 @@ self.addEventListener('fetch', event => {
             fetch(request)
                 .then(networkResponse => {
                     const responseClone = networkResponse.clone();
-                    caches.open(DYNAMIC_CACHE).then(cache => cache.put(request, responseClone));
+                    if (request.url.startsWith('http')) {
+                        caches.open(DYNAMIC_CACHE).then(cache => cache.put(request, responseClone));
+                    }
                     return networkResponse;
                 })
                 .catch(() => caches.match(request))
@@ -101,7 +103,9 @@ self.addEventListener('fetch', event => {
             caches.match(request).then(cachedResponse => {
                 const networkFetch = fetch(request).then(networkResponse => {
                     const responseClone = networkResponse.clone();
-                    caches.open(STATIC_CACHE).then(cache => cache.put(request, responseClone));
+                    if (request.url.startsWith('http')) {
+                        caches.open(STATIC_CACHE).then(cache => cache.put(request, responseClone));
+                    }
                     return networkResponse;
                 });
                 return cachedResponse || networkFetch; // Retornar caché inmediatamente si existe, pero actualizar en background
@@ -125,10 +129,12 @@ self.addEventListener('fetch', event => {
                     }
 
                     const responseClone = networkResponse.clone();
-                    caches.open(IMAGE_CACHE).then(cache => {
-                        cache.put(request, responseClone);
-                        limitCacheSize(IMAGE_CACHE, MAX_IMAGE_ITEMS);
-                    });
+                    if (request.url.startsWith('http')) {
+                        caches.open(IMAGE_CACHE).then(cache => {
+                            cache.put(request, responseClone);
+                            limitCacheSize(IMAGE_CACHE, MAX_IMAGE_ITEMS);
+                        });
+                    }
                     return networkResponse;
                 }).catch(() => {
                     // Fallback local si falla descarga de cualquier imagen
@@ -146,7 +152,9 @@ self.addEventListener('fetch', event => {
         fetch(request)
             .then(networkResponse => {
                 const responseClone = networkResponse.clone();
-                caches.open(DYNAMIC_CACHE).then(cache => cache.put(request, responseClone));
+                if (request.url.startsWith('http')) {
+                    caches.open(DYNAMIC_CACHE).then(cache => cache.put(request, responseClone));
+                }
                 return networkResponse;
             })
             .catch(() => caches.match(request))
